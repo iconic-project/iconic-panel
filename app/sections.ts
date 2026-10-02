@@ -23,6 +23,6 @@ export const sections: Record<SectionId, Section> = {
 }
 
 export const LAST_PATH_KEYS: Record<SectionId, string> = {
-  rms: 'anakata.section.last.rms',
-  crm: 'anakata.section.last.crm'
+  rms: 'iconic.section.last.rms',
+  crm: 'iconic.section.last.crm'
 }

@@ -278,8 +278,8 @@ describe('describeHistory', () => {
     expect(describeHistory({
       event: 'booking.fees_changed',
       before: null,
-      after: { what: 'PNG park entry fee — collected by Anakata (invoiced, due with the balance)' }
-    }, t)).toBe('PNG park entry fee — collected by Anakata (invoiced, due with the balance)')
+      after: { what: 'PNG park entry fee — collected by Iconic (invoiced, due with the balance)' }
+    }, t)).toBe('PNG park entry fee — collected by Iconic (invoiced, due with the balance)')
     expect(describeHistory({
       event: 'document.issued',
       before: null,

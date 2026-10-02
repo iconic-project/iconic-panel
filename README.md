@@ -1,12 +1,12 @@
-# anakata-panel
+# iconic-panel
 
-Staff SPA for **RMS** and **CRM** in one Nuxt 4 app. The URL decides the section (`/rms/…` vs `/crm/…`). Both sides call the same `useApi()` from the `anakata-ui` layer.
+Staff SPA for **RMS** and **CRM** in one Nuxt 4 app. The URL decides the section (`/rms/…` vs `/crm/…`). Both sides call the same `useApi()` from the `iconic-ui` layer.
 
 | | |
 |---|---|
 | Port | **3001** |
 | Render | SPA (`ssr: false`) |
-| Layer | local `../anakata-ui`; Netlify `github:anakata-project/anakata-ui#v0.17.1` |
+| Layer | local `../iconic-ui`; Netlify `github:iconic-project/iconic-ui#dev` |
 | API | `NUXT_PUBLIC_API_BASE` (default `http://localhost:8000`) |
 
 The API must already allow this origin. CORS is configured on the API via `FRONTEND_PANEL_URL=http://localhost:3001`.
@@ -26,7 +26,7 @@ NUXT_PUBLIC_API_BASE=http://localhost:8000
 
 ## Run
 
-From the Cursor workspace, use **Anakata: start everything** — it starts the API and `pnpm dev --port 3001` for this app.
+From the Cursor workspace, use **Iconic: start everything** — it starts the API and `pnpm dev --port 3001` for this app.
 
 Or locally:
 

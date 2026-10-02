@@ -33,21 +33,21 @@ describe('extraHelpers', () => {
       pngPendingCount: 0,
       tctPp: 20,
       tctCount: 2
-    })).toBe('Guest pays the PNG park entry fee to Anakata (USD 400 — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival.')
+    })).toBe('Guest pays the PNG park entry fee to Iconic (USD 400 — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival.')
 
     expect(feeLabel('png', {
       pngKnownTotal: 200,
       pngPendingCount: 1,
       tctPp: 20,
       tctCount: 3
-    })).toBe('Guest pays the PNG park entry fee to Anakata (USD 200 — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival. 1 guests pending data')
+    })).toBe('Guest pays the PNG park entry fee to Iconic (USD 200 — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival. 1 guests pending data')
 
     expect(feeLabel('tct', {
       pngKnownTotal: 0,
       pngPendingCount: 0,
       tctPp: 20,
       tctCount: 3
-    })).toBe('Anakata manages the TCT transit card (USD 20 × 3). Unchecked = guest pre-registers or pays at the origin airport.')
+    })).toBe('Iconic manages the TCT transit card (USD 20 × 3). Unchecked = guest pre-registers or pays at the origin airport.')
   })
 
   it('defaults quantity to the guest count and rate to the catalogue price', () => {

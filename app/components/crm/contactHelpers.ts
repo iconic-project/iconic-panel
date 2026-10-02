@@ -1,4 +1,4 @@
-import type { AttributionTouch } from '#anakata-ui/app/types'
+import type { AttributionTouch } from '#iconic-ui/app/types'
 import type { ContactMerge, ContactSegment } from '../../types/api'
 
 export function segmentPillClass(segment: ContactSegment): string {

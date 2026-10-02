@@ -1,4 +1,4 @@
-import type { components } from '#anakata-ui/app/types/api'
+import type { components } from '#iconic-ui/app/types/api'
 
 export type {
   AllowedTransition,
@@ -271,7 +271,7 @@ export type {
   SegmentVocabulary,
   TemplateDraftInput,
   TemplatePreviewInput
-} from '#anakata-ui/app/types'
+} from '#iconic-ui/app/types'
 
 export type ChannelOfOriginGroup = components['schemas']['ChannelOfOriginGroup']
 export type Permission = components['schemas']['Permission']

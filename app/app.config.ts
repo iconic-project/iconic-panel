@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  anakata: {
+  iconic: {
     displayTimeZone: 'Pacific/Galapagos'
   }
 })

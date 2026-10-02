@@ -1,4 +1,4 @@
-export const PANEL_LOCALE_COOKIE = 'anakata_panel_locale'
+export const PANEL_LOCALE_COOKIE = 'iconic_panel_locale'
 
 const YEAR = 60 * 60 * 24 * 365
 

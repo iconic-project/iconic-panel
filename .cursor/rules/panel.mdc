@@ -1,9 +1,9 @@
 ---
-description: Structure of anakata-panel — one staff app containing the RMS and the CRM
+description: Structure of iconic-panel — one staff app containing the RMS and the CRM
 alwaysApply: true
 ---
 
-# anakata-panel — RMS + CRM in one app
+# iconic-panel — RMS + CRM in one app
 
 The RMS and the CRM are **two sections** of one tightly coupled staff app (one codebase, one `useApi()`). Dev decisions A2, A3, A11. The API still enforces that the CRM has no write path to money.
 

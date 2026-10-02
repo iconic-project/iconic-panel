@@ -1,8 +1,8 @@
-import type { ApiError } from '#anakata-ui/app/composables/useApi'
+import type { ApiError } from '#iconic-ui/app/composables/useApi'
 
 declare module '#app' {
   interface RuntimeNuxtHooks {
-    'anakata:api-error': (error: ApiError) => void
+    'iconic:api-error': (error: ApiError) => void
   }
 }
 

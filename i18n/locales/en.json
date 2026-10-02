@@ -317,7 +317,7 @@
     "localeEnNote": "Only live locale at go-live.",
     "localeEs": "Español (ES)",
     "localeEsStatus": "NOT PLANNED",
-    "localeEsNote": "Anakata decision 12 Sep 2026: everything in English — guest-facing and internal. Supersedes §8.0 (Spanish as secondary locale).",
+    "localeEsNote": "Iconic decision 12 Sep 2026: everything in English — guest-facing and internal. Supersedes §8.0 (Spanish as secondary locale).",
     "localeCurrency": "Currency",
     "localeCurrencyStatus": "USD",
     "localeCurrencyNote": "All engine prices in USD at launch.",
@@ -341,7 +341,7 @@
     "pngExempt": "PNG fee — exempt under age",
     "showFees": "Show these fees as information lines in the price panel",
     "feeNote": "Fee footnote",
-    "feesFootnote": "Informational only — never added to the invoice total or charged, unless the guest asks Anakata to collect them.",
+    "feesFootnote": "Informational only — never added to the invoice total or charged, unless the guest asks Iconic to collect them.",
     "charterTitle": "Private charter page",
     "headline": "Headline",
     "intro": "Intro",
@@ -1083,7 +1083,7 @@
     "removeExtra": "Remove",
     "removeExtraTitle": "Remove {name} × {qty}?",
     "feesHeading": "Galápagos fees — the guest chooses who collects them",
-    "feesFootnote": "Fees Anakata collects are invoiced; fees the guest pays directly appear on the invoice as information only. Extras and collected fees are due up to {hours} h before departure — services taken on board (spa, premium bar, boutique) are settled during or after the cruise.",
+    "feesFootnote": "Fees Iconic collects are invoiced; fees the guest pays directly appear on the invoice as information only. Extras and collected fees are due up to {hours} h before departure — services taken on board (spa, premium bar, boutique) are settled during or after the cruise.",
     "feesUpdatedToast": "Fee collection updated",
     "overduePill": "OVERDUE",
     "overdueOnly": "Overdue only",
@@ -1733,7 +1733,7 @@
     "colStatus": "Status",
     "empty": "No documents in this date range.",
     "colLatest": "Latest",
-    "footnote": "Anakata decisions (12 Sep 2026): the guest chooses whether the PNG park entry fee is paid to Anakata or directly at SCY airport — set it per booking in the Extras tab; fees Anakata collects are invoiced, the rest appear as information only. The deposit is calculated on cruise charges only; extras and collected fees are due with the balance. Invoice issued by PONTOS LLC (EIN 42-4742064); bank details still pending."
+    "footnote": "Iconic decisions (12 Sep 2026): the guest chooses whether the PNG park entry fee is paid to Iconic or directly at SCY airport — set it per booking in the Extras tab; fees Iconic collects are invoiced, the rest appear as information only. The deposit is calculated on cruise charges only; extras and collected fees are due with the balance. Invoice issued by PONTOS LLC (EIN 42-4742064); bank details still pending."
   },
   "alerts": {
     "tabOpen": "Open",
@@ -2473,7 +2473,7 @@
     "kpiMissing": "Not yet in the RMS",
     "kpiMissingHome": "every element has an RMS home",
     "kpiMissingGap": "still without an RMS home",
-    "decisionsTitle": "Anakata decisions — 12 Sep 2026",
+    "decisionsTitle": "Iconic decisions — 12 Sep 2026",
     "openTitle": "Still open",
     "pillNew": "NEW — THIS SECTION",
     "pillExisting": "EXISTING RMS TAB",
@@ -2643,7 +2643,7 @@
     "decisions": {
       "parkFee": {
         "title": "Galápagos park fee",
-        "body": "the guest chooses: pay it to Anakata (invoiced) or directly at SCY airport. Set per booking in the Extras tab; the TCT card works the same way."
+        "body": "the guest chooses: pay it to Iconic (invoiced) or directly at SCY airport. Set per booking in the Extras tab; the TCT card works the same way."
       },
       "deposit": {
         "title": "Deposit",
@@ -2703,7 +2703,7 @@
     "open": {
       "cancellation": {
         "title": "Cancellation policy text",
-        "body": "(LEG-001) — being written by Anakata; the system logic is live, the customer-facing text is not published."
+        "body": "(LEG-001) — being written by Iconic; the system logic is live, the customer-facing text is not published."
       },
       "privacy": {
         "title": "LOPDP / GDPR architecture",

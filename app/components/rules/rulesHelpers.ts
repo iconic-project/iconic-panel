@@ -388,7 +388,7 @@ export function ruleFieldLabels(): Record<string, string> {
     'commission.default_pct': 'RMS · Default agency commission',
     'commission.payable_days_after_cruise': '§10 · Commission payable after cruise',
     'modification_fee_usd': 'FIN-006 · Date-change / modification fee',
-    'payments.extras_due_hours': 'Anakata · Extras & collected fees — due before departure',
+    'payments.extras_due_hours': 'Iconic · Extras & collected fees — due before departure',
     'payments.wire_window_hours': 'RMS · Wire transfer window before auto-release',
     'payments.balance_reminder_days': '§4.1.4 · Balance reminders — days before due',
     'discounts.online_deposit_discount_pct': '08 B2 · Online-deposit advantage',

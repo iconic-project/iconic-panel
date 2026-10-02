@@ -2,8 +2,8 @@ import { LAST_PATH_KEYS } from '../sections'
 import type { Me, Permission } from '../types/api'
 import type { SectionId } from '../navigation/types'
 
-const USER_STATE = 'anakata.auth.user'
-const FETCHED_STATE = 'anakata.auth.fetched'
+const USER_STATE = 'iconic.auth.user'
+const FETCHED_STATE = 'iconic.auth.fetched'
 
 let fetchPromise: Promise<void> | null = null
 

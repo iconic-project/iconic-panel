@@ -102,9 +102,9 @@ describe('newReservationHelpers', () => {
   })
 
   it('matches a selected contact only while the email still agrees', () => {
-    expect(existingContactSelected('Ada@Anakata.test', 'ada@anakata.test')).toBe(true)
-    expect(existingContactSelected('other@anakata.test', 'ada@anakata.test')).toBe(false)
-    expect(existingContactSelected('ada@anakata.test', null)).toBe(false)
+    expect(existingContactSelected('Ada@Iconic.test', 'ada@iconic.test')).toBe(true)
+    expect(existingContactSelected('other@iconic.test', 'ada@iconic.test')).toBe(false)
+    expect(existingContactSelected('ada@iconic.test', null)).toBe(false)
   })
 
   it('renders deposit and charter copy from quote terms', () => {

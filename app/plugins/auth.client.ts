@@ -8,7 +8,7 @@ export default defineNuxtPlugin(async () => {
 
   const nuxtApp = useNuxtApp()
 
-  nuxtApp.hook('anakata:api-error', (error) => {
+  nuxtApp.hook('iconic:api-error', (error) => {
     if (error.status === 401) {
       if (user.value === null) {
         return

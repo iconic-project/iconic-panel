@@ -317,7 +317,7 @@
     "localeEnNote": "Único idioma activo en el lanzamiento.",
     "localeEs": "Español (ES)",
     "localeEsStatus": "NO PLANIFICADO",
-    "localeEsNote": "Decisión de Anakata 12 Sep 2026: todo en inglés — para el huésped y a nivel interno. Sustituye §8.0 (español como idioma secundario).",
+    "localeEsNote": "Decisión de Iconic 12 Sep 2026: todo en inglés — para el huésped y a nivel interno. Sustituye §8.0 (español como idioma secundario).",
     "localeCurrency": "Moneda",
     "localeCurrencyStatus": "USD",
     "localeCurrencyNote": "Todos los precios del motor en USD en el lanzamiento.",
@@ -341,7 +341,7 @@
     "pngExempt": "Tasa PNG — exento por edad",
     "showFees": "Mostrar estas tasas como líneas informativas en el panel de precios",
     "feeNote": "Nota al pie de las tasas",
-    "feesFootnote": "Solo informativas: nunca se suman al total de la factura ni se cobran, salvo que el huésped pida a Anakata que las recaude.",
+    "feesFootnote": "Solo informativas: nunca se suman al total de la factura ni se cobran, salvo que el huésped pida a Iconic que las recaude.",
     "charterTitle": "Página de chárter privado",
     "headline": "Titular",
     "intro": "Introducción",
@@ -1083,7 +1083,7 @@
     "removeExtra": "Quitar",
     "removeExtraTitle": "¿Quitar {name} × {qty}?",
     "feesHeading": "Tasas de Galápagos — el huésped elige quién las cobra",
-    "feesFootnote": "Las tasas que cobra Anakata se facturan; las que el huésped paga directamente figuran en la factura solo con carácter informativo. Los extras y las tasas cobradas vencen hasta {hours} h antes de la salida — los servicios tomados a bordo (spa, bar premium, boutique) se liquidan durante el crucero o después.",
+    "feesFootnote": "Las tasas que cobra Iconic se facturan; las que el huésped paga directamente figuran en la factura solo con carácter informativo. Los extras y las tasas cobradas vencen hasta {hours} h antes de la salida — los servicios tomados a bordo (spa, bar premium, boutique) se liquidan durante el crucero o después.",
     "feesUpdatedToast": "Cobro de tasas actualizado",
     "overduePill": "VENCIDO",
     "overdueOnly": "Solo vencidos",
@@ -1733,7 +1733,7 @@
     "colStatus": "Estado",
     "empty": "No hay documentos en este rango de fechas.",
     "colLatest": "Más reciente",
-    "footnote": "Decisiones de Anakata (12 sep. 2026): el huésped elige si la tarifa de ingreso al parque PNG se paga a Anakata o directamente en el aeropuerto SCY; se define en cada reserva, en la pestaña Extras. Las tarifas que cobra Anakata se facturan; las demás aparecen solo como información. El depósito se calcula solo sobre los cargos del crucero; los extras y las tarifas cobradas se pagan con el saldo. Factura emitida por PONTOS LLC (EIN 42-4742064); los datos bancarios siguen pendientes."
+    "footnote": "Decisiones de Iconic (12 sep. 2026): el huésped elige si la tarifa de ingreso al parque PNG se paga a Iconic o directamente en el aeropuerto SCY; se define en cada reserva, en la pestaña Extras. Las tarifas que cobra Iconic se facturan; las demás aparecen solo como información. El depósito se calcula solo sobre los cargos del crucero; los extras y las tarifas cobradas se pagan con el saldo. Factura emitida por PONTOS LLC (EIN 42-4742064); los datos bancarios siguen pendientes."
   },
   "alerts": {
     "tabOpen": "Abiertas",
@@ -2473,7 +2473,7 @@
     "kpiMissing": "Aún no está en el RMS",
     "kpiMissingHome": "cada elemento tiene un lugar en el RMS",
     "kpiMissingGap": "aún sin un lugar en el RMS",
-    "decisionsTitle": "Decisiones de Anakata — 12 sep 2026",
+    "decisionsTitle": "Decisiones de Iconic — 12 sep 2026",
     "openTitle": "Aún abierto",
     "pillNew": "NEW — THIS SECTION",
     "pillExisting": "EXISTING RMS TAB",
@@ -2643,7 +2643,7 @@
     "decisions": {
       "parkFee": {
         "title": "Galápagos park fee",
-        "body": "the guest chooses: pay it to Anakata (invoiced) or directly at SCY airport. Set per booking in the Extras tab; the TCT card works the same way."
+        "body": "the guest chooses: pay it to Iconic (invoiced) or directly at SCY airport. Set per booking in the Extras tab; the TCT card works the same way."
       },
       "deposit": {
         "title": "Deposit",
@@ -2703,7 +2703,7 @@
     "open": {
       "cancellation": {
         "title": "Cancellation policy text",
-        "body": "(LEG-001) — being written by Anakata; the system logic is live, the customer-facing text is not published."
+        "body": "(LEG-001) — being written by Iconic; the system logic is live, the customer-facing text is not published."
       },
       "privacy": {
         "title": "LOPDP / GDPR architecture",

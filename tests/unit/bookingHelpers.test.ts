@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useDates } from '#anakata-ui/app/composables/useDates'
+import { useDates } from '#iconic-ui/app/composables/useDates'
 import {
   BOOKING_TABS,
   bookingToOpen,

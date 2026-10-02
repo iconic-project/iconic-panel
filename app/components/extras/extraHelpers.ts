@@ -47,7 +47,7 @@ export function extrasWritable(status: BookingStatus, canAct: boolean): boolean 
 
 export function feeLabel(kind: FeeKind, amounts: FeeAmounts): string {
   if (kind === 'png') {
-    let sentence = `Guest pays the PNG park entry fee to Anakata (${formatUsd(amounts.pngKnownTotal)} — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival.`
+    let sentence = `Guest pays the PNG park entry fee to Iconic (${formatUsd(amounts.pngKnownTotal)} — by nationality, see Guests). Unchecked = paid directly at SCY airport on arrival.`
 
     if (amounts.pngPendingCount > 0) {
       sentence += ` ${String(amounts.pngPendingCount)} guests pending data`
@@ -56,7 +56,7 @@ export function feeLabel(kind: FeeKind, amounts: FeeAmounts): string {
     return sentence
   }
 
-  return `Anakata manages the TCT transit card (${formatUsd(amounts.tctPp)} × ${String(amounts.tctCount)}). Unchecked = guest pre-registers or pays at the origin airport.`
+  return `Iconic manages the TCT transit card (${formatUsd(amounts.tctPp)} × ${String(amounts.tctCount)}). Unchecked = guest pre-registers or pays at the origin airport.`
 }
 
 export function extraAddDefaults(

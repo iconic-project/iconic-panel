@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AttributionTouch } from '#anakata-ui/app/types'
+import type { AttributionTouch } from '#iconic-ui/app/types'
 import type {
   ContactBooking,
   ContactProfile,
