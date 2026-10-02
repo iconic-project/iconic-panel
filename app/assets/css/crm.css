@@ -1,39 +1,47 @@
 .pill.hi {
+  border-radius: 9999px;
   border-color: var(--coral);
   color: var(--coral-400);
 }
 
 .pill.mid {
+  border-radius: 9999px;
   border-color: var(--sand);
   color: var(--sand);
 }
 
 .pill.new {
+  border-radius: 9999px;
   border-color: var(--iv38);
   color: var(--iv62);
 }
 
 .pill.ok {
+  border-radius: 9999px;
   border-color: var(--ok);
   color: var(--ok);
 }
 
 .pill.bad {
+  border-radius: 9999px;
   border-color: var(--coral);
   color: var(--coral-400);
 }
 
 .sysbadge.sys-crm {
+  border-radius: 9999px;
   border-color: var(--coral);
   color: var(--coral-400);
 }
 
 .sysbadge.sys-eng {
+  border-radius: 9999px;
   border-color: var(--ok);
   color: var(--ok);
 }
 
 .sysbadge.sys-ext {
+  border-radius: 9999px;
   border-color: var(--iv38);
   color: var(--iv62);
 }
@@ -47,7 +55,7 @@
 @media (max-width: 1100px) {
   .crm-grid2 {
     grid-template-columns: 1fr;
-  }
+}
 }
 
 .crm-side {
@@ -58,20 +66,20 @@
 
 .crm-event {
   color: var(--coral-400);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10.5px;
-  letter-spacing: .04em;
+  letter-spacing: 0;
   text-transform: none;
 }
 
 .crm-code {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
   color: var(--iv38);
 }
 
 .crm-job-failed {
-  background: rgba(232, 86, 70, .08);
+  background: color-mix(in srgb, var(--hilo-blue-500) 8%, transparent);
 }
 
 .crm-notice-wide {
@@ -86,9 +94,9 @@
 }
 
 .ro {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8px;
-  letter-spacing: .12em;
+  letter-spacing: 0;
   color: var(--iv38);
   border: 1px dashed var(--hair);
   padding: 2px 6px;
@@ -123,18 +131,18 @@
   border: 1px solid var(--hair);
   color: var(--iv62);
   padding: 7px 10px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  border-radius: 0;
+  border-radius: 8px;
   outline: none;
 }
 
 .crm-filters input {
   min-width: 180px;
   text-transform: none;
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 
 .crm-hint {
@@ -157,9 +165,9 @@
 }
 
 .crm-ev .t {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
-  letter-spacing: .12em;
+  letter-spacing: 0;
   color: var(--iv38);
   display: block;
 }
@@ -194,13 +202,13 @@
 @media (max-width: 800px) {
   .crm-merge-grid {
     grid-template-columns: 1fr;
-  }
+}
 }
 
 .crm-merge-col h4 {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .2em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--coral);
   margin: 0 0 10px;
@@ -241,9 +249,9 @@
 
 .col h3 {
   display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .18em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sand);
   padding: 12px 14px;
@@ -257,14 +265,14 @@
   margin-top: 4px;
   line-height: 1.5;
   text-transform: none;
-  letter-spacing: .04em;
+  letter-spacing: 0;
   font-size: 8.5px;
   color: var(--iv38);
 }
 
 .col h3 .money {
   color: var(--iv62);
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 
 .cards {
@@ -297,9 +305,9 @@
 }
 
 .card .mono {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--iv38);
-  letter-spacing: .1em;
+  letter-spacing: 0;
   display: block;
   margin-bottom: 8px;
   font-size: 9px;
@@ -307,18 +315,18 @@
 
 .card .val,
 .card-val {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 11px;
   color: var(--sand);
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 
 .card .slabadge,
 .slabadge {
   float: right;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8.5px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   padding: 2px 7px;
   border: 1px solid var(--ok);
   color: var(--ok);
@@ -343,9 +351,9 @@
 
 .card .rmsref,
 .rmsref {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8.5px;
-  letter-spacing: .08em;
+  letter-spacing: 0;
   color: var(--sand);
   margin-bottom: 6px;
   line-height: 1.6;
@@ -371,13 +379,13 @@
 }
 
 .taskrow:hover {
-  background: rgba(242, 241, 225, .03);
+  background: color-mix(in srgb, var(--fg-default) 3%, transparent);
 }
 
 .taskrow .due {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
-  letter-spacing: .12em;
+  letter-spacing: 0;
 }
 
 .taskrow .due.bad {
@@ -459,9 +467,9 @@ table.list th.nw {
 }
 
 .journey .jh h3 {
-  font-family: 'Oswald', sans-serif;
-  font-weight: 300;
-  letter-spacing: .18em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
   color: var(--sand);
@@ -480,9 +488,9 @@ table.list th.nw {
 }
 
 .journey .trigger {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--iv38);
-  letter-spacing: .12em;
+  letter-spacing: 0;
   font-size: 9.5px;
 }
 
@@ -500,9 +508,9 @@ table.list th.nw {
 }
 
 .jbranch {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .14em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv38);
   padding: 12px 20px 0;
@@ -539,9 +547,9 @@ table.list th.nw {
 }
 
 .jstep .sn {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .14em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--coral);
   margin-bottom: 4px;
@@ -553,20 +561,20 @@ table.list th.nw {
 }
 
 .jstep .sa {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv38);
   margin-top: 4px;
 }
 
 .jstep .sc {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
   color: var(--sand);
   margin-top: 6px;
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 
 .jstep .joff {
@@ -645,19 +653,19 @@ table.list th.nw {
 }
 
 .segc h4 {
-  font-family: 'Oswald', sans-serif;
-  font-weight: 300;
-  letter-spacing: .16em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
   margin-bottom: 4px;
 }
 
 .segc .n {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 17px;
   color: var(--coral-400);
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 
 .segc .rule {
@@ -677,9 +685,9 @@ table.list th.nw {
 .dim {
   border: 1px solid var(--hair);
   padding: 3px 9px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .14em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
 }
@@ -736,9 +744,9 @@ table.list th.nw {
 }
 
 .autosec h2 {
-  font-family: 'Oswald', sans-serif;
-  font-weight: 300;
-  letter-spacing: .2em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 14px;
   color: var(--coral-400);
@@ -771,9 +779,9 @@ table.list th.nw {
 }
 
 .auto .k {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
 }
@@ -782,7 +790,7 @@ table.list th.nw {
   color: var(--sand);
   font-weight: 500;
   display: block;
-  letter-spacing: .06em;
+  letter-spacing: 0;
   text-transform: none;
   font-size: 11px;
 }
@@ -880,18 +888,18 @@ button.toggle.off::after {
   font: inherit;
   padding: 14px 16px;
   border: 0;
-  border-bottom: 1px solid rgba(242, 241, 225, .07);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg-default) 7%, transparent);
   border-left: 2px solid transparent;
   cursor: pointer;
 }
 
 .conv:hover {
-  background: rgba(242, 241, 225, .03);
+  background: color-mix(in srgb, var(--fg-default) 3%, transparent);
 }
 
 .conv.cur {
   border-left-color: var(--coral);
-  background: rgba(232, 86, 70, .06);
+  background: color-mix(in srgb, var(--hilo-blue-500) 6%, transparent);
 }
 
 .conv .cn {
@@ -917,9 +925,9 @@ button.toggle.off::after {
 
 .chtag {
   display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 7.5px;
-  letter-spacing: .14em;
+  letter-spacing: 0;
   padding: 2px 6px;
   border: 1px solid var(--hair);
   color: var(--iv62);
@@ -969,19 +977,19 @@ button.toggle.off::after {
 }
 
 .thhead .tn {
-  font-family: 'Oswald', sans-serif;
-  letter-spacing: .14em;
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
 }
 
 .th-meta {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--iv38);
-  letter-spacing: .12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-left: 12px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .th-actions {
@@ -1022,9 +1030,9 @@ button.toggle.off::after {
 }
 
 .msg .mt {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv38);
   margin-top: 7px;
@@ -1070,9 +1078,9 @@ button.toggle.off::after {
 }
 
 .send-via {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--iv38);
-  letter-spacing: .14em;
+  letter-spacing: 0;
   font-size: 10px;
 }
 
@@ -1080,9 +1088,9 @@ button.toggle.off::after {
   border: 1px solid var(--hair);
   background: transparent;
   padding: 7px 14px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .16em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
   cursor: pointer;
@@ -1104,10 +1112,10 @@ button.toggle.off::after {
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 11px 13px;
-  font-family: 'Archivo', sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   outline: none;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .composer input:focus {
@@ -1120,14 +1128,17 @@ button.toggle.off::after {
 
 .composer .btn {
   background: var(--coral);
-  color: var(--forest-950);
+  color: #fff;
   border: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
   padding: 11px 20px;
   cursor: pointer;
+
+  border-radius: 8px;
+  font-weight: 500;
 }
 
 .composer .btn:disabled {
@@ -1139,13 +1150,16 @@ button.toggle.off::after {
   background: transparent;
   border: 1px solid var(--hair);
   color: var(--ivory);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
   padding: 8px 14px;
   cursor: pointer;
   text-decoration: none;
+
+  border-radius: 8px;
+  font-weight: 500;
 }
 
 .thhead .btn.o:hover {
@@ -1177,7 +1191,7 @@ button.toggle.off::after {
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 6px 8px;
-  border-radius: 0;
+  border-radius: 8px;
   font-size: 12px;
 }
 

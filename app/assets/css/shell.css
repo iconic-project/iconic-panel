@@ -33,82 +33,61 @@ aside {
 }
 
 .brand {
-  font-family: 'Oswald', sans-serif;
-  letter-spacing: .3em;
+  font-family: var(--font-display);
+  letter-spacing: 0;
   font-size: 15px;
   padding: 0 22px 22px;
   border-bottom: 1px solid var(--hair);
 }
 
-.brand img {
-  height: 12px;
-  display: block;
-}
-
-/* Beat `.brand img` (one class + element). A lone class loses, so the
-   light theme kept both wordmarks and the hidden one added space. */
-.brand img.brand-mark--dark {
-  display: none;
-}
-
-.dark .brand img.brand-mark--dark {
-  display: block;
-}
-
-.dark .brand img.brand-mark--light {
-  display: none;
-}
-
 .brand small {
   display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .28em;
-  color: var(--iv38);
-  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+  margin-top: 8px;
 }
 
 .navsec {
   padding: 18px 22px 6px;
   color: var(--iv38);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .26em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .nav a {
   display: block;
-  padding: 10px 22px;
-  color: var(--iv62);
+  margin: 2px 12px;
+  padding: 8px 12px;
+  color: var(--fg-muted);
   text-decoration: none;
-  font-size: 13px;
-  border-left: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .nav a.on {
-  color: var(--ivory);
-  border-left-color: var(--coral);
-  background: rgba(232, 86, 70, .07);
+  color: var(--fg-brand);
+  background: var(--hilo-blue-50);
+}
+
+.dark .nav a.on {
+  background: color-mix(in srgb, var(--hilo-blue-300) 18%, transparent);
 }
 
 .nav a:hover {
-  color: var(--ivory);
+  color: var(--fg-default);
+  background: var(--bg-surface-alt);
 }
 
 .nav-badge {
   margin-left: 6px;
-}
-
-.sideprow {
-  width: 36px;
-  height: 19px;
-  display: block;
-  margin: 28px auto 0;
-  padding: 0;
-  margin-top: auto;
-  padding-top: 28px;
 }
 
 main {
@@ -163,6 +142,7 @@ main {
   gap: 8px;
   padding: 4px 8px;
   border: 1px solid var(--hair);
+  border-radius: 8px;
   color: var(--ivory);
   text-decoration: none;
 }
@@ -180,11 +160,11 @@ main {
 .fchip {
   appearance: none;
   border: 1px solid var(--hair);
-  border-radius: 0;
+  border-radius: 9999px;
   padding: 6px 14px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .16em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
   cursor: pointer;
@@ -192,11 +172,13 @@ main {
 }
 
 .fchip.on {
+  border-radius: 9999px;
   border-color: var(--coral);
   color: var(--coral);
 }
 
 .fchip:focus-visible {
+  border-radius: 9999px;
   outline: 1px solid var(--coral);
   outline-offset: 2px;
 }
@@ -207,10 +189,11 @@ main {
 }
 
 .sysbadge {
+  border-radius: 9999px;
   display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8px;
-  letter-spacing: .14em;
+  letter-spacing: 0;
   padding: 2px 7px;
   border: 1px solid var(--hair);
   color: var(--iv62);
@@ -218,6 +201,7 @@ main {
 }
 
 .sysbadge.sys-rms {
+  border-radius: 9999px;
   border-color: var(--sand);
   color: var(--sand);
 }
@@ -233,15 +217,15 @@ main {
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 8px 12px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .14em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
 }
 
 .who-email {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
   letter-spacing: 0;
   text-transform: none;
@@ -252,7 +236,7 @@ main {
 .auth-layout {
   position: relative;
   min-height: 100vh;
-  background: var(--forest);
+  background: var(--bg-canvas);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,6 +255,11 @@ main {
 .auth-column {
   width: 400px;
   max-width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  padding: 32px 28px;
 }
 
 .auth-column .brand {
@@ -299,9 +288,9 @@ main {
 }
 
 .auth-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .14em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ivory);
   text-decoration: none;
@@ -321,7 +310,7 @@ main {
 
 .warnbox {
   border: 1px solid var(--coral);
-  background: rgba(232, 86, 70, .08);
+  background: color-mix(in srgb, var(--hilo-blue-500) 8%, transparent);
   padding: 14px 16px;
   font-size: 12.5px;
   margin: 0;
@@ -333,5 +322,5 @@ main {
 @media (max-width: 800px) {
   aside {
     display: none;
-  }
+}
 }

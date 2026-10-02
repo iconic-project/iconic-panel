@@ -4,9 +4,9 @@ table.list {
 }
 
 table.list th {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .16em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv38);
   text-align: left;
@@ -17,12 +17,12 @@ table.list th {
 
 table.list td {
   padding: 11px 20px;
-  border-bottom: 1px solid rgba(242, 241, 225, .06);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg-default) 6%, transparent);
   font-size: 12.5px;
 }
 
 table.list tr:hover td {
-  background: rgba(242, 241, 225, .03);
+  background: color-mix(in srgb, var(--fg-default) 3%, transparent);
 }
 
 table.list th.list-actions,
@@ -61,9 +61,9 @@ tr.dr-empty td {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .1em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
 }
@@ -95,9 +95,9 @@ tr.dr-empty td {
 }
 
 .user-email {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
-  letter-spacing: .04em;
+  letter-spacing: 0;
   color: var(--iv62);
 }
 
@@ -125,25 +125,25 @@ tr.dr-empty td {
 
 .field-hint {
   margin: 6px 0 0;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   color: var(--iv62);
 }
 
 .history-drawer h2 {
-  font-family: 'Oswald', sans-serif;
-  font-weight: 300;
-  letter-spacing: .18em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0;
   text-transform: uppercase;
   font-size: 17px;
   margin: 0 0 4px;
 }
 
 .history-drawer .bid {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--coral);
-  letter-spacing: .22em;
+  letter-spacing: 0;
   font-size: 12px;
   margin-bottom: 20px;
 }
@@ -155,9 +155,9 @@ tr.dr-empty td {
 }
 
 .history-zone {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   color: var(--iv38);
   margin: 0 0 12px;
 }
@@ -184,9 +184,9 @@ tr.dr-empty td {
 }
 
 .tlt {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   color: var(--iv38);
   margin-bottom: 2px;
 }
@@ -215,9 +215,9 @@ tr.dr-empty td {
 .history-load {
   display: inline-block;
   margin-top: 8px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ivory);
   background: none;
@@ -269,9 +269,9 @@ td.matrix-role {
 }
 
 .matrix-users {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
-  letter-spacing: .04em;
+  letter-spacing: 0;
   text-transform: none;
   color: var(--iv62);
 }
@@ -282,7 +282,7 @@ table.list tr.matrix-group td {
 }
 
 td.matrix-cell--dirty {
-  box-shadow: inset 2px 0 0 var(--coral);
+  border-left: 3px solid var(--hilo-blue-500);
 }
 
 .matrix-cell-btn {
@@ -317,9 +317,9 @@ td.matrix-cell--dirty {
   padding: 12px 20px;
   border-top: 1px solid var(--hair);
   background: var(--forest-900);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .1em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
 }
@@ -373,10 +373,10 @@ td.matrix-cell--dirty {
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 8px 10px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 11px;
-  letter-spacing: .06em;
-  border-radius: 0;
+  letter-spacing: 0;
+  border-radius: 8px;
   outline: none;
 }
 
@@ -403,7 +403,7 @@ td.matrix-cell--dirty {
 .drc {
   margin-left: auto;
   color: var(--iv62);
-  letter-spacing: .14em;
+  letter-spacing: 0;
 }
 
 .drbar.active .drc {
@@ -415,8 +415,8 @@ td.matrix-cell--dirty {
 }
 
 .ct-source {
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: .08em;
+  font-family: var(--font-sans);
+  letter-spacing: 0;
   color: var(--iv38);
 }
 

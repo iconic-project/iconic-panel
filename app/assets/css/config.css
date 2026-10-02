@@ -54,7 +54,7 @@
 
 .rcell .mono {
   font-size: 9px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   color: var(--iv38);
   white-space: nowrap;
 }
@@ -65,9 +65,9 @@
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 8px 9px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 12px;
-  border-radius: 0;
+  border-radius: 8px;
   outline: none;
 }
 
@@ -97,9 +97,9 @@
 }
 
 .yoy {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8.5px;
-  letter-spacing: .08em;
+  letter-spacing: 0;
   color: var(--iv38);
   margin-top: 4px;
 }
@@ -115,7 +115,7 @@
 
 .rhelp .mono {
   font-size: 9px;
-  letter-spacing: .14em;
+  letter-spacing: 0;
   color: var(--iv62);
 }
 
@@ -125,7 +125,7 @@
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 7px 9px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 11px;
   width: auto;
   max-width: 130px;
@@ -135,9 +135,9 @@
   background: none;
   border: 1px solid var(--hair);
   color: var(--coral-400);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 8px;
-  letter-spacing: .1em;
+  letter-spacing: 0;
   padding: 2px 6px;
   margin-left: 6px;
   cursor: pointer;
@@ -148,8 +148,8 @@
 }
 
 .rflag {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
+  font-family: var(--font-sans);
+  font-size: 11px;
   letter-spacing: .08em;
   color: var(--coral-400);
   margin-top: 5px;
@@ -158,7 +158,7 @@
 }
 
 tr.rdiff td:first-child {
-  box-shadow: inset 2px 0 0 var(--coral);
+  border-left: 3px solid var(--hilo-blue-500);
 }
 
 .bands .rcell {
@@ -285,11 +285,11 @@ tr.rdiff td:first-child {
 @media (max-width: 1100px) {
   .setgrid {
     grid-template-columns: 1fr;
-  }
+}
 
   .setgrid .prevbox {
     position: static;
-  }
+}
 }
 
 .field {
@@ -298,9 +298,9 @@ tr.rdiff td:first-child {
 
 .field label {
   display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .2em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--iv62);
   margin-bottom: 6px;
@@ -314,9 +314,9 @@ tr.rdiff td:first-child {
   border: 1px solid var(--hair);
   color: var(--ivory);
   padding: 11px 12px;
-  font-family: 'Archivo', sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
-  border-radius: 0;
+  border-radius: 8px;
   outline: none;
 }
 
@@ -360,7 +360,7 @@ tr.rdiff td:first-child {
 
 .cnt {
   color: var(--iv38);
-  letter-spacing: .1em;
+  letter-spacing: 0;
 }
 
 .chkline {
@@ -372,7 +372,7 @@ tr.rdiff td:first-child {
   cursor: pointer;
   text-transform: none;
   letter-spacing: 0;
-  font-family: 'Archivo', sans-serif;
+  font-family: var(--font-sans);
   color: var(--ivory);
 }
 
@@ -448,7 +448,7 @@ tr.rdiff td:first-child {
 }
 
 .rule-code {
-  letter-spacing: .08em;
+  letter-spacing: 0;
   color: var(--sand);
 }
 

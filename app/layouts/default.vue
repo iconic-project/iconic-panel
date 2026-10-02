@@ -52,18 +52,7 @@ onMounted(() => {
   <div class="app">
     <aside>
       <div class="brand">
-        <img
-          src="/brand/wordmark-dark.png"
-          alt="ANAKATA"
-          class="brand-mark--dark"
-          draggable="false"
-        >
-        <img
-          src="/brand/wordmark-light.png"
-          alt="ANAKATA"
-          class="brand-mark--light"
-          draggable="false"
-        >
+        <AnkWordmark />
         <small>{{ t(section.brandSubtitleKey) }}</small>
       </div>
 
@@ -91,15 +80,6 @@ onMounted(() => {
           </div>
         </template>
       </nav>
-
-      <img
-        class="sideprow"
-        src="/brand/prow.png"
-        alt=""
-        width="36"
-        height="19"
-        draggable="false"
-      >
     </aside>
 
     <main>

@@ -23,5 +23,5 @@ app/                     the shell: layouts, header (section switch, role switch
 - **The header section switch** (RMS ⇄ CRM) swaps the sidebar navigation. It goes to the last page visited in the other section (remembered per browser), or that section's home page.
 - **One codebase.** Pages live in `app/pages/rms` and `app/pages/crm`. No local Nuxt layers, no import ban between RMS and CRM.
 - **One API client.** All screens call `useApi()`. CRM screens never trigger booking, payment, refund, commission, document or pricing mutations. Cross-section links (deal → booking) are route links only.
-- **Each section looks like its own prototype.** RMS pages follow `prototype/rms_index.html`; CRM pages follow `prototype/crm_index.html`. The shell follows the RMS prototype's shell, plus the section switch. Where the CRM prototype's shell differs (brand subtitle, header controls), show the CRM variant while the CRM section is active.
+- **Each section keeps its own navigation.** RMS and CRM pages keep their routes and the section switch. Both sections use the HILO visual system from the shared layer. The wordmark in the shell is HILO.
 - **Access**: each section is gated by a permission (`panel.rms`, `panel.crm`, from Sprint 1). A user with only one section sees no switch and is never routed to the other; a route guard enforces it (the API enforces it again).
