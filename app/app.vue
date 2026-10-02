@@ -22,8 +22,8 @@ useHead({
 })
 
 useSeoMeta({
-  title: 'HILO',
-  description: 'HILO staff panel — RMS and CRM'
+  title: 'Iconic',
+  description: 'Iconic staff panel — RMS and CRM'
 })
 </script>
 
