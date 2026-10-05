@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { InternalBlock } from '../../types/api'
 import { applyApiFormError } from '../../utils/apiForm'
+import type { RangeBlock } from './blockHelpers'
 
 const props = defineProps<{
   open: boolean
-  block: InternalBlock | null
+  block: RangeBlock | null
 }>()
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  'released': [block: InternalBlock]
+  'released': [block: RangeBlock]
 }>()
 
 const { t } = useI18n()
@@ -28,7 +28,9 @@ watch(() => props.open, (isOpen) => {
 })
 
 async function submit(): Promise<void> {
-  if (props.block === null) {
+  const releaseNote = note.value.trim()
+
+  if (props.block === null || releaseNote === '') {
     return
   }
 
@@ -39,9 +41,9 @@ async function submit(): Promise<void> {
     const released = await request(`/api/rms/blocks/${props.block.id}/release`, {
       method: 'POST',
       body: {
-        note: note.value === '' ? null : note.value
+        note: releaseNote
       }
-    }) as InternalBlock
+    }) as RangeBlock
 
     toast.add({
       title: t('blocks.releasedToast', { reference: released.reference })
@@ -96,7 +98,7 @@ async function submit(): Promise<void> {
           <UButton
             type="submit"
             :loading="submitting"
-            :disabled="submitting"
+            :disabled="submitting || note.trim() === ''"
           >
             {{ t('blocks.releaseConfirm') }}
           </UButton>

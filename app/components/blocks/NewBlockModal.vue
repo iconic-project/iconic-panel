@@ -1,208 +1,160 @@
 <script setup lang="ts">
-import type { BlockReason, DepartureListItem, InternalBlock, Paginated, Yacht } from '../../types/api'
-import { applyApiFormError } from '../../utils/apiForm'
-import {
-  applyFullYacht,
-  BLOCK_REASONS,
-  cabinCodesPayload,
-  departureOptionLabel,
-  futureDepartures,
-  isFullYacht,
-  MAX_DEPARTURES,
-  reasonLabelKey,
-  toggleCabin,
-  type StoreInternalBlockBody
-} from './blockHelpers'
+import type { BlockReason } from '../../types/api'
+import { applyApiFormError, type FormFieldErrors } from '../../utils/apiForm'
+import { BLOCK_REASONS, storeRangeBlockBody } from './blockHelpers'
+import type { StayRange } from '#iconic-ui/app/components/AnkStayInput.vue'
+
+type PropertyOption = {
+  id: number
+  code: string
+  name: string
+}
+
+type RoomOption = {
+  id: number
+  code: string
+  label: string
+}
+
+type RoomTypeOption = {
+  id: number
+  code: string
+  name: string
+}
+
+export type BlockPrefill = {
+  propertyId: number | null
+  roomId: number | null
+  checkIn: string
+  checkOut: string
+}
+
+const open = defineModel<boolean>('open', { required: true })
 
 const props = defineProps<{
-  open: boolean
-  yachts: Array<Yacht>
-  from: string | null
-  to: string | null
-  today: string
+  properties: Array<PropertyOption>
+  stay: { minNights: number, maxNights: number, horizonDays: number } | null
+  prefill: BlockPrefill | null
 }>()
 
 const emit = defineEmits<{
-  'update:open': [value: boolean]
-  'created': [block: InternalBlock]
+  created: []
 }>()
 
 const { t } = useI18n()
-const { request } = useApi()
-const { format } = useDates()
 const toast = useToast()
+const { request } = useApi()
+const { format, addNights } = useDates()
 
-const yachtId = ref<number | null>(null)
-const selectedDepartureIds = ref<Array<number>>([])
-const selectedCabins = ref<Array<string>>([])
-const reason = ref<BlockReason>('FAM_TRIP')
+const propertyId = ref<number | undefined>(undefined)
+const stayRange = ref<StayRange | null>(null)
+const reason = ref<BlockReason>('MAINTENANCE')
 const notes = ref('')
-const departures = ref<Array<DepartureListItem>>([])
-const loadingDepartures = ref(false)
-const submitting = ref(false)
+const byType = ref(false)
+const roomIds = ref<Array<number>>([])
+const roomTypeId = ref<number | undefined>(undefined)
+const count = ref(1)
+const rooms = ref<Array<RoomOption>>([])
+const roomTypes = ref<Array<RoomTypeOption>>([])
+const saving = ref(false)
+const fieldErrors = ref<FormFieldErrors>({})
 const conflict = ref('')
-const fieldErrors = ref<Record<string, string>>({})
 
-const selectedYacht = computed(() => props.yachts.find(yacht => yacht.id === yachtId.value) ?? null)
+const today = computed(() => format(new Date(), 'iso'))
+const minDate = computed(() => today.value)
+const maxDate = computed(() => props.stay === null ? '' : addNights(today.value, props.stay.horizonDays))
 
-const cabins = computed(() => {
-  return [...(selectedYacht.value?.cabins ?? [])].sort((left, right) => left.sort - right.sort)
-})
-
-const fullYacht = computed({
-  get: () => isFullYacht(selectedCabins.value),
-  set: (checked: boolean) => {
-    selectedCabins.value = applyFullYacht(checked)
-  }
-})
-
-const atDepartureCap = computed(() => selectedDepartureIds.value.length >= MAX_DEPARTURES)
-
-const reasonItems = computed(() => BLOCK_REASONS.map(item => ({
-  label: t(reasonLabelKey(item)),
-  value: item
+const reasonItems = computed(() => BLOCK_REASONS.map(value => ({
+  value,
+  label: t(`blocks.reasons.${value}`)
 })))
 
-function reset(): void {
-  yachtId.value = props.yachts[0]?.id ?? null
-  selectedDepartureIds.value = []
-  selectedCabins.value = []
-  reason.value = 'FAM_TRIP'
-  notes.value = ''
-  departures.value = []
-  conflict.value = ''
-  fieldErrors.value = {}
-}
-
-async function loadDepartures(): Promise<void> {
-  if (yachtId.value === null) {
-    departures.value = []
+watch(open, (isOpen) => {
+  if (!isOpen) {
     return
   }
 
-  loadingDepartures.value = true
-
-  try {
-    const params = new URLSearchParams({
-      per_page: '500',
-      yacht_id: String(yachtId.value)
-    })
-
-    if (props.from !== null) {
-      params.set('from', props.from)
-    }
-
-    if (props.to !== null) {
-      params.set('to', props.to)
-    }
-
-    const result = await request(`/api/rms/departures?${params.toString()}`) as Paginated<DepartureListItem>
-    departures.value = futureDepartures(result.data, props.today)
-  } finally {
-    loadingDepartures.value = false
-  }
-}
-
-watch(() => props.open, (isOpen) => {
-  if (isOpen) {
-    reset()
-    void loadDepartures()
-  }
+  fieldErrors.value = {}
+  conflict.value = ''
+  notes.value = ''
+  reason.value = 'MAINTENANCE'
+  byType.value = false
+  count.value = 1
+  propertyId.value = props.prefill?.propertyId ?? props.properties[0]?.id
+  roomIds.value = props.prefill?.roomId === null || props.prefill === null ? [] : [props.prefill.roomId]
+  stayRange.value = props.prefill === null || props.prefill.checkIn === ''
+    ? null
+    : {
+        check_in: props.prefill.checkIn,
+        check_out: props.prefill.checkOut
+      }
 })
 
-function onYachtChange(id: number): void {
-  if (yachtId.value === id) {
+watch(() => props.properties, (list) => {
+  if (!open.value || propertyId.value !== undefined || list[0] === undefined) {
     return
   }
 
-  yachtId.value = id
-  selectedDepartureIds.value = []
-  void loadDepartures()
-}
+  propertyId.value = list[0].id
+})
 
-function isDepartureChecked(id: number): boolean {
-  return selectedDepartureIds.value.includes(id)
-}
+watch(propertyId, () => {
+  void loadProperty()
+})
 
-function toggleDeparture(id: number, event: Event): void {
-  const target = event.target
+async function loadProperty(): Promise<void> {
+  const id = propertyId.value
 
-  if (!(target instanceof HTMLInputElement)) {
+  if (id === undefined) {
+    rooms.value = []
+    roomTypes.value = []
     return
   }
 
-  if (target.checked) {
-    if (selectedDepartureIds.value.length >= MAX_DEPARTURES) {
-      target.checked = false
-      return
-    }
+  const [roomList, typeList] = await Promise.all([
+    request(`/api/rms/properties/${id}/rooms`) as Promise<{ data: Array<RoomOption> }>,
+    request(`/api/rms/properties/${id}/room-types`) as Promise<{ data: Array<RoomTypeOption> }>
+  ])
 
-    selectedDepartureIds.value = [...selectedDepartureIds.value, id]
-    return
-  }
-
-  selectedDepartureIds.value = selectedDepartureIds.value.filter(item => item !== id)
+  rooms.value = roomList.data
+  roomTypes.value = typeList.data
+  roomTypeId.value = typeList.data[0]?.id
+  roomIds.value = roomIds.value.filter(roomId => roomList.data.some(room => room.id === roomId))
 }
 
-function onCabinToggle(code: string, event: Event): void {
-  const target = event.target
-
-  if (!(target instanceof HTMLInputElement)) {
-    return
-  }
-
-  selectedCabins.value = toggleCabin(selectedCabins.value, code)
-
-  if (target.checked !== selectedCabins.value.includes(code)) {
-    target.checked = selectedCabins.value.includes(code)
-  }
-}
-
-function optionLabel(row: DepartureListItem): string {
-  return departureOptionLabel(format(row.date, 'short'), row.itinerary.name)
+function toggleRoom(id: number): void {
+  roomIds.value = roomIds.value.includes(id)
+    ? roomIds.value.filter(roomId => roomId !== id)
+    : [...roomIds.value, id]
 }
 
 async function submit(): Promise<void> {
-  conflict.value = ''
+  if (propertyId.value === undefined || props.stay === null || stayRange.value === null) {
+    return
+  }
+
+  saving.value = true
   fieldErrors.value = {}
-
-  if (selectedDepartureIds.value.length === 0) {
-    conflict.value = t('blocks.needDepartures')
-    return
-  }
-
-  if (selectedCabins.value.length === 0) {
-    conflict.value = t('blocks.needCabins')
-    return
-  }
-
-  submitting.value = true
+  conflict.value = ''
 
   try {
-    const cabinCodes = cabinCodesPayload(selectedCabins.value)
-    const body: StoreInternalBlockBody = {
-      reason: reason.value,
-      notes: notes.value === '' ? null : notes.value,
-      departures: selectedDepartureIds.value.map(id => ({
-        departure_id: id,
-        cabin_codes: cabinCodes
-      }))
-    }
-
-    const created = await request('/api/rms/blocks', {
+    await request('/api/rms/blocks', {
       method: 'POST',
-      body
-    }) as InternalBlock
-
-    toast.add({
-      title: t('blocks.createdToast', {
-        reference: created.reference,
-        n: String(created.claims.length)
+      body: storeRangeBlockBody({
+        startsOn: stayRange.value.check_in,
+        endsOn: stayRange.value.check_out,
+        reason: reason.value,
+        notes: notes.value,
+        roomIds: roomIds.value,
+        roomTypeId: roomTypeId.value ?? null,
+        count: count.value,
+        byType: byType.value
       })
     })
-    emit('created', created)
-    emit('update:open', false)
-  } catch (error: unknown) {
+    toast.add({ title: t('blocks.createdDone'), color: 'success' })
+    open.value = false
+    emit('created')
+  } catch (error) {
     if (!applyApiFormError(error, (fields, message) => {
       fieldErrors.value = fields
       conflict.value = message
@@ -210,148 +162,127 @@ async function submit(): Promise<void> {
       throw error
     }
   } finally {
-    submitting.value = false
+    saving.value = false
   }
 }
 </script>
 
 <template>
   <UModal
-    :open="open"
-    :title="t('blocks.createTitle')"
-    @update:open="emit('update:open', $event)"
+    v-model:open="open"
+    :title="t('blocks.newTitle')"
+    :description="t('blocks.newBody')"
   >
     <template #body>
       <form
-        class="modal-form"
+        class="stack"
         @submit.prevent="submit"
       >
-        <div
-          v-if="conflict"
-          class="warnbox"
+        <p
+          v-if="stay === null"
+          class="field-error"
         >
-          {{ conflict }}
-        </div>
-        <p class="notice">
-          {{ t('blocks.notice') }}
+          {{ t('blocks.stayMissing') }}
         </p>
-
-        <div class="field">
-          <label>{{ t('blocks.yacht') }}</label>
-          <div class="blk-radios">
-            <label
-              v-for="yacht in yachts"
-              :key="yacht.id"
-              class="chkline"
-            >
-              <input
-                type="radio"
-                :value="yacht.id"
-                :checked="yachtId === yacht.id"
-                @change="onYachtChange(yacht.id)"
-              >
-              {{ yacht.code }}
-            </label>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>{{ t('blocks.departures') }}</label>
-          <p class="field-hint">
-            {{ t('blocks.departuresHint') }}
-          </p>
-          <p
-            v-if="loadingDepartures"
-            class="blk-meta"
-          >
-            …
-          </p>
-          <p
-            v-else-if="departures.length === 0"
-            class="blk-meta"
-          >
-            {{ t('blocks.noDepartures') }}
-          </p>
-          <div
-            v-else
-            class="blk-dep-list"
-          >
-            <label
-              v-for="row in departures"
-              :key="row.id"
-              class="chkline"
-            >
-              <input
-                type="checkbox"
-                :checked="isDepartureChecked(row.id)"
-                :disabled="!isDepartureChecked(row.id) && atDepartureCap"
-                @change="toggleDeparture(row.id, $event)"
-              >
-              <span>{{ optionLabel(row) }}</span>
-              <span class="blk-dep-free">{{ t('blocks.freeCabins', { n: String(row.availability.counts.free) }) }}</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>{{ t('blocks.cabins') }}</label>
-          <label class="chkline">
-            <input
-              v-model="fullYacht"
-              type="checkbox"
-            >
-            {{ t('blocks.fullYacht') }}
-          </label>
-          <div class="blk-cabins">
-            <label
-              v-for="cabin in cabins"
-              :key="cabin.code"
-              class="chkline"
-            >
-              <input
-                type="checkbox"
-                :checked="selectedCabins.includes(cabin.code)"
-                @change="onCabinToggle(cabin.code, $event)"
-              >
-              {{ cabin.label }}
-            </label>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>{{ t('blocks.reason') }}</label>
+        <UFormField :label="t('blocks.property')">
+          <USelect
+            v-model="propertyId"
+            :items="properties.map(property => ({ value: property.id, label: property.name }))"
+            class="w-full"
+          />
+        </UFormField>
+        <AnkStayInput
+          v-if="stay !== null"
+          v-model="stayRange"
+          :min-nights="stay.minNights"
+          :max-nights="stay.maxNights"
+          :min-date="minDate"
+          :max-date="maxDate"
+        />
+        <p
+          v-if="fieldErrors.starts_on || fieldErrors.ends_on"
+          class="field-error"
+        >
+          {{ fieldErrors.starts_on || fieldErrors.ends_on }}
+        </p>
+        <UFormField :label="t('blocks.reason')">
           <USelect
             v-model="reason"
             :items="reasonItems"
-            :class="{ bad: fieldErrors.reason }"
             class="w-full"
           />
-        </div>
-
-        <div class="field">
-          <label>
-            {{ t('blocks.notes') }}
-            <span class="cnt">· {{ t('blocks.notesCounter', { n: String(notes.length) }) }}</span>
-          </label>
-          <textarea
+        </UFormField>
+        <UFormField :label="t('blocks.notes')">
+          <UTextarea
             v-model="notes"
-            maxlength="500"
-            rows="3"
+            class="w-full"
+            :rows="2"
           />
-        </div>
-
-        <div class="modal-actions">
-          <UButton
-            variant="outline"
-            :disabled="submitting"
-            @click="emit('update:open', false)"
+        </UFormField>
+        <label class="check-row">
+          <input
+            v-model="byType"
+            type="checkbox"
           >
-            {{ t('blocks.cancel') }}
-          </UButton>
+          {{ t('blocks.byType') }}
+        </label>
+        <UFormField
+          v-if="byType"
+          :label="t('blocks.roomType')"
+          :error="fieldErrors.room_type_id"
+        >
+          <USelect
+            v-model="roomTypeId"
+            :items="roomTypes.map(type => ({ value: type.id, label: type.name }))"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField
+          v-if="byType"
+          :label="t('blocks.count')"
+          :error="fieldErrors.count"
+        >
+          <UInput
+            v-model.number="count"
+            type="number"
+            :min="1"
+            class="w-full"
+          />
+        </UFormField>
+        <fieldset v-else>
+          <legend class="field-label">
+            {{ t('blocks.rooms') }}
+          </legend>
+          <p
+            v-if="fieldErrors.rooms"
+            class="field-error"
+          >
+            {{ fieldErrors.rooms }}
+          </p>
+          <label
+            v-for="room in rooms"
+            :key="room.id"
+            class="check-row"
+          >
+            <input
+              type="checkbox"
+              :checked="roomIds.includes(room.id)"
+              @change="toggleRoom(room.id)"
+            >
+            {{ room.label }}
+          </label>
+        </fieldset>
+        <p
+          v-if="conflict"
+          class="field-error"
+        >
+          {{ conflict }}
+        </p>
+        <div class="row-actions">
           <UButton
             type="submit"
-            :loading="submitting"
-            :disabled="submitting"
+            :loading="saving"
+            :disabled="stay === null || stayRange === null"
           >
             {{ t('blocks.create') }}
           </UButton>

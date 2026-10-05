@@ -22,13 +22,6 @@ export const rmsNav: Array<NavGroup> = [
         sprint: 3
       },
       {
-        id: 'yacht-layout',
-        labelKey: 'nav.rms.yachtLayout',
-        glyph: '⛵',
-        to: '/rms/reservations/yacht-layout',
-        sprint: 3
-      },
-      {
         id: 'bookings',
         labelKey: 'nav.rms.bookings',
         glyph: '≣',
@@ -86,6 +79,20 @@ export const rmsNav: Array<NavGroup> = [
         glyph: '◉',
         to: '/rms/commercial/contacts-in',
         sprint: 6,
+        permission: 'panel.rms'
+      }
+    ]
+  },
+  {
+    id: 'inventory',
+    labelKey: 'nav.rms.inventory',
+    items: [
+      {
+        id: 'restrictions',
+        labelKey: 'nav.rms.restrictions',
+        glyph: '▦',
+        to: '/rms/inventory/restrictions',
+        sprint: 17,
         permission: 'panel.rms'
       }
     ]

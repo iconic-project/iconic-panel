@@ -185,6 +185,9 @@ function itineraryWarning(status: string): string | null {
 <template>
   <div>
     <p class="notice dep-notice">
+      {{ t('departures.retired') }}
+    </p>
+    <p class="notice dep-notice">
       {{ t('departures.noticeBefore') }}<b>{{ t('departures.noticeItinerary') }}</b>{{ t('departures.noticeMid') }}<b>{{ t('departures.noticeOnSale') }}</b>{{ t('departures.noticeGuest') }}<b>{{ t('departures.noticeInventory') }}</b>{{ t('departures.noticeAfter') }}
     </p>
 

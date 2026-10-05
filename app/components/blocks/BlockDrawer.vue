@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { BlockReason, InternalBlock } from '../../types/api'
+import type { BlockReason } from '../../types/api'
 import { firstApiMessage } from '../../utils/apiForm'
 import { confirmUnsaved } from '../../composables/useUnsavedGuard'
 import HistoryDrawer from '../history/HistoryDrawer.vue'
-import { BLOCK_REASONS, reasonLabelKey, scopeLines } from './blockHelpers'
+import { BLOCK_REASONS, reasonLabelKey, type RangeBlock } from './blockHelpers'
 
 const isOpen = defineModel<boolean>('open', { required: true })
 
 const props = defineProps<{
-  source: InternalBlock | null
+  source: RangeBlock | null
   canManage: boolean
   roleName: string
 }>()
 
 const emit = defineEmits<{
-  saved: [block: InternalBlock]
+  saved: [block: RangeBlock]
 }>()
 
 const { t } = useI18n()
@@ -53,7 +53,10 @@ const lines = computed(() => {
     return []
   }
 
-  return scopeLines(props.source.claims, iso => format(iso, 'short'))
+  const stay = `${format(props.source.starts_on, 'short')} – ${format(props.source.ends_on, 'short')}`
+  const rooms = props.source.rooms.map(room => room.label).join(', ')
+
+  return [props.source.scope_summary, stay, rooms].filter(line => line !== '')
 })
 
 watch(
@@ -100,7 +103,7 @@ async function save(): Promise<void> {
         reason: reason.value,
         notes: notes.value === '' ? null : notes.value
       }
-    }) as InternalBlock
+    }) as RangeBlock
 
     snapshot.value = `${updated.reason}\0${updated.notes ?? ''}`
     reason.value = updated.reason
