@@ -5,7 +5,6 @@ const { t } = useI18n()
 const { sectionId, section, currentItem } = useSystem()
 const { can, hasSection } = useAuth()
 const route = useRoute()
-const { openNew } = useNewReservation()
 const { count: requestCount, allowed: showRequestBadge, startPolling } = useOpenRequests()
 const {
   total: alertTotal,
@@ -19,14 +18,9 @@ const alertsTo = computed(() => {
 })
 
 function onNewReservation(): void {
-  if (route.path === '/rms/reservations/bookings') {
-    openNew()
-    return
-  }
-
   void navigateTo({
     path: '/rms/reservations/bookings',
-    query: { new: '1' }
+    query: { ...route.query, new: '1' }
   })
 }
 

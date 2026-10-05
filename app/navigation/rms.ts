@@ -27,6 +27,13 @@ export const rmsNav: Array<NavGroup> = [
         glyph: '≣',
         to: '/rms/reservations/bookings',
         sprint: 4
+      },
+      {
+        id: 'front-desk',
+        labelKey: 'nav.rms.frontDesk',
+        glyph: '⌂',
+        to: '/rms/reservations/front-desk',
+        sprint: 19
       }
     ]
   },

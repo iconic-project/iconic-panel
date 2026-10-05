@@ -211,7 +211,7 @@ onMounted(() => {
               <th>{{ t('requests.colRequest') }}</th>
               <th>{{ t('requests.colContact') }}</th>
               <th>{{ t('requests.colParty') }}</th>
-              <th>{{ t('requests.colDeparture') }}</th>
+              <th>{{ t('requests.colStay') }}</th>
               <th>{{ t('requests.colValue') }}</th>
               <th>{{ t('requests.colHold') }}</th>
               <th>{{ t('requests.colSla') }}</th>
@@ -255,7 +255,7 @@ onMounted(() => {
                 </div>
               </td>
               <td>{{ row.party }}</td>
-              <td>{{ format(row.departure.date, 'short') }} · {{ row.cabin_label }}</td>
+              <td>{{ row.copy }}</td>
               <td>{{ money(row.estimated_value) }}</td>
               <td :class="row.hold.expired ? 'req-expired' : ''">
                 {{ holdOf(row) }}

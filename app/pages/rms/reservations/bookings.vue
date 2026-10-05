@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import type { Booking, BookingAuditRow, BookingSegment, CreateReservationResponse, Group, Paginated } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
+import type { Booking, BookingAuditRow, BookingOwner, BookingSegment, BookingStatus, CreateReservationResponse, Group, Paginated } from '../../../types/api'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import GroupDrawer from '../../../components/bookings/GroupDrawer.vue'
-import NewReservationModal from '../../../components/bookings/NewReservationModal.vue'
+import StayReservationModal from '../../../components/bookings/StayReservationModal.vue'
 import {
   bookingToOpen,
-  segmentPillClass,
-  statusLabel,
-  statusPillClass
+  statusPillClass,
+  statusText
 } from '../../../components/bookings/bookingHelpers'
+import { MAIN_CHANNELS } from '../../../components/bookings/stayBooking'
 
 const SEARCH_DEBOUNCE_MS = 300
 
@@ -27,10 +26,17 @@ const { format } = useDates()
 const { format: money } = useMoney()
 const route = useRoute()
 const router = useRouter()
-const { open: newOpen, prefill: newPrefill, openNew } = useNewReservation()
+const stayOpen = ref(false)
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
+const arrivingFrom = ref('')
+const arrivingTo = ref('')
+const inHouseOn = ref('')
+const departingFrom = ref('')
+const departingTo = ref('')
+const statusFilter = ref('')
+const ownerFilter = ref('')
+const channelFilter = ref('')
+const owners = ref<BookingOwner[]>([])
 const segment = ref<'ALL' | BookingSegment>('ALL')
 const searchInput = ref('')
 const search = ref('')
@@ -38,7 +44,19 @@ const mine = ref(false)
 const overdueOnly = ref(false)
 const page = ref(1)
 const auditPage = ref(1)
-const today = computed(() => format(new Date(), 'iso'))
+
+const STATUS_FILTERS: BookingStatus[] = [
+  'REQUESTED',
+  'PENDING_PAYMENT',
+  'CONFIRMED',
+  'FULLY_PAID',
+  'IN_HOUSE',
+  'CHECKED_OUT',
+  'NO_SHOW',
+  'ON_HOLD_AGENCY',
+  'OVERDUE',
+  'CANCELLED'
+]
 
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
@@ -59,10 +77,27 @@ onUnmounted(() => {
   clearTimeout(searchTimer)
 })
 
-watch([search, segment, mine, overdueOnly, from, to], () => {
+watch([search, segment, mine, overdueOnly, arrivingFrom, arrivingTo, inHouseOn, departingFrom, departingTo, statusFilter, ownerFilter, channelFilter], () => {
   page.value = 1
   auditPage.value = 1
 })
+
+onMounted(() => {
+  void loadOwners()
+})
+
+async function loadOwners(): Promise<void> {
+  try {
+    const result = await request('/api/rms/bookings/owners') as { data: BookingOwner[] }
+    owners.value = result.data
+  } catch {
+    owners.value = []
+  }
+}
+
+function labelOf(status: string): string {
+  return statusText(status, key => t(key))
+}
 
 const canViewAudit = computed(() => can('bookings.view_all'))
 const canCreate = computed(() => can('bookings.create'))
@@ -73,12 +108,36 @@ const listUrl = computed(() => {
     per_page: '50'
   })
 
-  if (from.value !== null) {
-    params.set('from', from.value)
+  if (arrivingFrom.value !== '') {
+    params.set('arriving_from', arrivingFrom.value)
   }
 
-  if (to.value !== null) {
-    params.set('to', to.value)
+  if (arrivingTo.value !== '') {
+    params.set('arriving_to', arrivingTo.value)
+  }
+
+  if (inHouseOn.value !== '') {
+    params.set('in_house_on', inHouseOn.value)
+  }
+
+  if (departingFrom.value !== '') {
+    params.set('departing_from', departingFrom.value)
+  }
+
+  if (departingTo.value !== '') {
+    params.set('departing_to', departingTo.value)
+  }
+
+  if (statusFilter.value !== '') {
+    params.set('status', statusFilter.value)
+  }
+
+  if (ownerFilter.value !== '') {
+    params.set('owner_id', ownerFilter.value)
+  }
+
+  if (channelFilter.value !== '') {
+    params.set('channel', channelFilter.value)
   }
 
   if (segment.value !== 'ALL') {
@@ -100,35 +159,13 @@ const listUrl = computed(() => {
   return `/api/rms/bookings?${params.toString()}`
 })
 
-const groupsUrl = computed(() => {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  const query = params.toString()
-
-  return query === '' ? '/api/rms/groups' : `/api/rms/groups?${query}`
-})
+const groupsUrl = computed(() => '/api/rms/groups')
 
 const auditUrl = computed(() => {
   const params = new URLSearchParams({
     page: String(auditPage.value),
     per_page: '50'
   })
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
 
   return `/api/rms/bookings/audit?${params.toString()}`
 })
@@ -146,7 +183,6 @@ watch([canViewAudit, auditUrl], ([allowed]) => {
 }, { immediate: true })
 
 const bookings = computed(() => listPayload.value?.data ?? [])
-const total = computed(() => listPayload.value?.meta.total ?? 0)
 const meta = computed(() => listPayload.value?.meta)
 const groups = computed(() => groupsPayload.value?.data ?? [])
 const audit = computed(() => auditPayload.value?.data ?? [])
@@ -200,7 +236,7 @@ async function onDeleted(): Promise<void> {
 }
 
 async function onCreated(response: CreateReservationResponse): Promise<void> {
-  newOpen.value = false
+  stayOpen.value = false
   await refreshAll()
   const first = response.bookings[0]
 
@@ -222,14 +258,7 @@ watch(
       return
     }
 
-    const departureRaw = route.query.departure_id
-    const cabinRaw = route.query.cabin
-    const departureId = typeof departureRaw === 'string' ? Number(departureRaw) : NaN
-
-    openNew({
-      departureId: Number.isFinite(departureId) ? departureId : undefined,
-      cabinCode: typeof cabinRaw === 'string' ? cabinRaw : undefined
-    })
+    stayOpen.value = true
 
     const query = { ...route.query }
     delete query.new
@@ -276,24 +305,67 @@ watch(
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('bookings.fieldLabel')"
-      :noun="t('bookings.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="panel">
       <div class="bk-toolbar">
         <h3>{{ t('bookings.panelTitle') }}</h3>
         <UButton
           v-if="canCreate"
-          @click="openNew()"
+          @click="stayOpen = true"
         >
-          {{ t('bookings.newReservation') }}
+          {{ t('bookings.newStay') }}
         </UButton>
+      </div>
+      <div class="list-filters">
+        <label class="field">
+          <span>{{ t('bookings.filterArriving') }}</span>
+          <UInput
+            v-model="arrivingFrom"
+            type="date"
+          />
+          <UInput
+            v-model="arrivingTo"
+            type="date"
+          />
+        </label>
+        <label class="field">
+          <span>{{ t('bookings.filterInHouse') }}</span>
+          <UInput
+            v-model="inHouseOn"
+            type="date"
+          />
+        </label>
+        <label class="field">
+          <span>{{ t('bookings.filterDeparting') }}</span>
+          <UInput
+            v-model="departingFrom"
+            type="date"
+          />
+          <UInput
+            v-model="departingTo"
+            type="date"
+          />
+        </label>
+        <label class="field">
+          <span>{{ t('bookings.filterStatus') }}</span>
+          <USelect
+            v-model="statusFilter"
+            :items="[{ label: t('bookings.filterAny'), value: '' }, ...STATUS_FILTERS.map(status => ({ label: labelOf(status), value: status }))]"
+          />
+        </label>
+        <label class="field">
+          <span>{{ t('bookings.filterOwner') }}</span>
+          <USelect
+            v-model="ownerFilter"
+            :items="[{ label: t('bookings.filterAny'), value: '' }, ...owners.map(owner => ({ label: owner.name, value: String(owner.id) }))]"
+          />
+        </label>
+        <label class="field">
+          <span>{{ t('bookings.filterChannel') }}</span>
+          <USelect
+            v-model="channelFilter"
+            :items="[{ label: t('bookings.filterAny'), value: '' }, ...MAIN_CHANNELS.map(channel => ({ label: channel, value: channel }))]"
+          />
+        </label>
       </div>
       <div class="ebtool dep-toolbar">
         <div class="fchips">
@@ -339,13 +411,11 @@ watch(
             <tr>
               <th>{{ t('bookings.colId') }}</th>
               <th>{{ t('bookings.colClient') }}</th>
-              <th>{{ t('bookings.colType') }}</th>
-              <th>{{ t('bookings.colDeparture') }}</th>
-              <th>{{ t('bookings.colCabin') }}</th>
-              <th>{{ t('bookings.colTotal') }}</th>
-              <th>{{ t('bookings.colBalance') }}</th>
+              <th>{{ t('bookings.colStay') }}</th>
+              <th>{{ t('bookings.colRoom') }}</th>
+              <th>{{ t('bookings.colRoomType') }}</th>
               <th>{{ t('bookings.colStatus') }}</th>
-              <th>{{ t('bookings.colOwner') }}</th>
+              <th>{{ t('bookings.colBalanceDue') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -353,7 +423,7 @@ watch(
               v-if="bookings.length === 0"
               class="dr-empty"
             >
-              <td colspan="9">
+              <td colspan="7">
                 {{ t('bookings.empty') }}
               </td>
             </tr>
@@ -385,32 +455,27 @@ watch(
                 </div>
               </td>
               <td>
-                <span
-                  class="sg"
-                  :class="segmentPillClass(row.segment)"
-                >{{ row.segment }}</span>
-                {{ row.channel_of_origin }}
-                <div class="bk-sub">
-                  {{ row.main_channel }}
-                </div>
+                <template v-if="row.stay">
+                  {{ row.stay.check_in }} – {{ row.stay.check_out }}
+                  <span class="pill">{{ t('bookings.nightsPill', { n: String(row.stay.nights) }) }}</span>
+                </template>
+                <template v-else-if="row.departure">
+                  {{ row.departure.date }}
+                </template>
               </td>
-              <td>{{ format(row.departure.date, 'short') }}</td>
-              <td>{{ row.cabin_label }}</td>
-              <td>{{ money(row.total) }}</td>
-              <td>{{ money(row.balance) }}</td>
+              <td>{{ row.room?.label ?? row.cabin_label }}</td>
+              <td>{{ row.room_type?.name ?? '' }}</td>
               <td>
                 <span
                   class="pill"
                   :class="statusPillClass(row.status)"
-                >{{ statusLabel(row.status) }}</span>
+                >{{ labelOf(row.status) }}</span>
                 <span
                   v-if="row.overdue"
                   class="pill p-over"
                 >{{ t('bookings.overduePill') }}</span>
               </td>
-              <td>
-                {{ row.owner.name }}{{ row.can_act ? '' : ` ${t('bookings.ownedLock')}` }}
-              </td>
+              <td>{{ money(row.balance) }}</td>
             </tr>
           </tbody>
         </table>
@@ -476,7 +541,7 @@ watch(
                   {{ t('bookings.groupCoordinator', { name: row.coordinator.name }) }}
                 </div>
               </td>
-              <td>{{ format(row.departure.date, 'short') }}</td>
+              <td>{{ row.departure?.date ?? '' }}</td>
               <td>
                 {{ row.cabins.length === 1
                   ? t('bookings.groupCabinsOne', { guests: String(row.guests) })
@@ -490,7 +555,7 @@ watch(
                   :key="status"
                   class="pill"
                   :class="statusPillClass(status)"
-                >{{ statusLabel(status) }}</span>
+                >{{ labelOf(status) }}</span>
               </td>
             </tr>
           </tbody>
@@ -584,9 +649,8 @@ watch(
       @open-booking="onOpenBookingFromGroup"
     />
 
-    <NewReservationModal
-      v-model:open="newOpen"
-      :prefill="newPrefill"
+    <StayReservationModal
+      v-model:open="stayOpen"
       @created="onCreated"
     />
   </div>

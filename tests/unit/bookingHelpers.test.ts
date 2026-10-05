@@ -39,6 +39,9 @@ describe('bookingHelpers', () => {
     expect(statusPillClass('FULLY_PAID')).toBe('p-full')
     expect(statusPillClass('OVERDUE')).toBe('p-over')
     expect(statusLabel('PENDING_PAYMENT')).toBe('PENDING PAYMENT')
+    expect(statusLabel('IN_HOUSE')).toBe('In house')
+    expect(statusLabel('CHECKED_OUT')).toBe('Checked out')
+    expect(statusLabel('NO_SHOW')).toBe('No-show')
   })
 
   it('builds the reason-modal title and required hint', () => {

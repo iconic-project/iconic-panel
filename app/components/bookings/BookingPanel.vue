@@ -23,6 +23,7 @@ import {
   reasonModalTitle,
   statusLabel,
   statusPillClass,
+  statusText,
   type BookingTab,
   type BookingTabId
 } from './bookingHelpers'
@@ -34,6 +35,7 @@ import BookingExtrasTab from '../extras/BookingExtrasTab.vue'
 import BookingDocumentsTab from '../documents/BookingDocumentsTab.vue'
 import PostTripSurveyModal from '../guest-experience/PostTripSurveyModal.vue'
 import BookingBillingBlock from './BookingBillingBlock.vue'
+import StayDeskActions from './StayDeskActions.vue'
 import { chargesRows } from '../extras/extraHelpers'
 
 const open = defineModel<boolean>('open', { required: true })
@@ -235,6 +237,14 @@ watch(tab, (id) => {
     void loadHistory(true)
   }
 })
+
+function onDeskUpdated(booking: Booking): void {
+  current.value = booking
+  notes.value = booking.internal_notes ?? ''
+  ownerId.value = booking.owner.id
+  snapshot.value = `${notes.value}\0${ownerId.value}`
+  emit('updated', booking)
+}
 
 async function refreshBooking(id: number): Promise<void> {
   const booking = await request(`/api/rms/bookings/${id}`) as Booking
@@ -550,7 +560,7 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
           <span
             class="pill"
             :class="statusPillClass(source.status)"
-          >{{ statusLabel(source.status) }}</span>
+          >{{ statusText(source.status, key => t(key)) }}</span>
           <span
             v-if="source.overdue"
             class="pill p-over"
@@ -606,6 +616,11 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
         </div>
 
         <template v-if="tab === 'overview'">
+          <StayDeskActions
+            v-if="source.stay"
+            :booking="source"
+            @updated="onDeskUpdated"
+          />
           <div class="kv">
             <span>{{ t('bookings.kvType') }}</span>
             <span>{{ t('bookings.typeChannel', { type: source.type, channel: source.channel_of_origin }) }}</span>
@@ -631,18 +646,20 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
               total: String(source.guests_summary.total)
             }) }}</span>
           </div>
-          <div class="kv">
-            <span>{{ t('bookings.kvDeparture') }}</span>
-            <span>{{ departureOverviewLabel(source.departure.date, source.departure.return_date, source.departure.embark, shortDate) }}</span>
-          </div>
-          <div class="kv">
-            <span>{{ t('bookings.kvItinerary') }}</span>
-            <span>{{ source.departure.itinerary_name }}</span>
-          </div>
-          <div class="kv">
-            <span>{{ t('bookings.kvCabin') }}</span>
-            <span>{{ source.cabin_label }}</span>
-          </div>
+          <template v-if="source.departure">
+            <div class="kv">
+              <span>{{ t('bookings.kvDeparture') }}</span>
+              <span>{{ departureOverviewLabel(source.departure.date, source.departure.return_date, source.departure.embark, shortDate) }}</span>
+            </div>
+            <div class="kv">
+              <span>{{ t('bookings.kvItinerary') }}</span>
+              <span>{{ source.departure.itinerary_name }}</span>
+            </div>
+            <div class="kv">
+              <span>{{ t('bookings.kvCabin') }}</span>
+              <span>{{ source.cabin_label }}</span>
+            </div>
+          </template>
           <div
             v-if="source.group"
             class="kv"

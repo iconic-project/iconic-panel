@@ -17,7 +17,10 @@ const STATUS_PILL: Record<BookingStatus, string> = {
   ON_BOARD: 'p-full',
   WAITLISTED: 'p-wait',
   RELEASED: 'p-canc',
-  ON_HOLD_AGENCY: 'p-hold'
+  ON_HOLD_AGENCY: 'p-hold',
+  IN_HOUSE: 'p-full',
+  CHECKED_OUT: 'p-comp',
+  NO_SHOW: 'p-over'
 }
 
 const MOVABLE: Array<BookingStatus> = [
@@ -64,7 +67,35 @@ export function statusPillClass(status: BookingStatus): string {
 }
 
 export function statusLabel(status: string): string {
+  if (status === 'IN_HOUSE') {
+    return 'In house'
+  }
+
+  if (status === 'CHECKED_OUT') {
+    return 'Checked out'
+  }
+
+  if (status === 'NO_SHOW') {
+    return 'No-show'
+  }
+
   return status.replaceAll('_', ' ')
+}
+
+export function statusText(status: string, translate: (key: string) => string): string {
+  if (status === 'IN_HOUSE') {
+    return translate('bookings.statusInHouse')
+  }
+
+  if (status === 'CHECKED_OUT') {
+    return translate('bookings.statusCheckedOut')
+  }
+
+  if (status === 'NO_SHOW') {
+    return translate('bookings.statusNoShow')
+  }
+
+  return statusLabel(status)
 }
 
 export function reasonModalTitle(from: string, to: string): string {
