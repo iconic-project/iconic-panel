@@ -279,7 +279,9 @@ export function useConfigEditor<
     const key = stripDocumentPrefix(path)
 
     return validation.value.warnings
-      .filter(warning => warning.path === key || warning.path === path)
+      .filter(warning => warning.path === key
+        || warning.path === path
+        || warning.path.startsWith(`${key}.`))
       .map(warning => warning.message)
   }
 

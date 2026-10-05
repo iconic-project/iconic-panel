@@ -50,7 +50,21 @@ export type BusinessRulesDraft = {
   }
   cancellation: {
     bands: Array<BandDraft>
+    sets?: Record<string, Array<BandDraft>>
   }
+  taxes?: Array<TaxDraft>
+}
+
+export type TaxBasisCode = 'PER_STAY' | 'PER_NIGHT' | 'PER_PERSON_PER_NIGHT' | 'PCT_OF_ROOM'
+
+export type TaxDraft = {
+  code: string
+  label: string
+  basis: TaxBasisCode
+  amount: number | null
+  child_exempt_under_age: number | null
+  charged: boolean
+  shown_in_price_panel: boolean
 }
 
 export type BandDraft = {

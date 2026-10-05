@@ -126,8 +126,20 @@ const capMeta = computed(() => meta('discounts.max_total_discount_pct'))
 
 <template>
   <div>
+    <RulesTaxesEditor
+      v-if="isHere && row.key === 'taxes'"
+      :can-edit="canEdit"
+      :errors-for="errorsFor"
+    />
+
+    <RulesSetsEditor
+      v-else-if="isHere && row.key === 'cancellation-sets'"
+      :can-edit="canEdit"
+      :errors-for="errorsFor"
+    />
+
     <RulesBandEditor
-      v-if="isHere && isBands"
+      v-else-if="isHere && isBands"
       :can-edit="canEdit"
       :errors-for="errorsFor"
     />

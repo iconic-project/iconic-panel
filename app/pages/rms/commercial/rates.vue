@@ -2,6 +2,7 @@
 import type { EngineSettingsVersion, ExtrasCatalogue, PriceCheckRow } from '../../../types/api'
 import type { ConfigValueFormat } from '../../../utils/formatConfigValue'
 import { rateFieldLabels, RATES_DRAFT_KEY, type RatesDraft } from '../../../components/rates/rateHelpers'
+import { stayEditorsFrom, stayRequests, type StayEditor } from '../../../components/rates/stayRates'
 import {
   EXTRAS_DRAFT_KEY,
   extrasFieldLabels,
@@ -52,13 +53,21 @@ const childMaxAge = computed(() => {
   return engineSettings.value?.document.guests.child_max_age ?? null
 })
 
-const selectedYear = ref<number | null>(null)
 const priceCheckRows = ref<Array<PriceCheckRow>>([])
+const priceCheckStays = ref<Array<StayEditor>>([])
 const priceCheckStale = ref(false)
 let priceCheckSeq = 0
 
-const draftYears = computed(() => {
-  return draft.value?.years.map(row => row.year) ?? []
+type RoomTypeOption = {
+  code: string
+  name: string
+  status: string
+}
+
+const roomTypes = ref<Array<{ code: string, name: string }>>([])
+
+const planOptions = computed(() => {
+  return draft.value?.rate_plans.map(plan => ({ code: plan.code, name: plan.name })) ?? []
 })
 
 const labels = computed(() => {
@@ -71,49 +80,66 @@ const formats: Record<string, ConfigValueFormat> = {
   'rules.festive_supplement_charter': 'money'
 }
 
-watch(draftYears, (years) => {
-  if (selectedYear.value === null || !years.includes(selectedYear.value)) {
-    selectedYear.value = years[0] ?? null
-  }
-}, { immediate: true })
+onMounted(async () => {
+  const properties = await request('/api/rms/properties') as { data: Array<{ id: number }> }
+  const lists = await Promise.all(properties.data.map(property =>
+    request(`/api/rms/properties/${property.id}/room-types`) as Promise<{ data: Array<RoomTypeOption> }>
+  ))
+
+  roomTypes.value = lists
+    .flatMap(list => list.data)
+    .filter(type => type.status === 'ACTIVE')
+    .map(type => ({ code: type.code, name: type.name }))
+})
+
+watch(priceCheckStays, () => {
+  void runPriceCheck()
+}, { deep: true })
 
 watch(
-  () => [editor.loading, editor.validating, editor.hasErrors, selectedYear.value] as const,
-  async ([loading, validating, hasErrors, year]) => {
-    if (loading || validating || year === null || draft.value === null) {
-      return
-    }
-
-    if (hasErrors) {
-      priceCheckStale.value = true
-      return
-    }
-
-    const id = ++priceCheckSeq
-    const document = cloneDocument(toRaw(draft.value))
-
-    try {
-      const body = await request('/api/rms/rates/price-check', {
-        method: 'POST',
-        body: {
-          year,
-          document
-        }
-      }) as { scenarios: Array<PriceCheckRow> }
-
-      if (id !== priceCheckSeq) {
-        return
-      }
-
-      priceCheckRows.value = body.scenarios
-      priceCheckStale.value = false
-    } catch {
-      if (id === priceCheckSeq) {
-        priceCheckStale.value = true
-      }
-    }
+  () => [editor.loading, editor.validating, editor.hasErrors] as const,
+  () => {
+    void runPriceCheck()
   }
 )
+
+async function runPriceCheck(): Promise<void> {
+  if (editor.loading || editor.validating || draft.value === null) {
+    return
+  }
+
+  if (editor.hasErrors) {
+    priceCheckStale.value = true
+    return
+  }
+
+  const id = ++priceCheckSeq
+  const document = cloneDocument(toRaw(draft.value))
+  const stays = stayRequests(priceCheckStays.value)
+
+  try {
+    const body = await request('/api/rms/rates/price-check', {
+      method: 'POST',
+      body: stays.length === 0 ? { document } : { document, stays }
+    }) as { scenarios: Array<PriceCheckRow> }
+
+    if (id !== priceCheckSeq) {
+      return
+    }
+
+    priceCheckRows.value = body.scenarios
+
+    if (priceCheckStays.value.length === 0) {
+      priceCheckStays.value = stayEditorsFrom(body.scenarios)
+    }
+
+    priceCheckStale.value = false
+  } catch {
+    if (id === priceCheckSeq) {
+      priceCheckStale.value = true
+    }
+  }
+}
 </script>
 
 <template>
@@ -132,30 +158,61 @@ watch(
       :labels="labels"
     />
 
-    <RatesBasePanel
+    <RatesSeasonsPanel
+      :can-publish="canPublish"
+      :errors-for="editor.errorsFor"
+      :warnings-for="editor.warningsFor"
+    />
+
+    <RatesRoomMatrix
+      :can-publish="canPublish"
+      :room-types="roomTypes"
+      :errors-for="editor.errorsFor"
+      :warnings-for="editor.warningsFor"
+    />
+
+    <RatesOccupancyPanel
       :can-publish="canPublish"
       :errors-for="editor.errorsFor"
     />
 
-    <RatesTermsPanel
+    <RatesStayRulesPanel
       :can-publish="canPublish"
       :errors-for="editor.errorsFor"
-    />
-
-    <RatesRulesPanel
-      :can-publish="canPublish"
-      :child-min-age="childMinAge"
-      :child-max-age="childMaxAge"
-      :errors-for="editor.errorsFor"
+      :warnings-for="editor.warningsFor"
     />
 
     <RatesPriceCheck
-      :years="draftYears"
-      :year="selectedYear"
       :rows="priceCheckRows"
+      :stays="priceCheckStays"
       :stale="priceCheckStale"
-      @update:year="selectedYear = $event"
+      :room-types="roomTypes"
+      :plans="planOptions"
+      @update:stays="priceCheckStays = $event"
     />
+
+    <details class="legacy-block">
+      <summary class="legacy-summary">
+        {{ t('rates.legacyTitle') }}
+      </summary>
+
+      <RatesBasePanel
+        :can-publish="false"
+        :errors-for="editor.errorsFor"
+      />
+
+      <RatesTermsPanel
+        :can-publish="false"
+        :errors-for="editor.errorsFor"
+      />
+
+      <RatesRulesPanel
+        :can-publish="false"
+        :child-min-age="childMinAge"
+        :child-max-age="childMaxAge"
+        :errors-for="editor.errorsFor"
+      />
+    </details>
 
     <ConfigHistoryPanel
       :title="t('rates.historyTitle')"
