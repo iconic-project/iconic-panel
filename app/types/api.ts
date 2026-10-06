@@ -177,8 +177,6 @@ export type {
   OfferChannel,
   OfferStatus,
   OfferType,
-  CharterEnquiry,
-  CharterEnquiryStatus,
   CommercialMetrics,
   HotelKpis,
   MetricDefinition,

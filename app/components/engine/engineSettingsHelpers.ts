@@ -31,14 +31,6 @@ export type EngineSettingsDraft = {
     footnote: string
   }
   copy: EngineSettingsDocument['copy']
-  charter: {
-    headline: string
-    intro: string
-    itinerary_label: string
-    response_sla_hours: number | null
-    group_contexts: Array<string>
-    thank_you: string
-  }
 }
 
 export type EnginePanelAccess = {
@@ -49,8 +41,6 @@ export type EnginePanelAccess = {
 export const ENGINE_SETTINGS_DRAFT_KEY: InjectionKey<ComputedRef<EngineSettingsDraft | null>> = Symbol('engine-settings-draft')
 
 export const COPY_CHAR_LIMIT = 320
-export const HEADLINE_LIMIT = 60
-export const ITINERARY_LABEL_LIMIT = 30
 export const UNDER_AGE_LIMIT = 60
 
 export function engineFieldLabels(): Record<string, string> {
@@ -82,13 +72,7 @@ export function engineFieldLabels(): Record<string, string> {
     'copy.solo_and_triple': 'Note — Solo & triple',
     'copy.pay_today': 'Pay-today box',
     'copy.details_note': 'Details-page note',
-    'copy.confirmation_steps': 'Confirmation steps',
-    'charter.headline': 'Charter headline',
-    'charter.intro': 'Charter intro',
-    'charter.itinerary_label': 'Charter itinerary label',
-    'charter.response_sla_hours': 'Charter response SLA',
-    'charter.group_contexts': 'Charter group contexts',
-    'charter.thank_you': 'Charter thank-you message'
+    'copy.confirmation_steps': 'Confirmation steps'
   }
 }
 

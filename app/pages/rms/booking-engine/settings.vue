@@ -104,11 +104,6 @@ const formats: Record<string, ConfigValueFormat> = {
       :errors-for="editor.errorsFor"
     />
 
-    <EngineCharterPanel
-      :can-edit="canEdit"
-      :errors-for="editor.errorsFor"
-    />
-
     <ConfigHistoryPanel
       :title="t('engineSettings.historyTitle')"
       :empty-text="t('engineSettings.historyEmpty')"

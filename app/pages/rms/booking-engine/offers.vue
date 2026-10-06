@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Itinerary, Offer } from '../../../types/api'
+import type { Offer, RatesVersion } from '../../../types/api'
 import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import OfferDrawer from '../../../components/offers/OfferDrawer.vue'
-import { offerStatusPillClass } from '../../../components/offers/offerHelpers'
+import { offerStatusPillClass, type OfferCodeOption } from '../../../components/offers/offerHelpers'
 
 const { can } = useAuth()
 const { t } = useI18n()
-const { useFetch } = useApi()
+const { useFetch, request } = useApi()
 const { format } = useDates()
 
 const from = ref<string | null>(null)
@@ -14,6 +14,7 @@ const to = ref<string | null>(null)
 const today = computed(() => format(new Date(), 'iso'))
 const editorOpen = ref(false)
 const selected = ref<Offer | null>(null)
+const roomTypes = ref<Array<OfferCodeOption>>([])
 
 const canManage = computed(() => can('offers.manage'))
 const canApprove = computed(() => can('offers.approve'))
@@ -35,11 +36,47 @@ const listUrl = computed(() => {
 })
 
 const { data: listPayload, refresh } = useFetch<{ data: Array<Offer> }>(listUrl)
-const { data: itinerariesPayload } = useFetch<{ data: Array<Itinerary> }>('/api/rms/itineraries')
+const { data: propertiesPayload } = useFetch<{ data: Array<{ id: number }> }>('/api/rms/properties')
+const { data: ratesPayload } = useFetch<RatesVersion>('/api/rms/rates')
 
 const offers = computed(() => listPayload.value?.data ?? [])
-const itineraries = computed(() => itinerariesPayload.value?.data ?? [])
+const ratePlans = computed<Array<OfferCodeOption>>(() => {
+  return (ratesPayload.value?.document.rate_plans ?? []).map(plan => ({
+    code: plan.code,
+    name: plan.name
+  }))
+})
 const total = computed(() => offers.value.length)
+
+watch(propertiesPayload, (payload) => {
+  const properties = payload?.data ?? []
+
+  if (properties.length === 0) {
+    roomTypes.value = []
+
+    return
+  }
+
+  void Promise.all(properties.map(async (property) => {
+    const result = await request(`/api/rms/properties/${property.id}/room-types`) as {
+      data: Array<OfferCodeOption>
+    }
+
+    return result.data
+  })).then((lists) => {
+    const seen = new Map<string, OfferCodeOption>()
+
+    for (const row of lists.flat()) {
+      if (!seen.has(row.code)) {
+        seen.set(row.code, { code: row.code, name: row.name })
+      }
+    }
+
+    roomTypes.value = [...seen.values()]
+  }).catch(() => {
+    roomTypes.value = []
+  })
+}, { immediate: true })
 
 function openNew(): void {
   selected.value = null
@@ -136,7 +173,7 @@ async function onSaved(offer: Offer): Promise<void> {
                 {{ offer.scope_label }}
               </td>
               <td>{{ offer.booking_window_label }}</td>
-              <td>{{ offer.travel_window_label }}</td>
+              <td>{{ offer.stay_window_label }}</td>
               <td>
                 <span
                   v-if="offer.engine_placement === 'badge' && offer.badge"
@@ -146,12 +183,6 @@ async function onSaved(offer: Offer): Promise<void> {
                   v-else
                   class="of-placement"
                 >{{ enginePlacementLabel(offer) }}</span>
-                <div
-                  v-if="offer.status === 'LIVE'"
-                  class="of-hits"
-                >
-                  {{ t('offers.departuresCount', { n: String(offer.live_departures_count) }) }}
-                </div>
               </td>
               <td>
                 <span
@@ -168,7 +199,8 @@ async function onSaved(offer: Offer): Promise<void> {
     <OfferDrawer
       v-model:open="editorOpen"
       :source="selected"
-      :itineraries="itineraries"
+      :room-types="roomTypes"
+      :rate-plans="ratePlans"
       :can-manage="canManage"
       :can-approve="canApprove"
       @saved="onSaved"

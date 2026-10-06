@@ -9,12 +9,7 @@ const copyPaths: Array<string> = [
   'copy.solo_and_triple',
   'copy.pay_today',
   'copy.details_note',
-  'copy.confirmation_steps',
-  'charter.headline',
-  'charter.intro',
-  'charter.itinerary_label',
-  'charter.group_contexts',
-  'charter.thank_you'
+  'copy.confirmation_steps'
 ]
 
 function allow(...granted: Array<Permission>): (permission: Permission) => boolean {
@@ -44,9 +39,7 @@ describe('canEditPath', () => {
     expect(canEditPath('copy.book_now_pay_later', copyPaths, can)).toBe(true)
     expect(canEditPath('copy.confirmation_steps', copyPaths, can)).toBe(true)
     expect(canEditPath('fees.footnote', copyPaths, can)).toBe(true)
-    expect(canEditPath('charter.headline', copyPaths, can)).toBe(true)
     expect(canEditPath('guests.max_per_cabin', copyPaths, can)).toBe(false)
-    expect(canEditPath('charter.response_sla_hours', copyPaths, can)).toBe(false)
     expect(canEditPath('fees.tct_pp', copyPaths, can)).toBe(false)
   })
 

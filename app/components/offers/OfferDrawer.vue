@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import type {
   ChangeHistoryEntry,
-  Itinerary,
   Offer,
   Paginated
 } from '../../types/api'
+import type { StayRange } from '#iconic-ui/app/components/AnkStayInput.vue'
 import { applyApiFormError, firstApiMessage, type FormFieldErrors } from '../../utils/apiForm'
 import { confirmUnsaved } from '../../composables/useUnsavedGuard'
 import HistoryTimeline from '../history/HistoryTimeline.vue'
 import ReasonModal from '../bookings/ReasonModal.vue'
 import {
+  addIsoDay,
   emptyOfferForm,
   formFromOffer,
-  OFFER_CABIN_TYPES,
   OFFER_CHANNELS,
+  OFFER_STAY_PICKER_MAX_NIGHTS,
   OFFER_TYPES,
   offerFormToPayload,
   offerStatusPillClass,
+  type OfferCodeOption,
   type OfferForm
 } from './offerHelpers'
 
@@ -24,7 +26,8 @@ const isOpen = defineModel<boolean>('open', { required: true })
 
 const props = defineProps<{
   source: Offer | null
-  itineraries: Array<Itinerary>
+  roomTypes: Array<OfferCodeOption>
+  ratePlans: Array<OfferCodeOption>
   canManage: boolean
   canApprove: boolean
 }>()
@@ -72,10 +75,6 @@ const title = computed(() => {
   return current.value?.code ?? t('offers.newTitle')
 })
 
-const nonFestiveCodes = computed(() => {
-  return props.itineraries.filter(item => !item.festive).map(item => item.code)
-})
-
 const typeItems = computed(() => OFFER_TYPES.map(item => ({
   label: t(`offers.types.${item}`),
   value: item
@@ -85,6 +84,30 @@ const channelItems = computed(() => OFFER_CHANNELS.map(item => ({
   label: t(`offers.channels.${item}`),
   value: item
 })))
+
+const stayRange = computed<StayRange | null>({
+  get() {
+    if (form.value.stay_from === '' || form.value.stay_to === '') {
+      return null
+    }
+
+    return {
+      check_in: form.value.stay_from,
+      check_out: addIsoDay(form.value.stay_to, 1)
+    }
+  },
+  set(value) {
+    if (value === null) {
+      form.value.stay_from = ''
+      form.value.stay_to = ''
+
+      return
+    }
+
+    form.value.stay_from = value.check_in
+    form.value.stay_to = addIsoDay(value.check_out, -1)
+  }
+})
 
 function onTypeUpdate(value: string | number | null | undefined): void {
   if (typeof value === 'string') {
@@ -106,21 +129,13 @@ function onBookingToUpdate(value: string | null): void {
   form.value.booking_to = value ?? ''
 }
 
-function onTravelFromUpdate(value: string | null): void {
-  form.value.travel_from = value ?? ''
-}
-
-function onTravelToUpdate(value: string | null): void {
-  form.value.travel_to = value ?? ''
-}
-
 function snapshotOf(next: OfferForm): string {
   return JSON.stringify(next)
 }
 
 function resetFrom(source: Offer | null): void {
   const next = source === null
-    ? emptyOfferForm(nonFestiveCodes.value)
+    ? emptyOfferForm()
     : formFromOffer(source)
 
   form.value = next
@@ -143,13 +158,6 @@ watch(
   }
 )
 
-watch(nonFestiveCodes, (codes) => {
-  if (isOpen.value && isNew.value && form.value.itinerary_codes.length === 0 && codes.length > 0) {
-    form.value.itinerary_codes = [...codes]
-    snapshot.value = snapshotOf(form.value)
-  }
-})
-
 useUnsavedGuard(dirty, () => t('config.leaveUnsaved'))
 
 function onUpdateOpen(next: boolean): void {
@@ -160,28 +168,23 @@ function onUpdateOpen(next: boolean): void {
   isOpen.value = next
 }
 
-function toggleCabin(code: (typeof OFFER_CABIN_TYPES)[number], checked: boolean): void {
+function toggleCode(list: 'room_types' | 'rate_plans', code: string, checked: boolean): void {
+  const current = form.value[list]
+
   if (checked) {
-    if (!form.value.cabin_types.includes(code)) {
-      form.value.cabin_types = [...form.value.cabin_types, code]
+    if (!current.includes(code)) {
+      form.value[list] = [...current, code]
     }
 
     return
   }
 
-  form.value.cabin_types = form.value.cabin_types.filter(item => item !== code)
+  form.value[list] = current.filter(item => item !== code)
 }
 
-function toggleItinerary(code: string, checked: boolean): void {
-  if (checked) {
-    if (!form.value.itinerary_codes.includes(code)) {
-      form.value.itinerary_codes = [...form.value.itinerary_codes, code]
-    }
-
-    return
-  }
-
-  form.value.itinerary_codes = form.value.itinerary_codes.filter(item => item !== code)
+function onMinNights(event: Event): void {
+  const raw = (event.target as HTMLInputElement).value
+  form.value.min_nights = raw === '' ? null : Number(raw)
 }
 
 function applySaved(offer: Offer): void {
@@ -509,50 +512,99 @@ function fieldError(name: string): string {
               </div>
             </div>
             <div class="field">
-              <span class="field-label">{{ t('offers.cabinTypes') }}</span>
-              <div class="chkgrid">
-                <label
-                  v-for="cabin in OFFER_CABIN_TYPES"
-                  :key="cabin"
-                  class="chkline"
-                >
-                  <input
-                    type="checkbox"
-                    :checked="form.cabin_types.includes(cabin)"
-                    @change="toggleCabin(cabin, ($event.target as HTMLInputElement).checked)"
-                  >
-                  {{ cabin === 'SUITE' ? t('offers.cabinSuite') : t('offers.cabinOwner') }}
-                </label>
-              </div>
+              <span class="field-label">{{ t('offers.stayWindow') }}</span>
+              <AnkStayInput
+                v-model="stayRange"
+                :min-nights="1"
+                :max-nights="OFFER_STAY_PICKER_MAX_NIGHTS"
+              />
               <p
-                v-if="fieldError('cabin_types')"
+                v-if="fieldError('stay_from') || fieldError('stay_to')"
                 class="pline-err"
               >
-                {{ fieldError('cabin_types') }}
+                {{ fieldError('stay_from') || fieldError('stay_to') }}
               </p>
             </div>
             <div class="field">
-              <span class="field-label">{{ t('offers.itineraries') }}</span>
-              <div class="chkgrid">
+              <label for="of-min">{{ t('offers.minNights') }}</label>
+              <input
+                id="of-min"
+                :value="form.min_nights ?? ''"
+                type="number"
+                min="1"
+                @input="onMinNights"
+              >
+              <p
+                v-if="fieldError('min_nights')"
+                class="pline-err"
+              >
+                {{ fieldError('min_nights') }}
+              </p>
+            </div>
+            <div class="field">
+              <span class="field-label">{{ t('offers.roomTypes') }}</span>
+              <p
+                v-if="roomTypes.length === 0"
+                class="notice"
+              >
+                {{ t('offers.allRooms') }}
+              </p>
+              <div
+                v-else
+                class="chkgrid"
+              >
                 <label
-                  v-for="item in itineraries"
+                  v-for="item in roomTypes"
                   :key="item.code"
                   class="chkline"
                 >
                   <input
                     type="checkbox"
-                    :checked="form.itinerary_codes.includes(item.code)"
-                    :disabled="item.festive || !canEdit"
-                    @change="toggleItinerary(item.code, ($event.target as HTMLInputElement).checked)"
+                    :checked="form.room_types.includes(item.code)"
+                    :disabled="!canEdit"
+                    @change="toggleCode('room_types', item.code, ($event.target as HTMLInputElement).checked)"
                   >
-                  {{ item.name }}{{ item.festive ? t('offers.festiveNever') : '' }}
+                  {{ item.name }}
                 </label>
               </div>
               <p
-                v-if="fieldError('itinerary_codes')"
+                v-if="fieldError('applies_to_room_types')"
                 class="pline-err"
               >
-                {{ fieldError('itinerary_codes') }}
+                {{ fieldError('applies_to_room_types') }}
+              </p>
+            </div>
+            <div class="field">
+              <span class="field-label">{{ t('offers.ratePlans') }}</span>
+              <p
+                v-if="ratePlans.length === 0"
+                class="notice"
+              >
+                {{ t('offers.allPlans') }}
+              </p>
+              <div
+                v-else
+                class="chkgrid"
+              >
+                <label
+                  v-for="item in ratePlans"
+                  :key="item.code"
+                  class="chkline"
+                >
+                  <input
+                    type="checkbox"
+                    :checked="form.rate_plans.includes(item.code)"
+                    :disabled="!canEdit"
+                    @change="toggleCode('rate_plans', item.code, ($event.target as HTMLInputElement).checked)"
+                  >
+                  {{ item.name }}
+                </label>
+              </div>
+              <p
+                v-if="fieldError('applies_to_rate_plans')"
+                class="pline-err"
+              >
+                {{ fieldError('applies_to_rate_plans') }}
               </p>
             </div>
             <div class="cols2">
@@ -582,36 +634,6 @@ function fieldError(name: string): string {
                   class="pline-err"
                 >
                   {{ fieldError('booking_to') }}
-                </p>
-              </div>
-            </div>
-            <div class="cols2">
-              <div class="field">
-                <label for="of-tf">{{ t('offers.travelFrom') }}</label>
-                <AnkDateInput
-                  id="of-tf"
-                  :model-value="form.travel_from === '' ? null : form.travel_from"
-                  @update:model-value="onTravelFromUpdate"
-                />
-                <p
-                  v-if="fieldError('travel_from')"
-                  class="pline-err"
-                >
-                  {{ fieldError('travel_from') }}
-                </p>
-              </div>
-              <div class="field">
-                <label for="of-tt">{{ t('offers.travelTo') }}</label>
-                <AnkDateInput
-                  id="of-tt"
-                  :model-value="form.travel_to === '' ? null : form.travel_to"
-                  @update:model-value="onTravelToUpdate"
-                />
-                <p
-                  v-if="fieldError('travel_to')"
-                  class="pline-err"
-                >
-                  {{ fieldError('travel_to') }}
                 </p>
               </div>
             </div>

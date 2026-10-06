@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Offer } from '../../app/types/api'
 import {
+  addIsoDay,
   compactOfferWindow,
   emptyOfferForm,
   formFromOffer,
@@ -25,6 +26,11 @@ function sampleOffer(overrides: Partial<Offer> = {}): Offer {
     booking_to: null,
     travel_from: '2027-11-01',
     travel_to: '2027-12-31',
+    stay_from: '2027-11-01',
+    stay_to: '2027-12-30',
+    min_nights: 3,
+    applies_to_room_types: ['STD'],
+    applies_to_rate_plans: null,
     combinable: false,
     is_promo_code: false,
     badge: 'OPENING OFFER',
@@ -38,11 +44,11 @@ function sampleOffer(overrides: Partial<Offer> = {}): Offer {
     approved_at: null,
     approval_reason: null,
     benefit_label: 'USD 500 ancillary credit / cabin',
-    scope_label: 'D2C · Suites · Western Realm',
+    scope_label: 'D2C · STD · All rate plans · min 3 nights',
     booking_window_label: 'Any',
     travel_window_label: '1 Nov 2027 → 31 Dec 2027',
+    stay_window_label: '1 Nov 2027 → 30 Dec 2027',
     engine_placement: 'badge',
-    live_departures_count: 2,
     ...overrides
   }
 }
@@ -58,14 +64,17 @@ describe('offerHelpers', () => {
   })
 
   it('uppercases the code and turns empty optionals into null', () => {
-    const form = emptyOfferForm(['WEST'])
+    const form = emptyOfferForm()
     form.code = ' opening-27 '
     form.name = ' Opening '
     form.partner = '  '
     form.badge = 'OPENING'
     form.value = 500
     form.booking_from = ''
-    form.travel_from = '2027-11-01'
+    form.stay_from = '2027-11-01'
+    form.stay_to = '2027-12-30'
+    form.min_nights = 3
+    form.room_types = ['STD']
 
     expect(offerFormToPayload(form, true)).toEqual({
       code: 'OPENING-27',
@@ -75,12 +84,13 @@ describe('offerHelpers', () => {
       value_text: null,
       channel: 'D2C',
       partner: null,
-      cabin_types: ['SUITE'],
-      itinerary_codes: ['WEST'],
+      stay_from: '2027-11-01',
+      stay_to: '2027-12-30',
+      min_nights: 3,
+      applies_to_room_types: ['STD'],
+      applies_to_rate_plans: null,
       booking_from: null,
       booking_to: null,
-      travel_from: '2027-11-01',
-      travel_to: null,
       combinable: false,
       is_promo_code: false,
       badge: 'OPENING',
@@ -97,16 +107,24 @@ describe('offerHelpers', () => {
 
     expect(payload.code).toBe('OPENING-27')
     expect(payload.as_draft).toBe(false)
-    expect(payload.cabin_types).toEqual(['SUITE'])
-    expect(payload.travel_from).toBe('2027-11-01')
+    expect(payload.stay_from).toBe('2027-11-01')
+    expect(payload.stay_to).toBe('2027-12-30')
+    expect(payload.min_nights).toBe(3)
+    expect(payload.applies_to_room_types).toEqual(['STD'])
+    expect(payload.applies_to_rate_plans).toBeNull()
     expect(payload.booking_from).toBeNull()
   })
 
-  it('uses the API travel window label when it is not Any', () => {
-    expect(compactOfferWindow(sampleOffer())).toBe('1 Nov 2027 → 31 Dec 2027')
+  it('uses the API stay window label when it is not Any', () => {
+    expect(compactOfferWindow(sampleOffer())).toBe('1 Nov 2027 → 30 Dec 2027')
     expect(compactOfferWindow(sampleOffer({
-      travel_window_label: 'Any',
+      stay_window_label: 'Any',
       booking_window_label: '1 Jan 2027 → 31 Mar 2027'
     }))).toBe('1 Jan 2027 → 31 Mar 2027')
+  })
+
+  it('maps a stay window onto check-out as the day after the last night', () => {
+    expect(addIsoDay('2027-12-30', 1)).toBe('2027-12-31')
+    expect(addIsoDay('2027-12-31', -1)).toBe('2027-12-30')
   })
 })

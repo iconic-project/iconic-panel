@@ -278,7 +278,10 @@ async function refreshQuote(): Promise<void> {
   try {
     quote.value = await request('/api/rms/bookings/quote', {
       method: 'POST',
-      body: stayQuoteBody(stay.value.check_in, stay.value.check_out, drafts())
+      body: {
+        ...stayQuoteBody(stay.value.check_in, stay.value.check_out, drafts()),
+        ...(mainChannel.value === '' ? {} : { main_channel: mainChannel.value })
+      }
     }) as StayQuote
     error.value = ''
   } catch (caught: unknown) {
