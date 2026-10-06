@@ -82,10 +82,8 @@ function holdExpires(row: HoldListItem): string {
   return formatHoldRemaining(row.remaining_business_minutes, dayMinutes.value, row.remaining_business_minutes <= 0)
 }
 
-function departureLabel(row: WaitlistEntry): string {
-  const date = format(row.departure.date, 'short')
-
-  return row.departure.festive ? t('holds.festiveDeparture', { date }) : date
+function stayLabel(row: WaitlistEntry): string {
+  return `${format(row.stay.check_in, 'short')} – ${format(row.stay.check_out, 'short')}`
 }
 
 function notifiedLine(row: WaitlistEntry): string {
@@ -261,7 +259,7 @@ onMounted(() => {
           <thead>
             <tr>
               <th>{{ t('holds.colWaitContact') }}</th>
-              <th>{{ t('holds.colDeparture') }}</th>
+              <th>{{ t('holds.colStay') }}</th>
               <th>{{ t('holds.colCabinType') }}</th>
               <th>{{ t('holds.colPosition') }}</th>
               <th>{{ t('holds.colSince') }}</th>
@@ -282,13 +280,13 @@ onMounted(() => {
               :key="row.id"
             >
               <td>{{ row.contact.email ?? row.contact.name }}</td>
-              <td>{{ departureLabel(row) }}</td>
-              <td>{{ row.cabin_type }}</td>
+              <td>{{ stayLabel(row) }}</td>
+              <td>{{ row.stay.room_type.name }}</td>
               <td>{{ row.position ?? '—' }}</td>
               <td>{{ format(row.since, 'short') }}</td>
               <td>
                 <div
-                  v-if="waitlistRowStatus(row) === 'cabin_free'"
+                  v-if="waitlistRowStatus(row) === 'room_free'"
                   class="wl-free"
                 >
                   {{ t('holds.cabinFree') }}

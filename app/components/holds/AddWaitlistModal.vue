@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import type {
   BookingFormOptions,
-  CabinCategory,
   Contact,
-  Departure,
-  Paginated,
   PreferredChannel,
   WaitlistEntry
 } from '../../types/api'
 import { firstApiMessage, applyApiFormError } from '../../utils/apiForm'
 import { existingContactSelected } from '../bookings/newReservationHelpers'
-import { departureOptionLabel, galapagosTomorrowIso } from '../bookings/bookingHelpers'
+
+type PropertyOption = {
+  id: number
+  code: string
+  name: string
+}
+
+type RoomTypeOption = {
+  id: number
+  code: string
+  name: string
+}
 
 const CONTACT_DEBOUNCE_MS = 300
 
@@ -22,11 +30,11 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { request } = useApi()
-const { format } = useDates()
 const toast = useToast()
 
 const options = ref<BookingFormOptions | null>(null)
-const departures = ref<Array<Departure>>([])
+const properties = ref<Array<PropertyOption>>([])
+const roomTypes = ref<Array<RoomTypeOption>>([])
 const contacts = ref<Array<Contact>>([])
 const selectedContact = ref<Contact | null>(null)
 const loading = ref(false)
@@ -34,8 +42,10 @@ const submitting = ref(false)
 const warn = ref('')
 const fieldErrors = ref<Record<string, string>>({})
 
-const departureId = ref<number | null>(null)
-const cabinCategory = ref<CabinCategory>('SUITE')
+const propertyId = ref<number | null>(null)
+const roomTypeId = ref<number | null>(null)
+const checkIn = ref('')
+const checkOut = ref('')
 const guestName = ref('')
 const email = ref('')
 const phone = ref('')
@@ -50,22 +60,20 @@ const existingNotice = computed(() => {
   return selectedContact.value !== null && existingContactSelected(email.value, selectedContact.value.email)
 })
 
-const orderedDepartures = computed(() => {
-  return [...departures.value].sort((left, right) => {
-    const leftFull = left.availability.counts.free === 0 ? 0 : 1
-    const rightFull = right.availability.counts.free === 0 ? 0 : 1
+const propertyItems = computed(() => [
+  { label: t('holds.property'), value: null as number | null },
+  ...properties.value.map(row => ({
+    label: `${row.code} · ${row.name}`,
+    value: row.id
+  }))
+])
 
-    if (leftFull !== rightFull) {
-      return leftFull - rightFull
-    }
-
-    return left.date.localeCompare(right.date)
-  })
-})
-
-const cabinItems = computed(() => [
-  { label: t('holds.suite'), value: 'SUITE' as CabinCategory },
-  { label: t('holds.ownerSuite'), value: 'OWNER' as CabinCategory }
+const roomTypeItems = computed(() => [
+  { label: t('holds.cabinType'), value: null as number | null },
+  ...roomTypes.value.map(row => ({
+    label: `${row.code} · ${row.name}`,
+    value: row.id
+  }))
 ])
 
 const preferredItems = computed(() => (options.value?.preferred ?? []).map(item => ({
@@ -74,8 +82,11 @@ const preferredItems = computed(() => (options.value?.preferred ?? []).map(item 
 })))
 
 function reset(): void {
-  departureId.value = null
-  cabinCategory.value = 'SUITE'
+  propertyId.value = null
+  roomTypeId.value = null
+  checkIn.value = ''
+  checkOut.value = ''
+  roomTypes.value = []
   guestName.value = ''
   email.value = ''
   phone.value = ''
@@ -93,22 +104,14 @@ async function loadOptions(): Promise<void> {
   options.value = await request('/api/rms/bookings/form-options') as BookingFormOptions
 }
 
-async function loadDepartures(): Promise<void> {
-  const from = galapagosTomorrowIso(new Date(), (value, style, formatOptions) => format(value, style, formatOptions))
-  const collected: Array<Departure> = []
-  let page = 1
-  let last = 1
+async function loadProperties(): Promise<void> {
+  const result = await request('/api/rms/properties') as { data: Array<PropertyOption> }
+  properties.value = result.data
+}
 
-  do {
-    const result = await request(
-      `/api/rms/departures?from=${from}&with_cabins=1&per_page=100&page=${String(page)}`
-    ) as Paginated<Departure>
-    collected.push(...result.data)
-    last = result.meta.last_page
-    page += 1
-  } while (page <= last)
-
-  departures.value = collected
+async function loadRoomTypes(id: number): Promise<void> {
+  const result = await request(`/api/rms/properties/${id}/room-types`) as { data: Array<RoomTypeOption> }
+  roomTypes.value = result.data
 }
 
 async function searchContacts(query: string): Promise<void> {
@@ -145,31 +148,8 @@ function pickContact(contact: Contact): void {
   contacts.value = []
 }
 
-function departureLabel(row: Departure): string {
-  const full = row.availability.counts.free === 0 ? t('holds.fullSuffix') : ''
-
-  return `${departureOptionLabel(
-    row.date,
-    row.yacht.name,
-    row.itinerary.name,
-    row.festive,
-    iso => format(iso, 'short')
-  )}${full}`
-}
-
-const departureItems = computed(() => [
-  {
-    label: loading.value ? t('bookings.loadingDepartures') : t('bookings.pickDeparture'),
-    value: null as number | null
-  },
-  ...orderedDepartures.value.map(row => ({
-    label: departureLabel(row),
-    value: row.id
-  }))
-])
-
 async function onSubmit(): Promise<void> {
-  if (departureId.value === null || guestName.value.trim() === '') {
+  if (roomTypeId.value === null || checkIn.value === '' || checkOut.value === '' || guestName.value.trim() === '') {
     return
   }
 
@@ -181,8 +161,9 @@ async function onSubmit(): Promise<void> {
     const created = await request('/api/rms/waitlist', {
       method: 'POST',
       body: {
-        departure_id: departureId.value,
-        cabin_category: cabinCategory.value,
+        room_type_id: roomTypeId.value,
+        check_in: checkIn.value,
+        check_out: checkOut.value,
         client: {
           name: guestName.value.trim(),
           email: email.value.trim() === '' ? null : email.value.trim(),
@@ -214,6 +195,19 @@ async function onSubmit(): Promise<void> {
   }
 }
 
+watch(propertyId, (id) => {
+  roomTypeId.value = null
+  roomTypes.value = []
+
+  if (id === null) {
+    return
+  }
+
+  void loadRoomTypes(id).catch((error: unknown) => {
+    warn.value = firstApiMessage(error) ?? (error instanceof Error ? error.message : '')
+  })
+})
+
 watch(open, async (isOpen) => {
   if (!isOpen) {
     return
@@ -223,7 +217,7 @@ watch(open, async (isOpen) => {
   loading.value = true
 
   try {
-    await Promise.all([loadOptions(), loadDepartures()])
+    await Promise.all([loadOptions(), loadProperties()])
   } catch (error: unknown) {
     warn.value = firstApiMessage(error) ?? (error instanceof Error ? error.message : '')
   } finally {
@@ -254,10 +248,10 @@ onUnmounted(() => {
           {{ warn }}
         </div>
         <div class="field">
-          <label>{{ t('bookings.departure') }}</label>
+          <label>{{ t('holds.property') }}</label>
           <USelect
-            v-model="departureId"
-            :items="departureItems"
+            v-model="propertyId"
+            :items="propertyItems"
             :disabled="loading"
             class="w-full"
           />
@@ -265,10 +259,27 @@ onUnmounted(() => {
         <div class="field">
           <label>{{ t('holds.cabinType') }}</label>
           <USelect
-            v-model="cabinCategory"
-            :items="cabinItems"
+            v-model="roomTypeId"
+            :items="roomTypeItems"
+            :disabled="propertyId === null"
             class="w-full"
           />
+        </div>
+        <div class="cols2">
+          <div class="field">
+            <label>{{ t('holds.checkIn') }}</label>
+            <input
+              v-model="checkIn"
+              type="date"
+            >
+          </div>
+          <div class="field">
+            <label>{{ t('holds.checkOut') }}</label>
+            <input
+              v-model="checkOut"
+              type="date"
+            >
+          </div>
         </div>
         <div class="cols2">
           <div class="field">
@@ -368,7 +379,7 @@ onUnmounted(() => {
           <UButton
             type="submit"
             :loading="submitting"
-            :disabled="submitting || departureId === null || guestName.trim() === ''"
+            :disabled="submitting || roomTypeId === null || checkIn === '' || checkOut === '' || guestName.trim() === ''"
           >
             {{ t('holds.addSubmit') }}
           </UButton>

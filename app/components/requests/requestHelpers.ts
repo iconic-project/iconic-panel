@@ -9,7 +9,7 @@ export type SlaDisplay = {
   text: string
 }
 
-export type WaitlistRowStatus = 'notified' | 'cabin_free' | 'waiting'
+export type WaitlistRowStatus = 'notified' | 'room_free' | 'waiting'
 
 export function formatHoldRemaining(
   remainingBusinessMinutes: number,
@@ -55,13 +55,13 @@ export function holdTypePill(type: string, minutes?: number): string {
   return type
 }
 
-export function waitlistRowStatus(entry: Pick<WaitlistEntry, 'notified' | 'cabin_available'>): WaitlistRowStatus {
+export function waitlistRowStatus(entry: Pick<WaitlistEntry, 'notified' | 'room_available'>): WaitlistRowStatus {
   if (entry.notified !== null) {
     return 'notified'
   }
 
-  if (entry.cabin_available) {
-    return 'cabin_free'
+  if (entry.room_available) {
+    return 'room_free'
   }
 
   return 'waiting'

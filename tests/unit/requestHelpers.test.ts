@@ -57,9 +57,9 @@ describe('waitlistRowStatus', () => {
   it('classifies notified, cabin free and waiting', () => {
     expect(waitlistRowStatus({
       notified: { at: '2026-09-20T00:00:00Z', channel: 'EMAIL', by: 'Carolina' },
-      cabin_available: true
+      room_available: true
     })).toBe('notified')
-    expect(waitlistRowStatus({ notified: null, cabin_available: true })).toBe('cabin_free')
-    expect(waitlistRowStatus({ notified: null, cabin_available: false })).toBe('waiting')
+    expect(waitlistRowStatus({ notified: null, room_available: true })).toBe('room_free')
+    expect(waitlistRowStatus({ notified: null, room_available: false })).toBe('waiting')
   })
 })

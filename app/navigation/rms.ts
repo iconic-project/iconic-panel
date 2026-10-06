@@ -160,11 +160,18 @@ export const rmsNav: Array<NavGroup> = [
     labelKey: 'nav.rms.bookingEngine',
     items: [
       {
-        id: 'itineraries',
-        labelKey: 'nav.rms.itineraries',
-        glyph: '◇',
-        to: '/rms/booking-engine/itineraries',
-        sprint: 3
+        id: 'property',
+        labelKey: 'nav.rms.property',
+        glyph: '⌂',
+        to: '/rms/booking-engine/property',
+        sprint: 20
+      },
+      {
+        id: 'room-types',
+        labelKey: 'nav.rms.roomTypes',
+        glyph: '▣',
+        to: '/rms/booking-engine/room-types',
+        sprint: 20
       },
       {
         id: 'departures',
