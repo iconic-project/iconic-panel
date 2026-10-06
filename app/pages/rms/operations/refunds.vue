@@ -236,7 +236,7 @@ async function onPanelUpdated(): Promise<void> {
                 {{ row.booking.display_reference ?? row.booking.reference }}
               </td>
               <td>{{ row.cancelled_at === null ? '—' : format(row.cancelled_at, 'short') }}</td>
-              <td>{{ row.days_before_departure }}</td>
+              <td>{{ row.days_before_arrival }}</td>
               <td>{{ t('refunds.band', { label: row.band_label, pct: String(row.penalty_pct) }) }}</td>
               <td>{{ money(row.penalty_amount) }}</td>
               <td>{{ t('refunds.dueOfPaid', { due: money(row.refund_due), paid: money(row.paid_at_cancellation) }) }}</td>

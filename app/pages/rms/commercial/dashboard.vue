@@ -5,9 +5,7 @@ import type {
   ChannelOfOriginGroup,
   CommercialMetrics,
   HotelKpis,
-  ItineraryListItem,
-  MetricDefinition,
-  Yacht
+  MetricDefinition
 } from '../../../types/api'
 import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import { calendarYear, resolveDateRange } from '../../../components/lists/dateRange'
@@ -40,8 +38,6 @@ const today = computed(() => format(new Date(), 'iso'))
 const yearWindow = resolveDateRange(`y${calendarYear(today.value)}`, today.value)
 const from = ref<string | null>(yearWindow.from)
 const to = ref<string | null>(yearWindow.to)
-const yachtId = ref(SELECT_ALL)
-const itineraryId = ref(SELECT_ALL)
 const channel = ref(SELECT_ALL)
 const agencyId = ref(SELECT_ALL)
 
@@ -49,35 +45,15 @@ const metrics = ref<CommercialMetrics | null>(null)
 const hotel = ref<HotelKpis | null>(null)
 const loadError = ref('')
 
-const { data: yachtsPayload } = useFetch<{ data: Array<Yacht> }>('/api/rms/yachts')
-const { data: itinerariesPayload } = useFetch<{ data: Array<ItineraryListItem> }>('/api/rms/itineraries')
 const { data: agenciesPayload } = useFetch<{ data: Array<AgencyListItem> }>('/api/rms/agencies')
 const { data: rulesPayload } = useFetch<BusinessRulesVersion>('/api/rms/business-rules', {
   immediate: can('rules.view')
 })
 
-const yachts = computed(() => yachtsPayload.value?.data ?? [])
-const itineraries = computed(() => itinerariesPayload.value?.data ?? [])
 const agencies = computed(() => agenciesPayload.value?.data ?? [])
 const lowOccupancyPct = computed(() => rulesPayload.value?.document.alerts.low_occupancy_pct ?? null)
-const departureCount = computed(() => metrics.value?.metrics.occupancy.departures.length ?? 0)
+const stayCount = computed(() => metrics.value?.metrics.occupancy.stays.length ?? 0)
 const hasWindow = computed(() => from.value !== null && to.value !== null)
-
-const yachtItems = computed(() => withSelectAll(
-  t('dashboard.allYachts'),
-  yachts.value.map(yacht => ({
-    label: yacht.code,
-    value: String(yacht.id)
-  }))
-))
-
-const itineraryItems = computed(() => withSelectAll(
-  t('dashboard.allItineraries'),
-  itineraries.value.map(itinerary => ({
-    label: itinerary.name,
-    value: String(itinerary.id)
-  }))
-))
 
 const channelItems = computed(() => withSelectAll(
   t('dashboard.allChannels'),
@@ -97,7 +73,7 @@ const agencyItems = computed(() => withSelectAll(
 
 let filterTimer: ReturnType<typeof setTimeout> | undefined
 
-watch([from, to, yachtId, itineraryId, channel, agencyId], () => {
+watch([from, to, channel, agencyId], () => {
   metrics.value = null
   clearTimeout(filterTimer)
   filterTimer = setTimeout(() => {
@@ -125,7 +101,7 @@ function hotelPercent(value: string | null): string {
   return `${value}%`
 }
 
-function periodLabel(key: HotelKpis['periods'][number]['key']): string {
+function periodLabel(key: string): string {
   if (key === 'this_month') {
     return t('dashboard.thisMonth')
   }
@@ -169,6 +145,54 @@ function barColor(ratio: string | null): string {
   return occupancyIsLow(ratio, lowOccupancyPct.value) ? 'var(--coral)' : 'var(--sand)'
 }
 
+type HotelCard = {
+  occupancy: string | null
+  adr: number | null
+  revpar: number | null
+}
+
+type HotelPeriod = {
+  key: string
+  kpis: HotelCard
+  last_year: HotelCard | null
+}
+
+function readCard(value: unknown): HotelCard {
+  if (value === null || typeof value !== 'object') {
+    return { occupancy: null, adr: null, revpar: null }
+  }
+
+  const card = value as Record<string, unknown>
+
+  return {
+    occupancy: typeof card.occupancy === 'string' ? card.occupancy : null,
+    adr: typeof card.adr === 'number' ? card.adr : null,
+    revpar: typeof card.revpar === 'number' ? card.revpar : null
+  }
+}
+
+function readPeriods(source: HotelKpis | null): Array<HotelPeriod> {
+  if (source === null) {
+    return []
+  }
+
+  return source.periods.flatMap((row) => {
+    if (typeof row.key !== 'string') {
+      return []
+    }
+
+    const lastYear = row.last_year
+
+    return [{
+      key: row.key,
+      kpis: readCard(row.kpis),
+      last_year: lastYear === null || lastYear === undefined ? null : readCard(lastYear)
+    }]
+  })
+}
+
+const hotelPeriods = computed(() => readPeriods(hotel.value))
+
 async function loadMetrics(): Promise<void> {
   if (from.value === null || to.value === null) {
     metrics.value = null
@@ -182,17 +206,7 @@ async function loadMetrics(): Promise<void> {
     to: to.value
   })
 
-  const yacht = selectedId(yachtId.value)
-  const itinerary = selectedId(itineraryId.value)
   const agency = selectedId(agencyId.value)
-
-  if (yacht !== null) {
-    params.set('yacht', String(yacht))
-  }
-
-  if (itinerary !== null) {
-    params.set('itinerary', String(itinerary))
-  }
 
   if (channel.value !== SELECT_ALL) {
     params.set('channel', channel.value)
@@ -233,7 +247,7 @@ async function loadMetrics(): Promise<void> {
       v-model:to="to"
       :field-label="t('dashboard.fieldLabel')"
       :noun="t('dashboard.noun')"
-      :total="departureCount"
+      :total="stayCount"
       :today="today"
     />
 
@@ -241,18 +255,6 @@ async function loadMetrics(): Promise<void> {
       <div class="drl">
         <span class="mono">{{ t('dashboard.filtersLabel') }}</span>
       </div>
-      <USelect
-        v-model="yachtId"
-        size="sm"
-        :items="yachtItems"
-        :aria-label="t('dashboard.allYachts')"
-      />
-      <USelect
-        v-model="itineraryId"
-        size="sm"
-        :items="itineraryItems"
-        :aria-label="t('dashboard.allItineraries')"
-      />
       <USelect
         v-model="channel"
         size="sm"
@@ -283,13 +285,13 @@ async function loadMetrics(): Promise<void> {
     <template v-else-if="metrics">
       <div class="krow">
         <AnkKpi :label="t('dashboard.kpiOccupancy')">
-          {{ hotelPercent(hotel?.periods[0]?.kpis.occupancy ?? null) }}
+          {{ hotelPercent(hotelPeriods[0]?.kpis.occupancy ?? null) }}
         </AnkKpi>
         <AnkKpi :label="t('dashboard.kpiAdr')">
-          {{ moneyOrDash(hotel?.periods[0]?.kpis.adr ?? null) }}
+          {{ moneyOrDash(hotelPeriods[0]?.kpis.adr ?? null) }}
         </AnkKpi>
         <AnkKpi :label="t('dashboard.kpiRevpar')">
-          {{ moneyOrDash(hotel?.periods[0]?.kpis.revpar ?? null) }}
+          {{ moneyOrDash(hotelPeriods[0]?.kpis.revpar ?? null) }}
         </AnkKpi>
         <AnkKpi
           :label="t('dashboard.kpiLead')"
@@ -328,7 +330,7 @@ async function loadMetrics(): Promise<void> {
             </thead>
             <tbody>
               <tr
-                v-for="period in hotel?.periods ?? []"
+                v-for="period in hotelPeriods"
                 :key="period.key"
               >
                 <td>{{ periodLabel(period.key) }}</td>
@@ -372,7 +374,7 @@ async function loadMetrics(): Promise<void> {
             <thead>
               <tr>
                 <th>{{ t('dashboard.colDate') }}</th>
-                <th>{{ t('dashboard.colYacht') }}</th>
+                <th>{{ t('blocks.property') }}</th>
                 <th>{{ t('dashboard.colSold') }}</th>
                 <th>{{ t('dashboard.colSellable') }}</th>
                 <th>{{ t('dashboard.colOccupancy') }}</th>
@@ -380,7 +382,7 @@ async function loadMetrics(): Promise<void> {
             </thead>
             <tbody>
               <tr
-                v-if="metrics.metrics.occupancy.departures.length === 0"
+                v-if="metrics.metrics.occupancy.stays.length === 0"
                 class="dr-empty"
               >
                 <td colspan="5">
@@ -388,7 +390,7 @@ async function loadMetrics(): Promise<void> {
                 </td>
               </tr>
               <tr
-                v-for="row in metrics.metrics.occupancy.departures"
+                v-for="row in metrics.metrics.occupancy.stays"
                 :key="row.id"
               >
                 <td>
@@ -396,7 +398,7 @@ async function loadMetrics(): Promise<void> {
                     {{ format(row.date, 'short') }}
                   </NuxtLink>
                 </td>
-                <td>{{ row.yacht_code }}</td>
+                <td>{{ row.property_code }}</td>
                 <td>{{ row.sold_berths }}</td>
                 <td>{{ row.sellable_berths }}</td>
                 <td>

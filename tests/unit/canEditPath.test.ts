@@ -20,7 +20,7 @@ describe('isCopyPath', () => {
   it('matches an exact copy path and a prefix of a list path', () => {
     expect(isCopyPath('copy.confirmation_steps', copyPaths)).toBe(true)
     expect(isCopyPath('copy.confirmation_steps.0', copyPaths)).toBe(true)
-    expect(isCopyPath('guests.max_per_cabin', copyPaths)).toBe(false)
+    expect(isCopyPath('guests.max_per_property', copyPaths)).toBe(false)
   })
 })
 
@@ -28,7 +28,7 @@ describe('canEditPath', () => {
   it('lets engine_settings.manage edit any path', () => {
     const can = allow('engine_settings.manage')
 
-    expect(canEditPath('guests.max_per_cabin', copyPaths, can)).toBe(true)
+    expect(canEditPath('guests.max_per_property', copyPaths, can)).toBe(true)
     expect(canEditPath('copy.book_now_pay_later', copyPaths, can)).toBe(true)
     expect(canEditPath('locale.default', copyPaths, can)).toBe(true)
   })
@@ -39,7 +39,7 @@ describe('canEditPath', () => {
     expect(canEditPath('copy.book_now_pay_later', copyPaths, can)).toBe(true)
     expect(canEditPath('copy.confirmation_steps', copyPaths, can)).toBe(true)
     expect(canEditPath('fees.footnote', copyPaths, can)).toBe(true)
-    expect(canEditPath('guests.max_per_cabin', copyPaths, can)).toBe(false)
+    expect(canEditPath('guests.max_per_property', copyPaths, can)).toBe(false)
     expect(canEditPath('fees.tct_pp', copyPaths, can)).toBe(false)
   })
 
@@ -47,6 +47,6 @@ describe('canEditPath', () => {
     const can = allow('panel.rms')
 
     expect(canEditPath('copy.book_now_pay_later', copyPaths, can)).toBe(false)
-    expect(canEditPath('guests.max_per_cabin', copyPaths, can)).toBe(false)
+    expect(canEditPath('guests.max_per_property', copyPaths, can)).toBe(false)
   })
 })

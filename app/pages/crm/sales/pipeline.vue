@@ -377,7 +377,7 @@ function onKeyboardMove(deal: PipelineDeal, stage: string | number | boolean | n
               <span class="mono">{{ deal.contact.name }}</span>
               <USelect
                 v-if="deal.may_move"
-                :model-value="''"
+                :model-value="undefined"
                 class="move"
                 size="sm"
                 :placeholder="t('crmPipeline.moveTo')"

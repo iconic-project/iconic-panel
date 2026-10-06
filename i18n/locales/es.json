@@ -330,7 +330,7 @@
     "cancellationSet": "Cancellation set",
     "mealPlan": "Meal plan",
     "addPlan": "Add a plan",
-    "legacyTitle": "Legacy (yacht) — read only",
+    "legacyTitle": "Legacy (property) — read only",
     "adults": "Adults",
     "childAges": "Child ages",
     "childAgesHint": "6, 8",
@@ -422,7 +422,8 @@
     "prevCharter": "Vista previa del motor · «Chárter, de un vistazo»",
     "previewBody": "La vista previa llega con el sprint del motor de reservas",
     "historyTitle": "Historial de publicación",
-    "historyEmpty": "No hay cambios publicados en esta sesión."
+    "historyEmpty": "No hay cambios publicados en esta sesión.",
+    "maxPerProperty": "Máximo de huéspedes por propiedad"
   },
   "businessRules": {
     "noticeBefore": "Cada regla de negocio con la que operan el RMS y el motor de reservas, con su fuente en ",
@@ -754,112 +755,8 @@
       "LIVE": "ACTIVA",
       "PAUSED": "EN PAUSA",
       "EXPIRED": "VENCIDA"
-    }
-  },
-  "departures": {
-    "noticeBefore": "Cada fila es un yate que zarpa un domingo. Define ",
-    "noticeItinerary": "qué itinerario",
-    "noticeMid": " navega, si está ",
-    "noticeOnSale": "a la venta",
-    "noticeGuest": ", y lo que ve el huésped (\"Solo quedan 2 camarotes\", lista de espera). ",
-    "noticeInventory": "La disponibilidad de camarotes nunca se escribe aquí",
-    "noticeAfter": " — proviene en vivo de Reservas, Solicitudes, Retenciones y Bloqueos internos.",
-    "retired": "Las salidas se retiran en el sprint 22 — use Restricciones.",
-    "noun": "salidas",
-    "fieldLabel": "Fecha de salida",
-    "panelTitle": "Salidas en el motor de reservas",
-    "allYachts": "Todos los yates",
-    "generate": "Generar temporada…",
-    "new": "＋ Nueva salida",
-    "empty": "No hay salidas en este intervalo de fechas.",
-    "colDeparture": "Salida",
-    "colYacht": "Yate",
-    "colItinerary": "Itinerario",
-    "colRates": "Tarifas",
-    "colInventory": "Inventario (en vivo)",
-    "colEngine": "El motor muestra",
-    "colStatus": "Estado",
-    "kpiOnSale": "A la venta en el motor",
-    "kpiOnSaleSub": "de {n} salidas en vista",
-    "kpiBookable": "Camarotes reservables",
-    "kpiBookableSub": "camarotes libres en salidas a la venta",
-    "kpiOnlyN": "Mostrando \"solo quedan N\"",
-    "kpiOnlyNSub": "en el umbral de urgencia o por debajo",
-    "kpiFull": "Completa",
-    "kpiFullSub": "lista de espera ofrecida cuando está habilitada",
-    "ratesFrom": "Tarifas {year} · desde {amount}",
-    "ratesMissing": "⚠ Sin tarifas {year}",
-    "festivePill": "FESTIVO +{amount} PP",
-    "itinDraft": "⚠ ITINERARIO EN BORRADOR",
-    "itinHidden": "⚠ ITINERARIO OCULTO",
-    "invSold": "{n} VENDIDOS",
-    "invHeld": "{n} RETENIDOS",
-    "invBlocked": "{n} BLOQUEADOS",
-    "invFree": "{n} LIBRES",
-    "statusOnSale": "A la venta",
-    "statusClosed": "Cerrada a la venta",
-    "statusHidden": "Oculta",
-    "statusCharter": "Solo charter",
-    "statusSaved": "Estado actualizado",
-    "newTitle": "Nueva salida",
-    "newBid": "ALIMENTA EL MOTOR DE RESERVAS + EL CALENDARIO DEL RMS",
-    "existingBid": "{reference} · {itinerary}",
-    "existingTitle": "{date} · {yacht}",
-    "viewOnly": "Rol {role}: solo lectura. Las salidas las administran Admin / Manager.",
-    "sectionDeparture": "Salida",
-    "embarkDate": "Fecha de embarque (domingo)",
-    "yacht": "Yate",
-    "itinerary": "Itinerario",
-    "itineraryDraft": "{name} (borrador)",
-    "statusOnEngine": "Estado en el motor",
-    "festiveCheck": "Salida festiva — suplemento de +{amount} pp; todos los descuentos y ofertas bloqueados",
-    "lockNotice": "La fecha y el yate están bloqueados — {n} camarote(s) vendidos o retenidos en esta salida. Traslade primero a los huéspedes con \"Mover a otra salida\" en cada reserva.",
-    "sectionGuest": "Lo que ve el huésped",
-    "urgency": "\"Solo quedan N camarotes\" cuando los libres ≤",
-    "publicNote": "Nota pública en la fila de salida",
-    "publicNotePlaceholder": "p. ej. Navegación inaugural",
-    "waitlist": "Ofrecer la lista de espera cuando esté completa (alimenta Retenciones y lista de espera)",
-    "previewLabel": "Vista previa del motor · desplegable de salidas",
-    "previewFrom": "desde {amount} pp",
-    "previewNoRate": "sin tarifa",
-    "previewFestive": " + festivo",
-    "sectionInventory": "Inventario en vivo (solo lectura)",
-    "cabinChip": "{cabin} · {state}",
-    "inventoryNote": "El inventario nunca se escribe aquí: proviene de Reservas, Solicitudes de reserva, Retenciones y Bloqueos internos. El motor lee las Suites libres ({suites}/8) y la Suite del propietario ({owner}).",
-    "ownerFree": "libre",
-    "ownerTaken": "ocupada",
-    "create": "Crear salida",
-    "save": "Guardar",
-    "saved": "Salida guardada",
-    "created": "Salida creada",
-    "delete": "Eliminar",
-    "deleteLocked": "Eliminar ({reason})",
-    "deleteConfirm": "¿Eliminar {reference}?",
-    "deleted": "Salida eliminada",
-    "cancel": "Cancelar",
-    "history": "Historial",
-    "subject": "SALIDA",
-    "pickDate": "Seleccione la fecha de embarque.",
-    "seasonTitle": "Generar temporada",
-    "seasonBid": "CREA SALIDAS SEMANALES LOS DOMINGOS",
-    "seasonFrom": "Desde",
-    "seasonTo": "Hasta",
-    "seasonYachts": "Yates",
-    "seasonPattern": "Patrón de itinerario",
-    "patternAlt": "Alternar Western Realm / Northern Passage (yates en rutas opuestas)",
-    "patternWest": "Western Realm cada semana",
-    "patternNorth": "Northern Passage cada semana",
-    "seasonFestive": "Usar Festive Expeditions para las salidas del 15 de diciembre al 2 de enero",
-    "seasonCreateAs": "Crear como",
-    "seasonClosed": "Cerrada a la venta — revisar y luego abrir",
-    "seasonOnSale": "A la venta de inmediato",
-    "seasonNotice": "Las salidas existentes (misma fecha + yate) se omiten. Las fechas nuevas también aparecen como columnas en el calendario del RMS.",
-    "seasonGenerate": "Generar",
-    "seasonNeedRange": "Seleccione un intervalo de fechas válido.",
-    "seasonNeedYacht": "Seleccione al menos un yate.",
-    "seasonCreatedClosed": "{n} salidas creadas como Cerrada a la venta — ábralas cuando esté listo.",
-    "seasonCreatedOnSale": "{n} salidas creadas y a la venta.",
-    "seasonSkipped": "{n} omitidas."
+    },
+    "showOnCalendar": "Mostrar en el calendario de disponibilidad"
   },
   "calendar": {
     "noun": "noches",
@@ -884,15 +781,6 @@
     "booking": "Reserva",
     "bookingMissing": "No se pudo cargar esta reserva.",
     "bookingReadOnly": "Solo lectura en este calendario."
-  },
-  "yachtLayout": {
-    "noun": "salidas",
-    "fieldLabel": "Fecha de salida",
-    "departure": "Salida",
-    "festive": "FESTIVO",
-    "noSailing": "Sin navegación",
-    "empty": "No hay salidas en este intervalo de fechas.",
-    "deckHeader": "{yacht} · {date}"
   },
   "blocks": {
     "noun": "bloqueos",
@@ -923,12 +811,10 @@
     "subject": "BLOQUEO",
     "leaveUnsaved": "Tiene cambios de bloqueo sin guardar. ¿Desea salir de esta página?",
     "createTitle": "Nuevo bloqueo",
-    "yacht": "Yate",
     "departures": "Salidas",
     "departuresHint": "Máximo 20. Los mismos camarotes se aplican a cada salida seleccionada.",
     "freeCabins": "{n} libres",
     "noDepartures": "No hay salidas futuras en este intervalo de fechas.",
-    "cabins": "Camarotes",
     "fullYacht": "Yate completo",
     "reason": "Motivo",
     "reasons": {
@@ -1010,7 +896,7 @@
     "newReservation": "＋ Nueva reserva",
     "newTitle": "Nueva reserva — ingreso manual",
     "bookingType": "Tipo de reserva",
-    "typeCabin": "CABIN (FIT / grupo)",
+    "typeCabin": "ROOM (FIT / grupo)",
     "typeCharter": "CHARTER (yate completo)",
     "mainChannel": "Canal principal",
     "originChannel": "Canal de origen",
@@ -1039,7 +925,6 @@
     "adults": "Adultos",
     "children": "Niños",
     "childrenRange": "Niños ({min}–{max})",
-    "cabin": "Cabina",
     "pickCabin": "Seleccione una cabina",
     "pickACabin": "Seleccione una cabina",
     "cabinTaken": "No disponible",
@@ -1053,7 +938,7 @@
     "ops008": "Reserva de grupo (OPS-008): mismas tarifas y condiciones que FIT. Cada cabina recibe su propio identificador de reserva bajo un mismo grupo; el huésped principal es el coordinador del grupo y el único punto de contacto.",
     "backToBack": "Consecutiva con otra semana (descuento en ambas semanas · no festivo)",
     "priceHeader": "Precio · según Tarifas y promociones · disponibilidad verificada en tiempo real",
-    "cabinQuote": "CABINA {n} · {cabin} · {party}",
+    "cabinQuote": "CABINA {n} · {room} · {party}",
     "partyAdults": "{adults} AD",
     "partyMix": "{adults} AD + {children} CH",
     "groupTotalLine": "Total del grupo · {n} cabinas",
@@ -1087,7 +972,7 @@
     "colCabins": "Cabinas",
     "groupsEmpty": "No hay grupos.",
     "groupCoordinator": "coordinador {name}",
-    "groupCabins": "{cabins} cabinas · {guests} huéspedes",
+    "groupCabins": "{rooms} cabinas · {guests} huéspedes",
     "groupCabinsOne": "1 cabina · {guests} huéspedes",
     "auditTitle": "Eliminadas y liberadas — auditoría",
     "colWhen": "Cuándo",
@@ -1376,7 +1261,12 @@
     "deskPreview": "Preview",
     "deskConfirm": "Confirm",
     "deskReason": "Reason",
-    "deskFailed": "The front desk action failed."
+    "deskFailed": "The front desk action failed.",
+    "kvStay": "Estancia",
+    "kvRoom": "Habitación",
+    "stayFare": "Estancia",
+    "depositOfStay": "Depósito · {pct}% de la estancia",
+    "stayTotal": "Total de la estancia"
   },
   "dashboard": {
     "noun": "salidas",
@@ -1473,7 +1363,7 @@
     "kpiCollected": "Cobrado a la fecha",
     "kpiCollectedSub": "depósitos + saldos, todos los canales",
     "kpiDeposits": "De los cuales, depósitos",
-    "kpiDepositsSub": "{cabin}% cabinas · {charter}% charter",
+    "kpiDepositsSub": "{charter}% depósito charter",
     "kpiPending": "Pagos pendientes",
     "kpiPendingSub": "{n} pagos · vencen en T−{days} según la reserva",
     "kpiOverdue": "Vencido",
@@ -1576,7 +1466,7 @@
   "requests": {
     "fieldLabel": "Fecha de salida",
     "noun": "solicitudes",
-    "notice": "Las reservas web llegan aquí como {status}, con las cabinas retenidas ({near} horas hábiles en el corto plazo / {long} días hábiles en el largo plazo). SLA: contactar al cliente {sla} por su canal preferido. Al confirmar se envía el enlace de pago del depósito del {pct}%; las declaraciones y los datos completos de los huéspedes se capturan allí. Ninguna solicitud se cancela automáticamente sin revisión del equipo; al vencer, se libera la retención y se notifica al responsable.",
+    "notice": "Las reservas web llegan aquí como {status}, con las habitaciones retenidas ({near} horas hábiles en el corto plazo / {long} días hábiles en el largo plazo). SLA: contactar al cliente {sla} por su canal preferido. Al confirmar se envía el enlace de pago del depósito; las declaraciones y los datos completos de los huéspedes se capturan allí. Ninguna solicitud se cancela automáticamente sin revisión del equipo; al vencer, se libera la retención y se notifica al responsable.",
     "noticeSla": "dentro de {hours} horas",
     "panelTitle": "Solicitudes entrantes",
     "colRequest": "Solicitud",
@@ -1684,7 +1574,8 @@
     "waitlistRule": "El sistema notifica a la primera entrada de la fila cuando se libera una habitación. No se retiene nada.",
     "remove": "Quitar",
     "removeTitle": "Quitar de la lista de espera",
-    "removedToast": "Quitado de la lista de espera"
+    "removedToast": "Quitado de la lista de espera",
+    "roomFree": "HABITACIÓN LIBRE — AVISAR"
   },
   "refunds": {
     "noun": "reembolsos",
@@ -2692,8 +2583,8 @@
     "rows": {
       "yachtName": {
         "step": "Site-wide",
-        "element": "Yacht name on departures & trip details",
-        "source": "Departures › Yacht"
+        "element": "Property name on departures & trip details",
+        "source": "Departures › Property"
       },
       "salesCalendar": {
         "step": "Site-wide",
@@ -2702,7 +2593,7 @@
       },
       "guestRules": {
         "step": "Site-wide",
-        "element": "Guest rules — max per cabin / yacht, child ages, adult with children",
+        "element": "Guest rules — max per room / property, child ages, adult with children",
         "source": "Engine Settings › Guests & capacity"
       },
       "searchWindow": {
@@ -2737,7 +2628,7 @@
       },
       "departureRow": {
         "step": "2 · Itineraries",
-        "element": "Departure row — dates, yacht, note",
+        "element": "Departure row — dates, property, note",
         "source": "Departures"
       },
       "availability": {
@@ -2781,32 +2672,32 @@
         "source": "Engine Settings › Booking notes & messages"
       },
       "deckPlan": {
-        "step": "4 · Cabins",
-        "element": "Deck plan & cabin numbers",
-        "source": "Yacht Layout"
+        "step": "4 · Rooms",
+        "element": "Deck plan & room numbers",
+        "source": "Property Layout"
       },
       "bookableCabins": {
-        "step": "4 · Cabins",
-        "element": "Which cabins are bookable",
+        "step": "4 · Rooms",
+        "element": "Which rooms are bookable",
         "source": "Live inventory — Calendar / Bookings / Holds / Blocks"
       },
       "priceLines": {
-        "step": "4 · Cabins",
+        "step": "4 · Rooms",
         "element": "Price lines — base, child −15%, single +75%, triple −10%, festive",
         "source": "Rates & Promotions › Discount & supplement rules (locked)"
       },
       "offerLine": {
-        "step": "4 · Cabins",
+        "step": "4 · Rooms",
         "element": "Offer line in the price panel",
         "source": "Offers › Price panel / invoice line"
       },
       "deposit": {
-        "step": "4 · Cabins",
+        "step": "4 · Rooms",
         "element": "Deposit % · balance due date",
         "source": "Rates & Promotions › Deposit & balance"
       },
       "feeEstimates": {
-        "step": "4 · Cabins",
+        "step": "4 · Rooms",
         "element": "TCT & PNG fee estimates (information lines)",
         "source": "Engine Settings › Galápagos fees"
       },
@@ -2858,7 +2749,7 @@
       },
       "deposit": {
         "title": "Deposit",
-        "before": "cruise (cabin) charges only. Extras and collected fees are due ",
+        "before": "cruise (room) charges only. Extras and collected fees are due ",
         "emphasis": "up to 72 h before departure",
         "after": "; services taken on board are settled during or after the cruise."
       },
@@ -2874,16 +2765,12 @@
         "title": "Invoicing entity",
         "body": "PONTOS LLC, 430 Grand Bay Drive, Apt 1108, Key Biscayne, FL 33149, USA · EIN 42-4742064. Bank details still pending."
       },
-      "yachts": {
-        "title": "Yachts",
-        "body": "ANAMARA and ANATIVA: identical twins, same hull, layout, cabin numbering and rates, so the two names are interchangeable in inventory terms."
-      },
       "itineraryNames": {
         "title": "Itinerary names",
         "body": "the engine set is the single set: Western Realm · Northern Passage · Festive Expeditions."
       },
       "cabinNumbering": {
-        "title": "Cabin numbering",
+        "title": "Room numbering",
         "body": "Suite 01–08 + Owner's Suite everywhere; the engine's 201–208 / 301 deck plan must change."
       },
       "season": {
@@ -2894,7 +2781,7 @@
         "title": "DPNG list",
         "before": "column set approved as built. ",
         "emphasis": "Capacity",
-        "after": " — 3 guests per cabin."
+        "after": " — 3 guests per room."
       },
       "payments": {
         "title": "Payments & email",
@@ -2902,7 +2789,7 @@
       },
       "backToBack": {
         "title": "Back-to-back",
-        "before": "cabin bookings only. ",
+        "before": "room bookings only. ",
         "emphasis": "Language",
         "after": " — everything in English, guest-facing and internal."
       },

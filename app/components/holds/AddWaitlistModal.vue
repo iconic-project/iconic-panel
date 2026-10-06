@@ -6,7 +6,7 @@ import type {
   WaitlistEntry
 } from '../../types/api'
 import { firstApiMessage, applyApiFormError } from '../../utils/apiForm'
-import { existingContactSelected } from '../bookings/newReservationHelpers'
+import { existingContactSelected } from './contactMatch'
 
 type PropertyOption = {
   id: number
@@ -69,7 +69,7 @@ const propertyItems = computed(() => [
 ])
 
 const roomTypeItems = computed(() => [
-  { label: t('holds.cabinType'), value: null as number | null },
+  { label: t('bookings.roomType'), value: null as number | null },
   ...roomTypes.value.map(row => ({
     label: `${row.code} · ${row.name}`,
     value: row.id
@@ -257,7 +257,7 @@ onUnmounted(() => {
           />
         </div>
         <div class="field">
-          <label>{{ t('holds.cabinType') }}</label>
+          <label>{{ t('bookings.roomType') }}</label>
           <USelect
             v-model="roomTypeId"
             :items="roomTypeItems"

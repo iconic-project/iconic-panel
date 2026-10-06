@@ -76,7 +76,7 @@ describe('extraHelpers', () => {
     })).map(row => row.id)
 
     expect(ids).toEqual([
-      'cruise',
+      'stay',
       'extras',
       'fees',
       'rule',

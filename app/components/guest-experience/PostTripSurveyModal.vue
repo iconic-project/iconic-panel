@@ -33,7 +33,7 @@ const submitting = ref(false)
 const openGuests = computed(() => guests.value.filter(guest => !guest.responded))
 
 const guestItems = computed(() => guests.value.map(guest => ({
-  label: `${guest.name} · ${guest.cabin}${guest.responded ? ` · ${t('guestExperience.surveyAnswered')}` : ''}`,
+  label: `${guest.name} · ${guest.room}${guest.responded ? ` · ${t('guestExperience.surveyAnswered')}` : ''}`,
   value: guest.guest_id,
   disabled: guest.responded
 })))

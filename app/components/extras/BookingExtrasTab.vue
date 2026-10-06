@@ -73,7 +73,6 @@ const feeAmounts = computed(() => {
 function emptySummary(): ExtrasListSummary {
   return {
     extras_total: 0,
-    png_collected: false,
     tct_collected: false,
     png_known_total: 0,
     png_pending_count: 0,
@@ -236,17 +235,17 @@ async function confirmRemove(): Promise<void> {
   }
 }
 
-function onFeeChange(field: 'png_collected' | 'tct_collected', event: Event): void {
+function onFeeChange(event: Event): void {
   const target = event.target
 
   if (!(target instanceof HTMLInputElement)) {
     return
   }
 
-  void onFee(field, target.checked)
+  void onFee(target.checked)
 }
 
-async function onFee(field: 'png_collected' | 'tct_collected', value: boolean): Promise<void> {
+async function onFee(value: boolean): Promise<void> {
   if (!canWrite.value) {
     return
   }
@@ -256,7 +255,7 @@ async function onFee(field: 'png_collected' | 'tct_collected', value: boolean): 
   try {
     const booking = await request(`/api/rms/bookings/${props.booking.id}/fees`, {
       method: 'PATCH',
-      body: { [field]: value }
+      body: { tct_collected: value }
     }) as Booking
 
     toast.add({ title: t('bookings.feesUpdatedToast') })
@@ -445,18 +444,9 @@ async function onFee(field: 'png_collected' | 'tct_collected', value: boolean): 
       <label class="chkline">
         <input
           type="checkbox"
-          :checked="summary.png_collected"
-          :disabled="!canWrite || feeBusy"
-          @change="onFeeChange('png_collected', $event)"
-        >
-        {{ feeLabel('png', feeAmounts) }}
-      </label>
-      <label class="chkline">
-        <input
-          type="checkbox"
           :checked="summary.tct_collected"
           :disabled="!canWrite || feeBusy"
-          @change="onFeeChange('tct_collected', $event)"
+          @change="onFeeChange($event)"
         >
         {{ feeLabel('tct', feeAmounts) }}
       </label>

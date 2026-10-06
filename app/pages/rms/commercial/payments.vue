@@ -38,9 +38,7 @@ const emptyKpis: PaymentsKpis = {
   overdue_count: 0,
   overdue_amount: 0,
   commission_accrued: 0,
-  cabin_deposit_pct: 0,
   charter_deposit_pct: 0,
-  cabin_balance_days: 0,
   commission_payable_days: 0,
   commission_cap_pct: 0,
   wire_window_hours: 0
@@ -328,7 +326,7 @@ async function submitApply(payload: { bookingId: number, kind: string }): Promis
               <th>{{ t('payments.colClient') }}</th>
               <th>{{ t('payments.colSegment') }}</th>
               <th>{{ t('payments.colAmountDue') }}</th>
-              <th>{{ t('payments.colDueDate', { days: String(kpis.cabin_balance_days) }) }}</th>
+              <th>{{ t('payments.colDate') }}</th>
               <th>{{ t('payments.colStatus') }}</th>
             </tr>
           </thead>

@@ -11,16 +11,16 @@ import {
 
 describe('engine map catalogue', () => {
   it('maps every prototype element', () => {
-    expect(engineMapRows).toHaveLength(32)
-    expect(engineMapDecisions).toHaveLength(13)
+    expect(engineMapRows).toHaveLength(27)
+    expect(engineMapDecisions).toHaveLength(10)
     expect(engineMapOpen).toHaveLength(7)
   })
 
   it('counts sources the way the prototype does', () => {
     expect(engineMapCounts(engineMapRows)).toEqual({
-      mapped: 32,
-      fedByNew: 21,
-      fedByExisting: 11,
+      mapped: 27,
+      fedByNew: 17,
+      fedByExisting: 10,
       notYet: 0
     })
   })

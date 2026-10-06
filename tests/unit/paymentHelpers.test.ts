@@ -69,9 +69,7 @@ describe('paymentHelpers', () => {
       overdue_count: 1,
       overdue_amount: 12000,
       commission_accrued: 2660,
-      cabin_deposit_pct: 10,
       charter_deposit_pct: 20,
-      cabin_balance_days: 120,
       commission_payable_days: 30,
       commission_cap_pct: 12,
       wire_window_hours: 72
@@ -80,8 +78,8 @@ describe('paymentHelpers', () => {
     const cards = paymentsKpiCards(meta)
 
     expect(cards.map(card => card.value)).toEqual([5000, 2660, 23940, 12000, 2660])
-    expect(cards[1]?.subParams).toEqual({ cabin: '10', charter: '20' })
-    expect(cards[2]?.subParams).toEqual({ n: '2', days: '120' })
+    expect(cards[1]?.subParams).toEqual({ charter: '20' })
+    expect(cards[2]?.subParams).toEqual({ n: '2' })
     expect(cards[3]?.tone).toBe('coral')
     expect(cards[4]?.subParams).toEqual({ days: '30' })
   })

@@ -196,9 +196,6 @@ onMounted(() => {
       <template #sla>
         <b>{{ t('requests.noticeSla', { hours: String(rules.response_hours) }) }}</b>
       </template>
-      <template #pct>
-        {{ rules.cabin_deposit_pct }}
-      </template>
     </i18n-t>
 
     <div class="panel">

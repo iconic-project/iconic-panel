@@ -13,7 +13,7 @@ export type BusinessRulesDraft = {
   commission: {
     cap_pct: number | null
     default_pct: number | null
-    payable_days_after_cruise: number | null
+    payable_days_after_check_out: number | null
   }
   modification_fee_usd: number | null
   payments: {
@@ -36,17 +36,13 @@ export type BusinessRulesDraft = {
     refund_business_days: number | null
     agency_approval_business_days: number | null
   }
-  manifests: {
-    dpng_fit_days: number | null
-    dpng_charter_days: number | null
-  }
   alerts: {
     low_occupancy_pct: number | null
     low_occupancy_days_before: number | null
   }
   retention: {
-    passport_months_after_cruise: number | null
-    medical_days_after_cruise: number | null
+    passport_months_after_check_out: number | null
+    medical_days_after_check_out: number | null
   }
   cancellation: {
     bands: Array<BandDraft>
@@ -106,14 +102,13 @@ const PENDING_STATUSES: Array<RuleStatus> = [
 
 const OTHER_PAGES: Array<RuleWhere> = [
   'rates',
-  'engine_settings',
-  'departures'
+  'engine_settings'
 ]
 
 const FIELD_META: Record<string, RuleFieldMeta> = {
   'commission.cap_pct': { unit: '%', min: 0, max: 30 },
   'commission.default_pct': { unit: '%', min: 0, max: 30 },
-  'commission.payable_days_after_cruise': { unit: 'days', min: 0, max: 120 },
+  'commission.payable_days_after_check_out': { unit: 'days', min: 0, max: 120 },
   'modification_fee_usd': { unit: 'USD', min: 0, max: 10000, prefix: 'USD' },
   'payments.extras_due_hours': { unit: 'hours', min: 0, max: 2160 },
   'payments.wire_window_hours': { unit: 'hours', min: 12, max: 168 },
@@ -127,12 +122,10 @@ const FIELD_META: Record<string, RuleFieldMeta> = {
   'sla.response_hours': { unit: 'hours', min: 1, max: 72 },
   'sla.refund_business_days': { unit: 'business days', min: 1, max: 60 },
   'sla.agency_approval_business_days': { unit: 'business days', min: 1, max: 10 },
-  'manifests.dpng_fit_days': { unit: 'days', min: 1, max: 90 },
-  'manifests.dpng_charter_days': { unit: 'days', min: 1, max: 90 },
   'alerts.low_occupancy_pct': { unit: '%', min: 1, max: 100 },
   'alerts.low_occupancy_days_before': { unit: 'days', min: 1, max: 365 },
-  'retention.passport_months_after_cruise': { unit: 'months', min: 1, max: 120 },
-  'retention.medical_days_after_cruise': { unit: 'days', min: 1, max: 3650 },
+  'retention.passport_months_after_check_out': { unit: 'months', min: 1, max: 120 },
+  'retention.medical_days_after_check_out': { unit: 'days', min: 1, max: 3650 },
   'cancellation.bands.min_days': { unit: 'days', min: 0, max: 999 },
   'cancellation.bands.penalty_pct': { unit: '%', min: 0, max: 100 }
 }
@@ -400,9 +393,9 @@ export function ruleFieldLabels(): Record<string, string> {
   return {
     'commission.cap_pct': 'FIN-005 · Max agency commission',
     'commission.default_pct': 'RMS · Default agency commission',
-    'commission.payable_days_after_cruise': '§10 · Commission payable after cruise',
+    'commission.payable_days_after_check_out': '§10 · Commission payable after check-out',
     'modification_fee_usd': 'FIN-006 · Date-change / modification fee',
-    'payments.extras_due_hours': 'Iconic · Extras & collected fees — due before departure',
+    'payments.extras_due_hours': 'Iconic · Extras and collected fees — due before check-out',
     'payments.wire_window_hours': 'RMS · Wire transfer window before auto-release',
     'payments.balance_reminder_days': '§4.1.4 · Balance reminders — days before due',
     'discounts.online_deposit_discount_pct': '08 B2 · Online-deposit advantage',
@@ -411,16 +404,14 @@ export function ruleFieldLabels(): Record<string, string> {
     'holds.web_extension_minutes': 'R-B2 · Web checkout hold (+ one silent extension)',
     'holds.near_term_business_hours': 'TEC-004 · Request / agency hold — near-term',
     'holds.long_lead_business_days': 'TEC-004 · Request / agency hold — long-lead',
-    'sla.response_hours': 'OPS-009 · Quote / first-response SLA (FIT, groups, charter)',
+    'sla.response_hours': 'OPS-009 · Quote / first-response SLA (FIT and groups)',
     'sla.refund_business_days': 'RMS · Refund execution SLA',
     'sla.agency_approval_business_days': '§5.5 · Agency approval SLA',
-    'manifests.dpng_fit_days': 'OPS-013 · DPNG manifest deadline — FIT / charter',
-    'manifests.dpng_charter_days': 'OPS-013 · DPNG manifest deadline — FIT / charter',
     'alerts.low_occupancy_pct': '§10 · Low-occupancy alert',
     'alerts.low_occupancy_days_before': '§10 · Low-occupancy alert',
-    'retention.passport_months_after_cruise': '§6.4 · Passport retention',
-    'retention.medical_days_after_cruise': 'LEG-002 · Medical notes retention',
-    'cancellation.bands': '§4.1.5 · Cabin cancellation penalty bands'
+    'retention.passport_months_after_check_out': '§6.4 · Passport retention after check-out',
+    'retention.medical_days_after_check_out': 'LEG-002 · Medical notes retention after check-out',
+    'cancellation.bands': '§4.1.5 · Stay cancellation penalty bands'
   }
 }
 
@@ -439,17 +430,13 @@ export function statusPill(status: RuleStatus): { tone: RulePillTone, labelKey: 
   }
 }
 
-export function ruleLinkKey(where: RuleWhere): 'linkRates' | 'linkEngine' | 'linkDepartures' | null {
+export function ruleLinkKey(where: RuleWhere): 'linkRates' | 'linkEngine' | null {
   if (where === 'rates') {
     return 'linkRates'
   }
 
   if (where === 'engine_settings') {
     return 'linkEngine'
-  }
-
-  if (where === 'departures') {
-    return 'linkDepartures'
   }
 
   return null

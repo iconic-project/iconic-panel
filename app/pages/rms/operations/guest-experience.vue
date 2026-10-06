@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type {
-  DepartureGuestExperience,
   NpsView,
-  PreferenceSource
+  PreferenceSource,
+  PreferenceStatus
 } from '../../../types/api'
 import DocumentPreviewModal from '../../../components/documents/DocumentPreviewModal.vue'
 import PreferenceModal from '../../../components/guest-experience/PreferenceModal.vue'
@@ -12,7 +12,38 @@ import {
 } from '../../../components/guest-experience/guestExperienceHelpers'
 import { firstApiMessage } from '../../../utils/apiForm'
 
-type ExperienceGuest = DepartureGuestExperience['guests'][number]
+type ArrivalGuest = {
+  guest_id: number
+  name: string
+  booking_reference: string
+  email: string | null
+  email_note: string | null
+  room: string
+  status: PreferenceStatus
+  status_label: string
+  answered_at: string | null
+  source: PreferenceSource | null
+  send_date: string
+  dietary: string | null
+  celebration: string | null
+  activity: string | null
+  accessibility_provided: boolean
+  emergency_contact_provided: boolean
+}
+
+type ArrivalGuestListView = {
+  send_date: string
+  send_state: 'sent' | 'scheduled'
+  kpis: {
+    guests: number
+    bookings: number
+    answered: number
+    total: number
+    celebrations: number
+    accessibility_or_medical: number
+  }
+  guests: Array<ArrivalGuest>
+}
 
 const { t } = useI18n()
 const { can } = useAuth()
@@ -25,13 +56,13 @@ const canSensitive = computed(() => can('guests.view_sensitive'))
 const today = computed(() => format(new Date(), 'iso'))
 const from = ref(today.value)
 const to = ref(today.value)
-const experience = ref<DepartureGuestExperience | null>(null)
+const experience = ref<ArrivalGuestListView | null>(null)
 const nps = ref<NpsView | null>(null)
 const loadError = ref('')
 const npsError = ref('')
 
 const preferenceOpen = ref(false)
-const preferenceGuest = ref<ExperienceGuest | null>(null)
+const preferenceGuest = ref<ArrivalGuest | null>(null)
 const briefOpen = ref(false)
 
 const briefHtml = computed(() => (
@@ -70,7 +101,7 @@ function sourceLabel(source: PreferenceSource | null): string {
   return ''
 }
 
-function statusDetail(guest: ExperienceGuest): string {
+function statusDetail(guest: ArrivalGuest): string {
   if (guest.status === 'ANSWERED') {
     const when = guest.answered_at === null ? '' : format(guest.answered_at, 'dateTime')
 
@@ -84,7 +115,7 @@ function statusDetail(guest: ExperienceGuest): string {
   return ''
 }
 
-function openPreferences(guest: ExperienceGuest): void {
+function openPreferences(guest: ArrivalGuest): void {
   preferenceGuest.value = guest
   preferenceOpen.value = true
 }
@@ -102,7 +133,7 @@ async function loadExperience(): Promise<void> {
 
   try {
     const payload = await request(`/api/rms/guest-experience?from=${from.value}&to=${to.value}`) as {
-      data: DepartureGuestExperience
+      data: ArrivalGuestListView
     }
     experience.value = payload.data
     loadError.value = ''
@@ -126,7 +157,7 @@ function refreshExperience(): void {
   void loadExperience()
 }
 
-function questionnaireSub(view: DepartureGuestExperience): string {
+function questionnaireSub(view: ArrivalGuestListView): string {
   const date = format(view.send_date, 'short')
 
   return view.send_state === 'sent'
@@ -223,7 +254,7 @@ function questionnaireSub(view: DepartureGuestExperience): string {
                     {{ guest.booking_reference }} · {{ guest.email ?? guest.email_note ?? '—' }}
                   </div>
                 </td>
-                <td>{{ guest.cabin }}</td>
+                <td>{{ guest.room }}</td>
                 <td>
                   <span
                     class="pill"
@@ -349,7 +380,7 @@ function questionnaireSub(view: DepartureGuestExperience): string {
       v-model:open="preferenceOpen"
       :guest-id="preferenceGuest?.guest_id ?? null"
       :name="preferenceGuest?.name ?? ''"
-      :meta="preferenceGuest === null ? '' : `${preferenceGuest.booking_reference} · ${preferenceGuest.cabin}`"
+      :meta="preferenceGuest === null ? '' : `${preferenceGuest.booking_reference} · ${preferenceGuest.room}`"
       @saved="refreshExperience"
     />
 

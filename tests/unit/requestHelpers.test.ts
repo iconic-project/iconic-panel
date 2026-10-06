@@ -24,8 +24,8 @@ describe('formatHoldRemaining', () => {
   })
 
   it('shows the expired string when the hold is expired or empty', () => {
-    expect(formatHoldRemaining(200, DAY, true)).toBe('HOLD EXPIRED — CABIN NOT HELD')
-    expect(formatHoldRemaining(0, DAY, false)).toBe('HOLD EXPIRED — CABIN NOT HELD')
+    expect(formatHoldRemaining(200, DAY, true)).toBe('HOLD EXPIRED — ROOM NOT HELD')
+    expect(formatHoldRemaining(0, DAY, false)).toBe('HOLD EXPIRED — ROOM NOT HELD')
   })
 })
 
@@ -54,7 +54,7 @@ describe('holdTypePill', () => {
 })
 
 describe('waitlistRowStatus', () => {
-  it('classifies notified, cabin free and waiting', () => {
+  it('classifies notified, room free and waiting', () => {
     expect(waitlistRowStatus({
       notified: { at: '2026-09-20T00:00:00Z', channel: 'EMAIL', by: 'Carolina' },
       room_available: true

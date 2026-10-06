@@ -99,7 +99,7 @@ const pngSub = computed(() => {
       : t('bookings.pngPendingMany', { n: String(pending) })
   }
 
-  return props.booking.png_collected ? '' : t('bookings.pngAirport')
+  return ''
 })
 
 function emptySummary(): GuestListSummary {
@@ -703,7 +703,7 @@ async function submitConsent(how: string): Promise<void> {
                 : '' }}
             </div>
             <div class="gmeta">
-              {{ t('bookings.pngLine', { category: guest.png_category_label ?? '—' }) }}{{ guest.png_fee !== null
+              {{ t('bookings.pngKpi') }}{{ guest.png_fee !== null
                 ? t('bookings.pngFee', { amount: money(guest.png_fee) })
                 : '' }}
               ·

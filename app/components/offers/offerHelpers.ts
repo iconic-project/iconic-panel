@@ -30,7 +30,7 @@ export type OfferForm = {
   is_promo_code: boolean
   badge: string
   show_on_card: boolean
-  show_on_departures: boolean
+  show_on_calendar: boolean
   price_line: string
   terms: string
 }
@@ -98,7 +98,7 @@ export function offerFormToPayload(form: OfferForm, asDraft: boolean): StoreOffe
     is_promo_code: form.is_promo_code,
     badge: blankToNull(form.badge),
     show_on_card: form.show_on_card,
-    show_on_departures: form.show_on_departures,
+    show_on_calendar: form.show_on_calendar,
     price_line: blankToNull(form.price_line),
     terms: blankToNull(form.terms),
     as_draft: asDraft
@@ -125,7 +125,7 @@ export function emptyOfferForm(): OfferForm {
     is_promo_code: false,
     badge: '',
     show_on_card: true,
-    show_on_departures: true,
+    show_on_calendar: true,
     price_line: '',
     terms: ''
   }
@@ -151,7 +151,7 @@ export function formFromOffer(offer: Offer): OfferForm {
     is_promo_code: offer.is_promo_code,
     badge: offer.badge ?? '',
     show_on_card: offer.show_on_card,
-    show_on_departures: offer.show_on_departures,
+    show_on_calendar: offer.show_on_calendar,
     price_line: offer.price_line ?? '',
     terms: offer.terms ?? ''
   }

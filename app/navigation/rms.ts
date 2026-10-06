@@ -174,13 +174,6 @@ export const rmsNav: Array<NavGroup> = [
         sprint: 20
       },
       {
-        id: 'departures',
-        labelKey: 'nav.rms.departures',
-        glyph: '◷',
-        to: '/rms/booking-engine/departures',
-        sprint: 3
-      },
-      {
         id: 'offers',
         labelKey: 'nav.rms.offers',
         glyph: '✦',

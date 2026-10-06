@@ -3,9 +3,6 @@ import { useDates } from '#iconic-ui/app/composables/useDates'
 import {
   BOOKING_TABS,
   bookingToOpen,
-  canMoveStatus,
-  departureOptionLabel,
-  departureOverviewLabel,
   displayReferenceMatch,
   formatMoveDifference,
   galapagosTomorrowIso,
@@ -67,21 +64,10 @@ describe('bookingHelpers', () => {
     expect(BOOKING_TABS.filter(tab => tab.disabled).map(tab => tab.id)).toEqual([])
   })
 
-  it('allows moves only from the four movable statuses', () => {
-    expect(canMoveStatus('CONFIRMED')).toBe(true)
-    expect(canMoveStatus('CANCELLED')).toBe(false)
-  })
-
-  it('derives weekdays and nights from date and return_date', () => {
+  it('derives weekdays and nights from two dates', () => {
     expect(weekdayShort('2027-11-07')).toBe('Sun')
     expect(weekdayShort('2027-11-14')).toBe('Sun')
     expect(nightsBetween('2027-11-07', '2027-11-14')).toBe(7)
-    expect(departureOverviewLabel(
-      '2027-11-07',
-      '2027-11-14',
-      'San Cristóbal (SCY)',
-      iso => format(iso, 'short')
-    )).toBe('7 Nov 2027 · 7 nights · Sun→Sun · San Cristóbal (SCY)')
   })
 
   it('uses the next Galápagos date after 23:30 GALT', () => {
@@ -99,17 +85,8 @@ describe('bookingHelpers', () => {
     expect(bookingToOpen('ANK-NOPE', [booking])).toBeNull()
   })
 
-  it('labels festive departures with the prototype suffix', () => {
-    const short = (iso: string): string => format(iso, 'short')
-
-    expect(departureOptionLabel('2027-11-07', 'ANAMARA', 'Western Realm', false, short))
-      .toBe('7 Nov 2027 · ANAMARA · Western Realm')
-    expect(departureOptionLabel('2027-12-19', 'ANAMARA', 'Festive Expeditions', true, short))
-      .toBe('19 Dec 2027 · ANAMARA · Festive Expeditions · FESTIVE (+supplement, discounts blocked)')
-  })
-
   it('detects a modification fee line', () => {
-    expect(hasModificationFee([{ code: 'cabin', label: 'Cabin', amount: 26600 }])).toBe(false)
+    expect(hasModificationFee([{ code: 'room', label: 'Room', amount: 26600 }])).toBe(false)
     expect(hasModificationFee([{ code: 'modification_fee', label: 'Modification fee (FIN-006)', amount: 0 }])).toBe(true)
   })
 })

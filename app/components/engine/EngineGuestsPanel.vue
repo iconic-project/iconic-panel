@@ -15,38 +15,21 @@ const { t } = useI18n()
 
     <div class="setgrid">
       <div>
-        <div class="cols2">
-          <EngineField
-            v-slot="{ id }"
-            :label="t('engineSettings.maxCabin')"
-          >
-            <ConfigNumberInput
-              :id="id"
-              v-model="draft.guests.max_per_cabin"
-              variant="field"
-              :disabled="!props.canEdit('guests.max_per_cabin')"
-              :bad="props.errorsFor('guests.max_per_cabin').length > 0"
-              min="1"
-              max="4"
-              step="1"
-            />
-          </EngineField>
-          <EngineField
-            v-slot="{ id }"
-            :label="t('engineSettings.maxYacht')"
-          >
-            <ConfigNumberInput
-              :id="id"
-              v-model="draft.guests.max_per_yacht"
-              variant="field"
-              :disabled="!props.canEdit('guests.max_per_yacht')"
-              :bad="props.errorsFor('guests.max_per_yacht').length > 0"
-              min="1"
-              max="36"
-              step="1"
-            />
-          </EngineField>
-        </div>
+        <EngineField
+          v-slot="{ id }"
+          :label="t('engineSettings.maxPerProperty')"
+        >
+          <ConfigNumberInput
+            :id="id"
+            v-model="draft.guests.max_per_property"
+            variant="field"
+            :disabled="!props.canEdit('guests.max_per_property')"
+            :bad="props.errorsFor('guests.max_per_property').length > 0"
+            min="1"
+            max="36"
+            step="1"
+          />
+        </EngineField>
         <div class="cols2">
           <EngineField
             v-slot="{ id }"

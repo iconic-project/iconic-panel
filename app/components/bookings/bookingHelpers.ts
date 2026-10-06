@@ -11,10 +11,8 @@ const STATUS_PILL: Record<BookingStatus, string> = {
   FULLY_PAID: 'p-full',
   PENDING_PAYMENT: 'p-pend',
   OVERDUE: 'p-over',
-  COMPLETED: 'p-comp',
   CANCELLED: 'p-canc',
   CANCELLED_POSTPAID: 'p-canc',
-  ON_BOARD: 'p-full',
   WAITLISTED: 'p-wait',
   RELEASED: 'p-canc',
   ON_HOLD_AGENCY: 'p-hold',
@@ -22,13 +20,6 @@ const STATUS_PILL: Record<BookingStatus, string> = {
   CHECKED_OUT: 'p-comp',
   NO_SHOW: 'p-over'
 }
-
-const MOVABLE: Array<BookingStatus> = [
-  'REQUESTED',
-  'PENDING_PAYMENT',
-  'CONFIRMED',
-  'FULLY_PAID'
-]
 
 export type BookingTabId = 'overview' | 'guests' | 'extras' | 'payments' | 'documents' | 'history'
 
@@ -131,10 +122,6 @@ export function tabAvailability(id: BookingTabId): BookingTab {
   }
 }
 
-export function canMoveStatus(status: BookingStatus): boolean {
-  return MOVABLE.includes(status)
-}
-
 export function weekdayShort(iso: string): string {
   return WEEKDAYS_SHORT[new Date(`${iso}T00:00:00.000Z`).getUTCDay()] ?? ''
 }
@@ -144,17 +131,6 @@ export function nightsBetween(from: string, to: string): number {
   const end = Date.parse(`${to}T00:00:00.000Z`)
 
   return Math.round((end - start) / 86_400_000)
-}
-
-export function departureOverviewLabel(
-  date: string,
-  returnDate: string,
-  embark: string,
-  formatShort: (iso: string) => string
-): string {
-  const nights = nightsBetween(date, returnDate)
-
-  return `${formatShort(date)} · ${nights} nights · ${weekdayShort(date)}→${weekdayShort(returnDate)} · ${embark}`
 }
 
 export function galapagosTodayIso(
@@ -190,16 +166,4 @@ export function bookingToOpen(
 
 export function hasModificationFee(lines: Array<PriceLine>): boolean {
   return lines.some(line => line.code === 'modification_fee')
-}
-
-export function departureOptionLabel(
-  date: string,
-  yachtName: string,
-  itineraryName: string,
-  festive: boolean,
-  formatShort: (iso: string) => string
-): string {
-  const base = `${formatShort(date)} · ${yachtName} · ${itineraryName}`
-
-  return festive ? `${base} · FESTIVE (+supplement, discounts blocked)` : base
 }

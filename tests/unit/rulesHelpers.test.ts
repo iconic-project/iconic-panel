@@ -41,7 +41,7 @@ function seedDraft(): BusinessRulesDraft {
     commission: {
       cap_pct: 12,
       default_pct: 10,
-      payable_days_after_cruise: 30
+      payable_days_after_check_out: 30
     },
     modification_fee_usd: 0,
     payments: {
@@ -64,17 +64,13 @@ function seedDraft(): BusinessRulesDraft {
       refund_business_days: 15,
       agency_approval_business_days: 2
     },
-    manifests: {
-      dpng_fit_days: 15,
-      dpng_charter_days: 30
-    },
     alerts: {
       low_occupancy_pct: 40,
       low_occupancy_days_before: 90
     },
     retention: {
-      passport_months_after_cruise: 24,
-      medical_days_after_cruise: 90
+      passport_months_after_check_out: 24,
+      medical_days_after_check_out: 90
     },
     cancellation: {
       bands: [
@@ -219,13 +215,13 @@ describe('ruleChipState', () => {
     }),
     row({
       key: 'ops-006-sales-open',
-      where: 'departures',
+      where: 'engine_settings',
       group: 'guests_capacity',
       group_label: 'Guests & capacity',
       paths: [],
       source_value: null,
       note: 'PRO-001 still pending.',
-      link: '/rms/booking-engine/departures'
+      link: '/rms/booking-engine/settings'
     })
   ]
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EngineSettingsVersion, ExtrasCatalogue, PriceCheckRow } from '../../../types/api'
+import type { ExtrasCatalogue, PriceCheckRow } from '../../../types/api'
 import type { ConfigValueFormat } from '../../../utils/formatConfigValue'
 import { rateFieldLabels, RATES_DRAFT_KEY, type RatesDraft } from '../../../components/rates/rateHelpers'
 import { stayEditorsFrom, stayRequests, type StayEditor } from '../../../components/rates/stayRates'
@@ -15,7 +15,7 @@ import RatesPromotionsPanel from '../../../components/offers/RatesPromotionsPane
 
 const { can } = useAuth()
 const { t } = useI18n()
-const { request, useFetch } = useApi()
+const { request } = useApi()
 
 const editor = useConfigEditor('rates')
 const extrasEditor = useConfigEditor('extras')
@@ -43,16 +43,6 @@ const extrasPublishedCodes = computed(() => {
   return document === undefined ? new Set<string>() : publishedCodes(document)
 })
 
-const { data: engineSettings } = useFetch<EngineSettingsVersion>('/api/rms/engine-settings')
-
-const childMinAge = computed(() => {
-  return engineSettings.value?.document.guests.child_min_age ?? null
-})
-
-const childMaxAge = computed(() => {
-  return engineSettings.value?.document.guests.child_max_age ?? null
-})
-
 const priceCheckRows = ref<Array<PriceCheckRow>>([])
 const priceCheckStays = ref<Array<StayEditor>>([])
 const priceCheckStale = ref(false)
@@ -75,9 +65,8 @@ const labels = computed(() => {
 })
 
 const formats: Record<string, ConfigValueFormat> = {
-  'years': 'money',
-  'rules.festive_supplement_pp': 'money',
-  'rules.festive_supplement_charter': 'money'
+  room_rates: 'money',
+  supplements: 'money'
 }
 
 onMounted(async () => {
@@ -190,29 +179,6 @@ async function runPriceCheck(): Promise<void> {
       :plans="planOptions"
       @update:stays="priceCheckStays = $event"
     />
-
-    <details class="legacy-block">
-      <summary class="legacy-summary">
-        {{ t('rates.legacyTitle') }}
-      </summary>
-
-      <RatesBasePanel
-        :can-publish="false"
-        :errors-for="editor.errorsFor"
-      />
-
-      <RatesTermsPanel
-        :can-publish="false"
-        :errors-for="editor.errorsFor"
-      />
-
-      <RatesRulesPanel
-        :can-publish="false"
-        :child-min-age="childMinAge"
-        :child-max-age="childMaxAge"
-        :errors-for="editor.errorsFor"
-      />
-    </details>
 
     <ConfigHistoryPanel
       :title="t('rates.historyTitle')"

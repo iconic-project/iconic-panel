@@ -1,6 +1,6 @@
 # iconic-panel
 
-Staff SPA for **RMS** and **CRM** in one Nuxt 4 app. The URL decides the section (`/rms/…` vs `/crm/…`). Both sides call the same `useApi()` from the `iconic-ui` layer.
+Staff SPA for the Iconic hotel. **RMS** and **CRM** live in one Nuxt 4 app. The URL decides the section (`/rms/…` vs `/crm/…`). Inventory is rooms and nights. Both sides call the same `useApi()` from the `iconic-ui` layer.
 
 | | |
 |---|---|

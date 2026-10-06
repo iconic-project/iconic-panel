@@ -262,8 +262,6 @@ watch(
 
     const query = { ...route.query }
     delete query.new
-    delete query.departure_id
-    delete query.cabin
     void router.replace({ query })
   },
   { immediate: true }
@@ -459,11 +457,8 @@ watch(
                   {{ row.stay.check_in }} – {{ row.stay.check_out }}
                   <span class="pill">{{ t('bookings.nightsPill', { n: String(row.stay.nights) }) }}</span>
                 </template>
-                <template v-else-if="row.departure">
-                  {{ row.departure.date }}
-                </template>
               </td>
-              <td>{{ row.room?.label ?? row.cabin_label }}</td>
+              <td>{{ row.room?.label ?? '' }}</td>
               <td>{{ row.room_type?.name ?? '' }}</td>
               <td>
                 <span
@@ -510,8 +505,8 @@ watch(
             <tr>
               <th>{{ t('bookings.colGroup') }}</th>
               <th>{{ t('bookings.colCoordinator') }}</th>
-              <th>{{ t('bookings.colDeparture') }}</th>
-              <th>{{ t('bookings.colCabins') }}</th>
+              <th>{{ t('blocks.property') }}</th>
+              <th>{{ t('blocks.rooms') }}</th>
               <th>{{ t('bookings.colTotal') }}</th>
               <th>{{ t('bookings.colBalance') }}</th>
               <th>{{ t('bookings.colStatus') }}</th>
@@ -541,12 +536,8 @@ watch(
                   {{ t('bookings.groupCoordinator', { name: row.coordinator.name }) }}
                 </div>
               </td>
-              <td>{{ row.departure?.date ?? '' }}</td>
-              <td>
-                {{ row.cabins.length === 1
-                  ? t('bookings.groupCabinsOne', { guests: String(row.guests) })
-                  : t('bookings.groupCabins', { cabins: String(row.cabins.length), guests: String(row.guests) }) }}
-              </td>
+              <td>{{ row.property?.name ?? '' }}</td>
+              <td>{{ row.rooms.join(', ') }}</td>
               <td>{{ money(row.total) }}</td>
               <td>{{ money(row.balance) }}</td>
               <td>

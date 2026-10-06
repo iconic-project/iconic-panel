@@ -699,10 +699,10 @@ function fieldError(name: string): string {
               </label>
               <label class="chkline">
                 <input
-                  v-model="form.show_on_departures"
+                  v-model="form.show_on_calendar"
                   type="checkbox"
                 >
-                {{ t('offers.showOnDepartures') }}
+                {{ t('offers.showOnCalendar') }}
               </label>
             </div>
             <div class="field">
@@ -737,7 +737,7 @@ function fieldError(name: string): string {
               </p>
               <template v-else>
                 <div
-                  v-if="form.show_on_departures && form.badge !== ''"
+                  v-if="form.show_on_calendar && form.badge !== ''"
                   class="pdrow"
                 >
                   <span class="badge-offer">{{ form.badge }}</span>

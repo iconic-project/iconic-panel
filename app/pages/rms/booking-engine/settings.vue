@@ -49,10 +49,7 @@ const readOnlyText = computed(() => {
 
 const labels = engineFieldLabels()
 
-const formats: Record<string, ConfigValueFormat> = {
-  'fees.tct_pp': 'money',
-  'fees.png': 'money'
-}
+const formats: Record<string, ConfigValueFormat> = {}
 </script>
 
 <template>

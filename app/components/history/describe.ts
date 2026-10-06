@@ -79,7 +79,7 @@ function labeled(map: Record<string, string>, value: string | undefined, t: Hist
   return key === undefined ? value : t(key)
 }
 
-function departureDate(record: Record<string, unknown>): string {
+function storedDate(record: Record<string, unknown>): string {
   const raw = stringField(record, 'departure') ?? compactValue(record.departure)
   const date = raw.split(' · ')[0] ?? raw
 
@@ -250,9 +250,9 @@ export function describeHistory(
       })
     case 'booking.moved':
       return t('history.events.bookingMoved', {
-        fromDate: departureDate(before),
+        fromDate: storedDate(before),
         fromCabin: stringField(before, 'cabin') ?? '—',
-        toDate: departureDate(after),
+        toDate: storedDate(after),
         toCabin: stringField(after, 'cabin') ?? '—',
         fromTotal: moneyUsd(before.total),
         toTotal: moneyUsd(after.total)

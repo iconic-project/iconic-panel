@@ -30,7 +30,7 @@ export type ChargesBooking = Pick<
 >
 
 export type ChargeRow
-  = | { id: 'cruise', amount: number }
+  = | { id: 'stay', amount: number }
     | { id: 'extras', amount: number }
     | { id: 'fees', amount: number, pendingCount: number }
     | { id: 'rule' }
@@ -71,7 +71,7 @@ export function extraAddDefaults(
 
 export function chargesRows(booking: ChargesBooking): Array<ChargeRow> {
   const rows: Array<ChargeRow> = [
-    { id: 'cruise', amount: booking.total },
+    { id: 'stay', amount: booking.total },
     { id: 'extras', amount: booking.extras_total },
     { id: 'fees', amount: booking.fees_collected_total, pendingCount: booking.png_pending_count },
     { id: 'rule' },

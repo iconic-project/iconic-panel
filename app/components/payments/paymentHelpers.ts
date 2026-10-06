@@ -76,7 +76,6 @@ export function paymentsKpiCards(meta: PaymentsKpis): Array<PaymentsKpiCard> {
       value: meta.deposits,
       subKey: 'payments.kpiDepositsSub',
       subParams: {
-        cabin: String(meta.cabin_deposit_pct),
         charter: String(meta.charter_deposit_pct)
       },
       tone: 'default'
@@ -87,8 +86,7 @@ export function paymentsKpiCards(meta: PaymentsKpis): Array<PaymentsKpiCard> {
       value: meta.pending,
       subKey: 'payments.kpiPendingSub',
       subParams: {
-        n: String(meta.pending_count),
-        days: String(meta.cabin_balance_days)
+        n: String(meta.pending_count)
       },
       tone: 'default'
     },

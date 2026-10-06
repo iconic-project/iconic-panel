@@ -207,8 +207,8 @@ onMounted(() => {
             <tr>
               <th>{{ t('holds.colType') }}</th>
               <th>{{ t('holds.colClient') }}</th>
-              <th>{{ t('holds.colDeparture') }}</th>
-              <th>{{ t('holds.colCabin') }}</th>
+              <th>{{ t('holds.colStay') }}</th>
+              <th>{{ t('bookings.colRoom') }}</th>
               <th>{{ t('holds.colExpires') }}</th>
               <th>{{ t('holds.colRule') }}</th>
             </tr>
@@ -232,8 +232,8 @@ onMounted(() => {
                 <span class="pill p-hold">{{ holdTypePill(row.type) }}</span>
               </td>
               <td>{{ row.client }}</td>
-              <td>{{ format(row.departure.date, 'short') }} · {{ row.departure.yacht.name }}</td>
-              <td>{{ row.cabin }}</td>
+              <td>{{ format(row.stay.check_in, 'short') }} · {{ row.stay.property.name }}</td>
+              <td>{{ row.room }}</td>
               <td class="hold-expires">
                 {{ holdExpires(row) }}
               </td>
@@ -260,7 +260,7 @@ onMounted(() => {
             <tr>
               <th>{{ t('holds.colWaitContact') }}</th>
               <th>{{ t('holds.colStay') }}</th>
-              <th>{{ t('holds.colCabinType') }}</th>
+              <th>{{ t('bookings.roomType') }}</th>
               <th>{{ t('holds.colPosition') }}</th>
               <th>{{ t('holds.colSince') }}</th>
               <th />
@@ -289,7 +289,7 @@ onMounted(() => {
                   v-if="waitlistRowStatus(row) === 'room_free'"
                   class="wl-free"
                 >
-                  {{ t('holds.cabinFree') }}
+                  {{ t('holds.roomFree') }}
                 </div>
                 <div
                   v-if="waitlistRowStatus(row) === 'notified'"

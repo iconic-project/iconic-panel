@@ -3,8 +3,7 @@ import type { EngineSettingsDocument } from '../../types/api'
 
 export type EngineSettingsDraft = {
   guests: {
-    max_per_cabin: number | null
-    max_per_yacht: number | null
+    max_per_property: number | null
     child_min_age: number | null
     child_max_age: number | null
     adult_required_with_children: boolean
@@ -18,15 +17,6 @@ export type EngineSettingsDraft = {
   }
   locale: EngineSettingsDocument['locale']
   fees: {
-    tct_pp: number | null
-    png: {
-      foreign_over_12: number | null
-      foreign_12_and_under: number | null
-      can_adult: number | null
-      can_minor: number | null
-      national_or_resident: number | null
-      exempt_under_age: number | null
-    }
     show_in_price_panel: boolean
     footnote: string
   }
@@ -45,8 +35,7 @@ export const UNDER_AGE_LIMIT = 60
 
 export function engineFieldLabels(): Record<string, string> {
   return {
-    'guests.max_per_cabin': 'Max guests per cabin',
-    'guests.max_per_yacht': 'Max guests per yacht',
+    'guests.max_per_property': 'Max guests per property',
     'guests.child_min_age': 'Child minimum age',
     'guests.child_max_age': 'Child maximum age',
     'guests.adult_required_with_children': 'Adult required with children',
@@ -58,13 +47,6 @@ export function engineFieldLabels(): Record<string, string> {
     'locale.default': 'Locale',
     'locale.live': 'Live locales',
     'locale.currency': 'Currency',
-    'fees.tct_pp': 'TCT transit card',
-    'fees.png.foreign_over_12': 'PNG fee — foreign visitor over 12',
-    'fees.png.foreign_12_and_under': 'PNG fee — foreign visitor 12 and under',
-    'fees.png.can_adult': 'PNG fee — CAN adult',
-    'fees.png.can_minor': 'PNG fee — CAN minor',
-    'fees.png.national_or_resident': 'PNG fee — national or resident',
-    'fees.png.exempt_under_age': 'PNG fee — exempt under age',
     'fees.show_in_price_panel': 'Show fees in price panel',
     'fees.footnote': 'Fee footnote',
     'copy.book_now_pay_later': 'Note — Book now, pay later',

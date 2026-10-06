@@ -10,15 +10,11 @@ import type {
 import { firstApiMessage } from '../../utils/apiForm'
 import { confirmUnsaved } from '../../composables/useUnsavedGuard'
 import HistoryTimeline from '../history/HistoryTimeline.vue'
-import BookingManifestArchive from './BookingManifestArchive.vue'
 import ReasonModal from './ReasonModal.vue'
-import MoveBookingModal from './MoveBookingModal.vue'
 import ConfirmRequestModal from '../requests/ConfirmRequestModal.vue'
 import { formatHoldRemaining } from '../requests/requestHelpers'
 import {
   BOOKING_TABS,
-  canMoveStatus,
-  departureOverviewLabel,
   galapagosTomorrowIso,
   reasonHint,
   reasonModalTitle,
@@ -81,12 +77,9 @@ const reasonTo = ref<BookingStatus | null>(null)
 const reasonRequired = ref(true)
 const reasonError = ref('')
 const reasonSubmitting = ref(false)
-const moveOpen = ref(false)
-
 const canReassign = computed(() => can('records.act_on_any'))
 const canDelete = computed(() => can('bookings.delete'))
 const canChangeStatus = computed(() => can('bookings.change_status'))
-const canMove = computed(() => can('bookings.move'))
 const canConfirm = computed(() => can('requests.confirm'))
 const canRelease = computed(() => can('requests.release'))
 const canOverdueDecision = computed(() => can('bookings.overdue_decision'))
@@ -192,7 +185,7 @@ const cancelRefundHint = computed(() => {
 })
 
 const extendMin = computed(() => galapagosTomorrowIso(new Date(), (value, style, options) => format(value, style, options)))
-const extendMax = computed(() => source.value?.departure.date ?? '')
+const extendMax = computed(() => source.value?.stay.check_in ?? '')
 const extendValid = computed(() => extendDate.value !== null && extendDate.value !== '')
 
 const ownerItems = computed(() => owners.value.map(item => ({
@@ -218,7 +211,6 @@ watch(
     tab.value = props.initialTab ?? 'overview'
     warn.value = ''
     reasonOpen.value = false
-    moveOpen.value = false
     history.value = []
     await refreshBooking(id)
 
@@ -476,12 +468,6 @@ async function onReason(reason: string): Promise<void> {
   }
 }
 
-async function onMoved(booking: Booking): Promise<void> {
-  current.value = booking
-  emit('updated', booking)
-  history.value = []
-}
-
 async function loadHistory(reset: boolean): Promise<void> {
   if (source.value === null) {
     return
@@ -647,20 +633,20 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
               total: String(source.guests_summary.total)
             }) }}</span>
           </div>
-          <template v-if="source.departure">
-            <div class="kv">
-              <span>{{ t('bookings.kvDeparture') }}</span>
-              <span>{{ departureOverviewLabel(source.departure.date, source.departure.return_date, source.departure.embark, shortDate) }}</span>
-            </div>
-            <div class="kv">
-              <span>{{ t('bookings.kvItinerary') }}</span>
-              <span>{{ source.departure.itinerary_name }}</span>
-            </div>
-            <div class="kv">
-              <span>{{ t('bookings.kvCabin') }}</span>
-              <span>{{ source.cabin_label }}</span>
-            </div>
-          </template>
+          <div
+            v-if="source.stay"
+            class="kv"
+          >
+            <span>{{ t('bookings.kvStay') }}</span>
+            <span>{{ shortDate(source.stay.check_in) }} – {{ shortDate(source.stay.check_out) }} · {{ source.stay.nights }}</span>
+          </div>
+          <div
+            v-if="source.room"
+            class="kv"
+          >
+            <span>{{ t('bookings.kvRoom') }}</span>
+            <span>{{ source.room.label }}</span>
+          </div>
           <div
             v-if="source.group"
             class="kv"
@@ -703,10 +689,10 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
             :key="row.id"
           >
             <div
-              v-if="row.id === 'cruise'"
+              v-if="row.id === 'stay'"
               class="kv"
             >
-              <span>{{ t('bookings.kvCruise') }}</span>
+              <span>{{ t('bookings.stayFare') }}</span>
               <span>{{ money(row.amount) }}</span>
             </div>
             <div
@@ -769,7 +755,7 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
               v-else-if="row.id === 'deposit'"
               class="kv"
             >
-              <span>{{ t('bookings.depositOfCruise', { pct: String(row.pct) }) }}</span>
+              <span>{{ t('bookings.depositOfStay', { pct: String(row.pct) }) }}</span>
               <span>
                 {{ money(row.amount) }}
                 <span
@@ -833,7 +819,7 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
               <span>{{ money(line.amount) }}</span>
             </div>
             <div class="pline tot">
-              <span>{{ t('bookings.kvCabinTotal') }}</span>
+              <span>{{ t('bookings.stayTotal') }}</span>
               <span>{{ money(source.total) }}</span>
             </div>
           </div>
@@ -889,7 +875,7 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
           </div>
 
           <div
-            v-if="source.status === 'COMPLETED' && canRecordSurvey"
+            v-if="source.status === 'CHECKED_OUT' && canRecordSurvey"
             class="sec"
           >
             <h4>{{ t('guestExperience.surveyTitle') }}</h4>
@@ -935,17 +921,6 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
             >
               {{ t('bookings.ownRecords') }}
             </p>
-          </div>
-
-          <div class="sec">
-            <h4>{{ t('bookings.freeDate') }}</h4>
-            <UButton
-              variant="outline"
-              :disabled="!canActOn(source) || !canMove || !canMoveStatus(source.status)"
-              @click="moveOpen = true"
-            >
-              {{ t('bookings.move') }}
-            </UButton>
           </div>
 
           <BookingBillingBlock
@@ -1033,10 +1008,6 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
             {{ t('bookings.historyNote') }}
           </p>
           <HistoryTimeline :entries="history" />
-          <BookingManifestArchive
-            v-if="source.departure"
-            :departure-id="source.departure.id"
-          />
           <button
             v-if="historyPage < historyLast"
             type="button"
@@ -1101,11 +1072,5 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
     v-model:open="surveyOpen"
     :booking-id="source?.id ?? null"
     @saved="history = []"
-  />
-
-  <MoveBookingModal
-    v-model:open="moveOpen"
-    :booking="source"
-    @moved="onMoved"
   />
 </template>

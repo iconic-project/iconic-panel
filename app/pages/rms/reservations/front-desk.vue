@@ -202,7 +202,7 @@ async function checkIn(row: Booking, event: Event): Promise<void> {
                   <span class="pill">{{ t('bookings.nightsPill', { n: String(row.stay.nights) }) }}</span>
                 </template>
               </td>
-              <td>{{ row.room?.label ?? row.cabin_label }}</td>
+              <td>{{ row.room?.label ?? '' }}</td>
               <td>{{ row.times?.expected_arrival_time ?? '' }}</td>
               <td>{{ money(row.balance) }}</td>
               <td>{{ labelOf(row.status) }}</td>

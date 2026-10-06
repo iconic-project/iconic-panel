@@ -17,7 +17,7 @@ export function formatHoldRemaining(
   expired: boolean
 ): string {
   if (expired || remainingBusinessMinutes <= 0) {
-    return 'HOLD EXPIRED — CABIN NOT HELD'
+    return 'HOLD EXPIRED — ROOM NOT HELD'
   }
 
   const remainingHours = remainingBusinessMinutes / 60

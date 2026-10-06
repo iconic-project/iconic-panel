@@ -3,13 +3,11 @@ import type {
   AgencyListItem,
   BusinessRulesVersion,
   ChannelOfOriginGroup,
-  ItineraryListItem,
   ReportDefinition,
   ReportRun,
   ReportSubscription,
   RunReportInput,
-  UpdateSubscriptionInput,
-  Yacht
+  UpdateSubscriptionInput
 } from '../../../types/api'
 import { downloadDocumentFile } from '../../../components/documents/documentFetch'
 import { calendarYear, resolveDateRange } from '../../../components/lists/dateRange'
@@ -42,39 +40,17 @@ const actionError = ref('')
 const openKey = ref<string | null>(null)
 const runFrom = ref<string | null>(yearWindow.from)
 const runTo = ref<string | null>(yearWindow.to)
-const yachtId = ref(SELECT_ALL)
-const itineraryId = ref(SELECT_ALL)
 const channel = ref(SELECT_ALL)
 const agencyId = ref(SELECT_ALL)
 const posting = ref(false)
 
-const { data: yachtsPayload } = useFetch<{ data: Array<Yacht> }>('/api/rms/yachts')
-const { data: itinerariesPayload } = useFetch<{ data: Array<ItineraryListItem> }>('/api/rms/itineraries')
 const { data: agenciesPayload } = useFetch<{ data: Array<AgencyListItem> }>('/api/rms/agencies')
 const { data: rulesPayload } = useFetch<BusinessRulesVersion>('/api/rms/business-rules', {
   immediate: can('rules.view')
 })
 
-const yachts = computed(() => yachtsPayload.value?.data ?? [])
-const itineraries = computed(() => itinerariesPayload.value?.data ?? [])
 const agencies = computed(() => agenciesPayload.value?.data ?? [])
 const fileDays = computed(() => retentionDays(rulesPayload.value?.document))
-
-const yachtItems = computed(() => withSelectAll(
-  t('dashboard.allYachts'),
-  yachts.value.map(yacht => ({
-    label: yacht.code,
-    value: String(yacht.id)
-  }))
-))
-
-const itineraryItems = computed(() => withSelectAll(
-  t('dashboard.allItineraries'),
-  itineraries.value.map(itinerary => ({
-    label: itinerary.name,
-    value: String(itinerary.id)
-  }))
-))
 
 const channelItems = computed(() => withSelectAll(
   t('dashboard.allChannels'),
@@ -206,17 +182,7 @@ async function submitRun(definition: ReportDefinition): Promise<void> {
     to: runTo.value
   }
 
-  const yacht = selectedId(yachtId.value)
-  const itinerary = selectedId(itineraryId.value)
   const agency = selectedId(agencyId.value)
-
-  if (yacht !== null) {
-    body.yacht = yacht
-  }
-
-  if (itinerary !== null) {
-    body.itinerary = itinerary
-  }
 
   if (channel.value !== SELECT_ALL) {
     const group = CHANNELS.find(item => item === channel.value)
@@ -375,18 +341,6 @@ async function runNow(subscription: ReportSubscription): Promise<void> {
                         size="sm"
                       />
                     </label>
-                    <USelect
-                      v-model="yachtId"
-                      size="sm"
-                      :items="yachtItems"
-                      :aria-label="t('dashboard.allYachts')"
-                    />
-                    <USelect
-                      v-model="itineraryId"
-                      size="sm"
-                      :items="itineraryItems"
-                      :aria-label="t('dashboard.allItineraries')"
-                    />
                     <USelect
                       v-model="channel"
                       size="sm"

@@ -14,7 +14,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { request } = useApi()
-const { format } = useDates()
 const { format: money } = useMoney()
 
 const bookings = ref<Array<Booking>>([])
@@ -57,7 +56,7 @@ function openBooking(booking: Booking): void {
           v-if="group"
           class="bid"
         >
-          {{ group.reference }} · {{ t('bookings.groupSubject', { n: String(group.cabins.length) }) }}
+          {{ group.reference }} · {{ group.property?.name ?? '' }}
         </div>
       </div>
     </template>
@@ -69,17 +68,21 @@ function openBooking(booking: Booking): void {
           <span>{{ group.coordinator.name }}</span>
         </div>
         <div class="kv">
-          <span>{{ t('bookings.kvDeparture') }}</span>
-          <span>{{ format(group.departure.date, 'short') }} · {{ group.departure.yacht.name }}</span>
+          <span>{{ t('blocks.property') }}</span>
+          <span>{{ group.property?.name ?? '' }}</span>
+        </div>
+        <div class="kv">
+          <span>{{ t('blocks.rooms') }}</span>
+          <span>{{ group.rooms.join(', ') }}</span>
         </div>
 
         <div class="sec">
-          <h4>{{ t('bookings.groupCabinsTitle') }}</h4>
+          <h4>{{ t('blocks.rooms') }}</h4>
           <table class="list mini-t">
             <thead>
               <tr>
                 <th>{{ t('bookings.colBooking') }}</th>
-                <th>{{ t('bookings.colCabin') }}</th>
+                <th>{{ t('bookings.colRoom') }}</th>
                 <th>{{ t('bookings.colClient') }}</th>
                 <th>{{ t('bookings.colTotal') }}</th>
                 <th>{{ t('bookings.colBalance') }}</th>
@@ -104,7 +107,7 @@ function openBooking(booking: Booking): void {
                 <td class="bk-ref">
                   {{ row.display_reference }}
                 </td>
-                <td>{{ row.cabin_label }}</td>
+                <td>{{ row.room?.label ?? '' }}</td>
                 <td>{{ row.contact.name }}</td>
                 <td>{{ money(row.total) }}</td>
                 <td>{{ money(row.balance) }}</td>
