@@ -755,6 +755,7 @@ table.list th.nw {
 
 .auto {
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
   background: var(--forest-900);
   padding: 16px 20px;
   margin-bottom: 10px;
@@ -813,6 +814,7 @@ button.toggle {
   height: 20px;
   padding: 0;
   border: 1px solid var(--coral);
+  border-radius: var(--ui-radius);
   background: transparent;
   position: relative;
   cursor: pointer;
@@ -825,6 +827,7 @@ button.toggle::after {
   left: 20px;
   width: 14px;
   height: 14px;
+  border-radius: var(--ui-radius);
   background: var(--coral);
 }
 
@@ -837,18 +840,19 @@ button.toggle.off::after {
   background: var(--iv38);
 }
 
+main:has(> .inbox-page) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 28px;
+}
+
 .inbox-page {
   display: flex;
   flex-direction: column;
   gap: 14px;
-}
-
-.inbox-notice {
-  max-width: 940px;
-}
-
-.inbox-notice b {
-  font-weight: 600;
+  flex: 1;
+  min-height: 0;
 }
 
 .inbox-filters {
@@ -862,8 +866,8 @@ button.toggle.off::after {
   gap: 0;
   border: 1px solid var(--hair);
   background: var(--forest-900);
-  min-height: 560px;
-  height: calc(100vh - 240px);
+  flex: 1;
+  min-height: 0;
 }
 
 .convcol {

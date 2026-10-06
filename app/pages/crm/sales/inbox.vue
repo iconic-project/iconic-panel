@@ -286,15 +286,6 @@ watch(messages, async () => {
 
 <template>
   <div class="inbox-page">
-    <p class="notice inbox-notice">
-      {{ t('crmInbox.noticeLead') }}
-      <b>{{ t('crmInbox.noticeEnglish') }}</b>
-      {{ t('crmInbox.noticeEmail') }}
-      <b>{{ t('crmInbox.noticeExchange') }}</b>{{ t('crmInbox.noticeWhatsapp') }}
-      <span class="pill mid">{{ t('crmInbox.noticePending') }}</span>
-      {{ t('crmInbox.noticeRule') }}
-    </p>
-
     <p
       v-if="loadError"
       class="warnbox"
