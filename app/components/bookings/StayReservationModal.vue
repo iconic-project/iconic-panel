@@ -11,6 +11,8 @@ import {
   type StayRoomDraft
 } from './stayBooking'
 
+const ROOM_UNASSIGNED = 'unassigned'
+
 const open = defineModel<boolean>('open', { required: true })
 
 const emit = defineEmits<{
@@ -162,7 +164,7 @@ function blankRoom(source: BookingFormOptions): RoomForm {
     childCount: 0,
     childAges: [],
     ratePlan: plan?.code ?? '',
-    roomId: '',
+    roomId: ROOM_UNASSIGNED,
     ownDates: false,
     checkIn: '',
     checkOut: ''
@@ -195,7 +197,7 @@ function drafts(): StayRoomDraft[] {
     adults: room.adults,
     child_ages: room.childAges.map(age => Number(age)).filter(age => Number.isInteger(age)),
     rate_plan: room.ratePlan || null,
-    room_id: room.roomId === '' ? null : Number(room.roomId),
+    room_id: room.roomId === ROOM_UNASSIGNED ? null : Number(room.roomId),
     check_in: room.ownDates ? room.checkIn || null : null,
     check_out: room.ownDates ? room.checkOut || null : null
   }))
@@ -411,7 +413,7 @@ async function submit(): Promise<void> {
             <USelect
               v-model="room.roomId"
               class="w-full"
-              :items="[{ label: t('bookings.roomUnassigned'), value: '' }, ...roomsFor(room).map(item => ({ label: item.label, value: String(item.id) }))]"
+              :items="[{ label: t('bookings.roomUnassigned'), value: ROOM_UNASSIGNED }, ...roomsFor(room).map(item => ({ label: item.label, value: String(item.id) }))]"
             />
           </label>
           <label class="field">

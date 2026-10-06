@@ -11,6 +11,7 @@ import {
 import { MAIN_CHANNELS } from '../../../components/bookings/stayBooking'
 
 const SEARCH_DEBOUNCE_MS = 300
+const FILTER_ANY = 'ALL'
 
 const SEGMENTS: Array<{ id: 'ALL' | BookingSegment, labelKey: string }> = [
   { id: 'ALL', labelKey: 'bookings.segmentAll' },
@@ -33,9 +34,9 @@ const arrivingTo = ref('')
 const inHouseOn = ref('')
 const departingFrom = ref('')
 const departingTo = ref('')
-const statusFilter = ref('')
-const ownerFilter = ref('')
-const channelFilter = ref('')
+const statusFilter = ref(FILTER_ANY)
+const ownerFilter = ref(FILTER_ANY)
+const channelFilter = ref(FILTER_ANY)
 const owners = ref<BookingOwner[]>([])
 const segment = ref<'ALL' | BookingSegment>('ALL')
 const searchInput = ref('')
@@ -128,15 +129,15 @@ const listUrl = computed(() => {
     params.set('departing_to', departingTo.value)
   }
 
-  if (statusFilter.value !== '') {
+  if (statusFilter.value !== FILTER_ANY) {
     params.set('status', statusFilter.value)
   }
 
-  if (ownerFilter.value !== '') {
+  if (ownerFilter.value !== FILTER_ANY) {
     params.set('owner_id', ownerFilter.value)
   }
 
-  if (channelFilter.value !== '') {
+  if (channelFilter.value !== FILTER_ANY) {
     params.set('channel', channelFilter.value)
   }
 
@@ -347,21 +348,21 @@ watch(
           <span>{{ t('bookings.filterStatus') }}</span>
           <USelect
             v-model="statusFilter"
-            :items="[{ label: t('bookings.filterAny'), value: '' }, ...STATUS_FILTERS.map(status => ({ label: labelOf(status), value: status }))]"
+            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...STATUS_FILTERS.map(status => ({ label: labelOf(status), value: status }))]"
           />
         </label>
         <label class="field">
           <span>{{ t('bookings.filterOwner') }}</span>
           <USelect
             v-model="ownerFilter"
-            :items="[{ label: t('bookings.filterAny'), value: '' }, ...owners.map(owner => ({ label: owner.name, value: String(owner.id) }))]"
+            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...owners.map(owner => ({ label: owner.name, value: String(owner.id) }))]"
           />
         </label>
         <label class="field">
           <span>{{ t('bookings.filterChannel') }}</span>
           <USelect
             v-model="channelFilter"
-            :items="[{ label: t('bookings.filterAny'), value: '' }, ...MAIN_CHANNELS.map(channel => ({ label: channel, value: channel }))]"
+            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...MAIN_CHANNELS.map(channel => ({ label: channel, value: channel }))]"
           />
         </label>
       </div>
