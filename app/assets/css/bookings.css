@@ -129,6 +129,26 @@
   color: var(--coral);
 }
 
+.bk-filters {
+  padding: 0 20px 4px;
+}
+
+.bk-filters .field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.bk-filters .field > span:first-child {
+  white-space: nowrap;
+}
+
+.bk-date {
+  width: 12rem;
+  flex: none;
+}
+
 .bk-table-wrap {
   overflow-x: auto;
 }

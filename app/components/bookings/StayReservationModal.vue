@@ -28,8 +28,8 @@ type RoomForm = {
   ratePlan: string
   roomId: string
   ownDates: boolean
-  checkIn: string
-  checkOut: string
+  checkIn: string | null
+  checkOut: string | null
 }
 
 type RestrictionRow = {
@@ -427,15 +427,13 @@ async function submit(): Promise<void> {
             v-if="room.ownDates"
             class="cols2"
           >
-            <UInput
+            <AnkDateInput
               v-model="room.checkIn"
-              type="date"
-              class="w-full"
+              :aria-label="t('bookings.filterArriving')"
             />
-            <UInput
+            <AnkDateInput
               v-model="room.checkOut"
-              type="date"
-              class="w-full"
+              :aria-label="t('bookings.filterDeparting')"
             />
           </div>
           <UButton

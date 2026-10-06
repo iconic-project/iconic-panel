@@ -28,8 +28,8 @@ const { format: money } = useMoney()
 const reason = ref('')
 const error = ref('')
 const busy = ref(false)
-const modifyIn = ref('')
-const modifyOut = ref('')
+const modifyIn = ref<string | null>('')
+const modifyOut = ref<string | null>('')
 const preview = ref<StayModifyPreview | null>(null)
 const moveRoomId = ref<string>('')
 const freeRooms = ref<FreeRoom[]>([])
@@ -117,8 +117,8 @@ async function previewModify(): Promise<void> {
     preview.value = await request(deskActionPath(props.booking.id, 'modify/preview'), {
       method: 'POST',
       body: {
-        check_in: modifyIn.value,
-        check_out: modifyOut.value
+        check_in: modifyIn.value ?? '',
+        check_out: modifyOut.value ?? ''
       }
     }) as StayModifyPreview
   } catch (caught: unknown) {
@@ -131,8 +131,8 @@ async function previewModify(): Promise<void> {
 
 function confirmModify(): Promise<void> {
   return post(deskActionPath(props.booking.id, 'modify'), {
-    check_in: modifyIn.value,
-    check_out: modifyOut.value,
+    check_in: modifyIn.value ?? '',
+    check_out: modifyOut.value ?? '',
     reason: reason.value.trim()
   })
 }
@@ -211,18 +211,16 @@ function moveRoom(): Promise<void> {
     >
       <label class="field">
         <span>{{ t('bookings.filterArriving') }}</span>
-        <UInput
+        <AnkDateInput
           v-model="modifyIn"
-          type="date"
-          class="w-full"
+          :aria-label="t('bookings.filterArriving')"
         />
       </label>
       <label class="field">
         <span>{{ t('bookings.filterDeparting') }}</span>
-        <UInput
+        <AnkDateInput
           v-model="modifyOut"
-          type="date"
-          class="w-full"
+          :aria-label="t('bookings.filterDeparting')"
         />
       </label>
       <div class="list-actions">

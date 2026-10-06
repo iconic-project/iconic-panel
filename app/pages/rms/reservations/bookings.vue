@@ -29,11 +29,11 @@ const route = useRoute()
 const router = useRouter()
 const stayOpen = ref(false)
 
-const arrivingFrom = ref('')
-const arrivingTo = ref('')
-const inHouseOn = ref('')
-const departingFrom = ref('')
-const departingTo = ref('')
+const arrivingFrom = ref<string | null>(null)
+const arrivingTo = ref<string | null>(null)
+const inHouseOn = ref<string | null>(null)
+const departingFrom = ref<string | null>(null)
+const departingTo = ref<string | null>(null)
 const statusFilter = ref(FILTER_ANY)
 const ownerFilter = ref(FILTER_ANY)
 const channelFilter = ref(FILTER_ANY)
@@ -100,6 +100,14 @@ function labelOf(status: string): string {
   return statusText(status, key => t(key))
 }
 
+function dateQuery(value: string | null): string | null {
+  if (value === null || value === '') {
+    return null
+  }
+
+  return value
+}
+
 const canViewAudit = computed(() => can('bookings.view_all'))
 const canCreate = computed(() => can('bookings.create'))
 
@@ -109,24 +117,30 @@ const listUrl = computed(() => {
     per_page: '50'
   })
 
-  if (arrivingFrom.value !== '') {
-    params.set('arriving_from', arrivingFrom.value)
+  const arrivingStart = dateQuery(arrivingFrom.value)
+  const arrivingEnd = dateQuery(arrivingTo.value)
+  const inHouse = dateQuery(inHouseOn.value)
+  const departingStart = dateQuery(departingFrom.value)
+  const departingEnd = dateQuery(departingTo.value)
+
+  if (arrivingStart !== null) {
+    params.set('arriving_from', arrivingStart)
   }
 
-  if (arrivingTo.value !== '') {
-    params.set('arriving_to', arrivingTo.value)
+  if (arrivingEnd !== null) {
+    params.set('arriving_to', arrivingEnd)
   }
 
-  if (inHouseOn.value !== '') {
-    params.set('in_house_on', inHouseOn.value)
+  if (inHouse !== null) {
+    params.set('in_house_on', inHouse)
   }
 
-  if (departingFrom.value !== '') {
-    params.set('departing_from', departingFrom.value)
+  if (departingStart !== null) {
+    params.set('departing_from', departingStart)
   }
 
-  if (departingTo.value !== '') {
-    params.set('departing_to', departingTo.value)
+  if (departingEnd !== null) {
+    params.set('departing_to', departingEnd)
   }
 
   if (statusFilter.value !== FILTER_ANY) {
@@ -314,35 +328,45 @@ watch(
           {{ t('bookings.newStay') }}
         </UButton>
       </div>
-      <div class="list-filters">
+      <div class="list-filters bk-filters">
         <label class="field">
           <span>{{ t('bookings.filterArriving') }}</span>
-          <UInput
-            v-model="arrivingFrom"
-            type="date"
-          />
-          <UInput
-            v-model="arrivingTo"
-            type="date"
-          />
+          <span class="bk-date">
+            <AnkDateInput
+              v-model="arrivingFrom"
+              :aria-label="t('bookings.filterArriving')"
+            />
+          </span>
+          <span class="bk-date">
+            <AnkDateInput
+              v-model="arrivingTo"
+              :aria-label="t('bookings.filterArriving')"
+            />
+          </span>
         </label>
         <label class="field">
           <span>{{ t('bookings.filterInHouse') }}</span>
-          <UInput
-            v-model="inHouseOn"
-            type="date"
-          />
+          <span class="bk-date">
+            <AnkDateInput
+              v-model="inHouseOn"
+              :aria-label="t('bookings.filterInHouse')"
+            />
+          </span>
         </label>
         <label class="field">
           <span>{{ t('bookings.filterDeparting') }}</span>
-          <UInput
-            v-model="departingFrom"
-            type="date"
-          />
-          <UInput
-            v-model="departingTo"
-            type="date"
-          />
+          <span class="bk-date">
+            <AnkDateInput
+              v-model="departingFrom"
+              :aria-label="t('bookings.filterDeparting')"
+            />
+          </span>
+          <span class="bk-date">
+            <AnkDateInput
+              v-model="departingTo"
+              :aria-label="t('bookings.filterDeparting')"
+            />
+          </span>
         </label>
         <label class="field">
           <span>{{ t('bookings.filterStatus') }}</span>

@@ -981,7 +981,7 @@ input.of-code {
   overflow-x: auto;
   max-width: 100%;
   border: 1px solid var(--hair);
-  border-radius: 16px;
+  border-radius: var(--ui-radius);
   background: var(--bg);
 }
 
