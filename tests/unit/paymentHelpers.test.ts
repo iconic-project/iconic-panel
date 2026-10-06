@@ -80,6 +80,7 @@ describe('paymentHelpers', () => {
     expect(cards.map(card => card.value)).toEqual([5000, 2660, 23940, 12000, 2660])
     expect(cards[1]?.subParams).toEqual({ charter: '20' })
     expect(cards[2]?.subParams).toEqual({ n: '2' })
+    expect(cards[2]?.tone).toBe('warn')
     expect(cards[3]?.tone).toBe('coral')
     expect(cards[4]?.subParams).toEqual({ days: '30' })
   })

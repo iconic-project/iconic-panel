@@ -28,6 +28,14 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+  app: {
+    head: {
+      htmlAttrs: {
+        'data-theme': 'staff'
+      }
+    }
+  },
+
   css: ['~/assets/css/shell.css', '~/assets/css/lists.css', '~/assets/css/config.css', '~/assets/css/inventory.css', '~/assets/css/bookings.css', '~/assets/css/documents.css', '~/assets/css/crm.css'],
 
   runtimeConfig: {

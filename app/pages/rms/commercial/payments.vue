@@ -270,7 +270,12 @@ async function submitApply(payload: { bookingId: number, kind: string }): Promis
         :label="t(card.labelKey)"
         :sub="t(card.subKey, card.subParams)"
       >
-        <span :class="{ 'pay-kpi-coral': card.tone === 'coral' }">{{ money(card.value) }}</span>
+        <span
+          :class="{
+            'pay-kpi-coral': card.tone === 'coral',
+            'pay-kpi-warn': card.tone === 'warn'
+          }"
+        >{{ money(card.value) }}</span>
       </AnkKpi>
     </div>
 

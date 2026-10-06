@@ -49,7 +49,7 @@ export function defaultPaymentAmount(booking: Pick<Booking, 'paid' | 'deposit_am
   return booking.paid === 0 ? booking.deposit_amount : booking.balance
 }
 
-export type PaymentsKpiTone = 'default' | 'coral'
+export type PaymentsKpiTone = 'default' | 'coral' | 'warn'
 
 export type PaymentsKpiCard = {
   id: 'collected' | 'deposits' | 'pending' | 'overdue' | 'commission'
@@ -88,7 +88,7 @@ export function paymentsKpiCards(meta: PaymentsKpis): Array<PaymentsKpiCard> {
       subParams: {
         n: String(meta.pending_count)
       },
-      tone: 'default'
+      tone: 'warn'
     },
     {
       id: 'overdue',

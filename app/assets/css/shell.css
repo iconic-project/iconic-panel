@@ -10,8 +10,8 @@ aside {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: #121738;
-  color: rgba(255, 255, 255, 0.82);
+  background: var(--nav-bg);
+  color: var(--nav-text);
   padding: 20px 0 12px;
 }
 
@@ -34,10 +34,29 @@ aside {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--font-display);
   letter-spacing: 0;
   font-size: 15px;
   padding: 4px 18px 18px;
+}
+
+.brand::before {
+  content: "I";
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--warm);
+  color: var(--text-on-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .brand .ank-wordmark[data-size] {
@@ -46,7 +65,7 @@ aside {
 
 .navsec {
   padding: 16px 22px 6px;
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--nav-section);
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 500;
@@ -60,7 +79,7 @@ aside {
   gap: 8px;
   margin: 2px 12px;
   padding: 8px 12px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--nav-text);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -70,20 +89,21 @@ aside {
 
 .nav a.on,
 .nav a.on:hover {
-  color: var(--neutral-0);
-  background: var(--hilo-blue-500);
+  color: var(--text-on-primary);
+  background: var(--primary);
+  box-shadow: inset 3px 0 0 var(--warm);
 }
 
 .nav a:hover {
-  color: var(--neutral-0);
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-primary);
+  background: var(--nav-hover);
 }
 
 .nav .nav-badge {
   margin-left: auto;
-  border-color: rgba(255, 255, 255, 0.35);
-  color: var(--neutral-0);
-  background: transparent;
+  border-color: transparent;
+  color: var(--text-on-primary);
+  background: var(--warm);
 }
 
 main {
@@ -222,8 +242,8 @@ main {
   height: 28px;
   flex: none;
   border-radius: 9999px;
-  background: #f0d2b4;
-  color: #6b3e1e;
+  background: var(--warm-soft);
+  color: var(--warm-ink);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0;
@@ -250,7 +270,7 @@ main {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-subtle);
+  color: var(--warm-ink);
 }
 
 .who-chevron {
@@ -386,8 +406,8 @@ main {
   padding: 52px 64px 36px;
   color: var(--neutral-0);
   background:
-    radial-gradient(90% 60% at 100% 0%, color-mix(in srgb, var(--hilo-blue-500) 32%, transparent), transparent 58%),
-    linear-gradient(168deg, var(--neutral-800) 0%, var(--neutral-950) 62%);
+    radial-gradient(90% 60% at 100% 0%, color-mix(in srgb, var(--warm) 28%, transparent), transparent 58%),
+    linear-gradient(168deg, var(--nav-hover) 0%, var(--nav-bg) 62%);
 }
 
 .auth-stage .ank-wordmark[data-size] {

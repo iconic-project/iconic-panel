@@ -8,21 +8,22 @@ table.list th {
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--iv38);
+  color: var(--text-muted);
   text-align: left;
   padding: 10px 20px;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
   font-weight: 400;
 }
 
 table.list td {
   padding: 11px 20px;
-  border-bottom: 1px solid color-mix(in srgb, var(--fg-default) 6%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 12.5px;
 }
 
 table.list tr:hover td {
-  background: color-mix(in srgb, var(--fg-default) 3%, transparent);
+  background: var(--surface-hover);
 }
 
 table.list th.list-actions,
@@ -61,6 +62,7 @@ tr.dr-empty td {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
+  background: var(--surface-sunken);
   font-family: var(--font-sans);
   font-size: 11px;
   letter-spacing: 0.06em;

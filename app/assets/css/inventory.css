@@ -1051,7 +1051,8 @@ input.of-code {
 }
 
 .night-head {
-  background: var(--sand);
+  background: var(--surface-sunken);
+  color: var(--text);
 }
 
 .night-type {
