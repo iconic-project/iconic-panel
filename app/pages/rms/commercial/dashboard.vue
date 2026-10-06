@@ -7,7 +7,6 @@ import type {
   HotelKpis,
   MetricDefinition
 } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import { calendarYear, resolveDateRange } from '../../../components/lists/dateRange'
 import {
   occupancyBarWidth,
@@ -52,7 +51,6 @@ const { data: rulesPayload } = useFetch<BusinessRulesVersion>('/api/rms/business
 
 const agencies = computed(() => agenciesPayload.value?.data ?? [])
 const lowOccupancyPct = computed(() => rulesPayload.value?.document.alerts.low_occupancy_pct ?? null)
-const stayCount = computed(() => metrics.value?.metrics.occupancy.stays.length ?? 0)
 const hasWindow = computed(() => from.value !== null && to.value !== null)
 
 const channelItems = computed(() => withSelectAll(
@@ -242,15 +240,6 @@ async function loadMetrics(): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('dashboard.fieldLabel')"
-      :noun="t('dashboard.noun')"
-      :total="stayCount"
-      :today="today"
-    />
-
     <div class="drbar">
       <div class="drl">
         <span class="mono">{{ t('dashboard.filtersLabel') }}</span>

@@ -134,6 +134,17 @@
   border-bottom: 1px solid var(--hair);
 }
 
+.bk-desk-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.bk-desk-date {
+  width: 11rem;
+}
+
 .bk-search {
   min-width: 220px;
 }

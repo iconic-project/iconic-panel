@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import type { Offer, RatesVersion } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import OfferDrawer from '../../../components/offers/OfferDrawer.vue'
 import { offerStatusPillClass, type OfferCodeOption } from '../../../components/offers/offerHelpers'
 
 const { can } = useAuth()
 const { t } = useI18n()
 const { useFetch, request } = useApi()
-const { format } = useDates()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
-const today = computed(() => format(new Date(), 'iso'))
 const editorOpen = ref(false)
 const selected = ref<Offer | null>(null)
 const roomTypes = ref<Array<OfferCodeOption>>([])
@@ -19,23 +14,7 @@ const roomTypes = ref<Array<OfferCodeOption>>([])
 const canManage = computed(() => can('offers.manage'))
 const canApprove = computed(() => can('offers.approve'))
 
-const listUrl = computed(() => {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  const query = params.toString()
-
-  return query === '' ? '/api/rms/offers' : `/api/rms/offers?${query}`
-})
-
-const { data: listPayload, refresh } = useFetch<{ data: Array<Offer> }>(listUrl)
+const { data: listPayload, refresh } = useFetch<{ data: Array<Offer> }>('/api/rms/offers')
 const { data: propertiesPayload } = useFetch<{ data: Array<{ id: number }> }>('/api/rms/properties')
 const { data: ratesPayload } = useFetch<RatesVersion>('/api/rms/rates')
 
@@ -46,7 +25,6 @@ const ratePlans = computed<Array<OfferCodeOption>>(() => {
     name: plan.name
   }))
 })
-const total = computed(() => offers.value.length)
 
 watch(propertiesPayload, (payload) => {
   const properties = payload?.data ?? []
@@ -108,19 +86,6 @@ async function onSaved(offer: Offer): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('offers.fieldLabel')"
-      :noun="t('offers.noun')"
-      :total="total"
-      :today="today"
-    />
-
-    <p class="notice of-notice">
-      {{ t('offers.notice') }}
-    </p>
-
     <div class="ebtool">
       <span />
       <div class="acts">

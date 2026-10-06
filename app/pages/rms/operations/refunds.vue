@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Booking, PaymentOptions, RefundRequest, RefundStatus, RefundsRules } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
+import type { Booking, PaymentOptions, RefundRequest, RefundStatus } from '../../../types/api'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import ReasonModal from '../../../components/bookings/ReasonModal.vue'
 import ExecuteRefundModal from '../../../components/refunds/ExecuteRefundModal.vue'
@@ -9,18 +8,11 @@ import { firstApiMessage } from '../../../utils/apiForm'
 
 type RefundsPayload = {
   data: Array<RefundRequest>
-  meta: {
-    rules: RefundsRules
-  }
 }
 
 type StatusChip = 'ALL' | RefundStatus
 
 const CHIPS: Array<StatusChip> = ['ALL', 'PENDING', 'APPROVED', 'EXECUTED', 'REJECTED']
-
-const emptyRules: RefundsRules = {
-  refund_business_days: 0
-}
 
 const { can } = useAuth()
 const { t } = useI18n()
@@ -29,10 +21,7 @@ const { format } = useDates()
 const { format: money } = useMoney()
 const toast = useToast()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const status = ref<StatusChip>('ALL')
-const today = computed(() => format(new Date(), 'iso'))
 
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
@@ -47,31 +36,17 @@ const executeSubmitting = ref(false)
 const executeError = ref('')
 
 const listUrl = computed(() => {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
+  if (status.value === 'ALL') {
+    return '/api/rms/refunds'
   }
 
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  if (status.value !== 'ALL') {
-    params.set('status', status.value)
-  }
-
-  const query = params.toString()
-
-  return query === '' ? '/api/rms/refunds' : `/api/rms/refunds?${query}`
+  return `/api/rms/refunds?status=${status.value}`
 })
 
 const { data: listPayload, refresh } = useFetch<RefundsPayload>(listUrl)
 const { data: optionsPayload } = useFetch<PaymentOptions>('/api/rms/payments/options')
 
 const rows = computed(() => listPayload.value?.data ?? [])
-const rules = computed(() => listPayload.value?.meta.rules ?? emptyRules)
-const total = computed(() => rows.value.length)
 
 function chipLabel(chip: StatusChip): string {
   if (chip === 'ALL') {
@@ -174,19 +149,6 @@ async function onPanelUpdated(): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('refunds.fieldLabel')"
-      :noun="t('refunds.noun')"
-      :total="total"
-      :today="today"
-    />
-
-    <p class="notice refunds-notice">
-      {{ t('refunds.notice', { days: String(rules.refund_business_days) }) }}
-    </p>
-
     <div class="panel">
       <h3>{{ t('refunds.title') }}</h3>
       <div class="ebtool dep-toolbar">

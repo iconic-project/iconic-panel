@@ -7,7 +7,6 @@ import type {
   PreferredChannel,
   WaitlistEntry
 } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import ReasonModal from '../../../components/bookings/ReasonModal.vue'
 import AddWaitlistModal from '../../../components/holds/AddWaitlistModal.vue'
@@ -30,9 +29,6 @@ const { useFetch, request } = useApi()
 const { format } = useDates()
 const toast = useToast()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
-const today = computed(() => format(new Date(), 'iso'))
 const canCreate = computed(() => can('bookings.create'))
 
 const panelOpen = ref(false)
@@ -48,27 +44,8 @@ const removeSubmitting = ref(false)
 const removeError = ref('')
 const options = ref<BookingFormOptions | null>(null)
 
-const rangeQuery = computed(() => {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  return params.toString()
-})
-
-const holdsUrl = computed(() => {
-  return rangeQuery.value === '' ? '/api/rms/holds' : `/api/rms/holds?${rangeQuery.value}`
-})
-
-const waitlistUrl = computed(() => {
-  return rangeQuery.value === '' ? '/api/rms/waitlist' : `/api/rms/waitlist?${rangeQuery.value}`
-})
+const holdsUrl = '/api/rms/holds'
+const waitlistUrl = '/api/rms/waitlist'
 
 const { data: holdsPayload, refresh: refreshHolds } = useFetch<HoldsPayload>(holdsUrl)
 const { data: waitlistPayload, refresh: refreshWaitlist } = useFetch<{ data: Array<WaitlistEntry> }>(waitlistUrl)
@@ -76,7 +53,6 @@ const { data: waitlistPayload, refresh: refreshWaitlist } = useFetch<{ data: Arr
 const holds = computed(() => holdsPayload.value?.data ?? [])
 const waitlist = computed(() => waitlistPayload.value?.data ?? [])
 const dayMinutes = computed(() => holdsPayload.value?.meta.rules.business_day_minutes ?? 0)
-const total = computed(() => holds.value.length + waitlist.value.length)
 
 function holdExpires(row: HoldListItem): string {
   return formatHoldRemaining(row.remaining_business_minutes, dayMinutes.value, row.remaining_business_minutes <= 0)
@@ -190,15 +166,6 @@ onMounted(() => {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('holds.fieldLabel')"
-      :noun="t('holds.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="panel">
       <h3>{{ t('holds.holdsTitle') }}</h3>
       <div class="bk-table-wrap">

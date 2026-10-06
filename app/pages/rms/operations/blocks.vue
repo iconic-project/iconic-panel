@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { BusinessRulesVersion } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BlockDrawer from '../../../components/blocks/BlockDrawer.vue'
 import NewBlockModal from '../../../components/blocks/NewBlockModal.vue'
 import ReleaseBlockModal from '../../../components/blocks/ReleaseBlockModal.vue'
@@ -27,8 +26,6 @@ const { useFetch, request } = useApi()
 const { format } = useDates()
 const route = useRoute()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const status = ref<BlockListStatus>('active')
 const propertyId = ref<number | null>(null)
 const drawerOpen = ref(false)
@@ -39,7 +36,6 @@ const selected = ref<RangeBlock | null>(null)
 const releasing = ref<RangeBlock | null>(null)
 const shortening = ref<RangeBlock | null>(null)
 const openedFromQuery = ref(false)
-const today = computed(() => format(new Date(), 'iso'))
 
 const canManage = computed(() => can('blocks.manage'))
 const roleName = computed(() => user.value?.role.name ?? '')
@@ -57,21 +53,12 @@ const listUrl = computed(() => {
     params.set('property_id', String(propertyId.value))
   }
 
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
   return `/api/rms/blocks?${params.toString()}`
 })
 
 const { data: listPayload, refresh } = useFetch<{ data: Array<RangeBlock> }>(listUrl)
 
 const blocks = computed(() => listPayload.value?.data ?? [])
-const total = computed(() => blocks.value.length)
 
 function actorName(block: RangeBlock): string {
   return block.created_by?.name ?? t('blocks.system')
@@ -147,15 +134,6 @@ watch(
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('blocks.fieldLabel')"
-      :noun="t('blocks.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="panel">
       <h3>{{ t('blocks.panelTitle') }}</h3>
       <div class="ebtool dep-toolbar">

@@ -111,25 +111,8 @@ async function checkIn(row: Booking, event: Event): Promise<void> {
 <template>
   <div>
     <div class="panel">
-      <div class="bk-toolbar">
+      <div class="bk-toolbar bk-head">
         <h3>{{ t('frontDesk.title') }}</h3>
-        <UInput
-          v-model="date"
-          type="date"
-          :aria-label="t('frontDesk.title')"
-        />
-        <USelect
-          v-model="exportFormat"
-          size="sm"
-          :items="exportFormats"
-          :aria-label="t('frontDesk.exportFormat')"
-        />
-        <UButton
-          :loading="exporting"
-          @click="exportRegistration"
-        >
-          {{ t('frontDesk.export') }}
-        </UButton>
       </div>
       <div
         v-if="audit.length > 0"
@@ -151,17 +134,39 @@ async function checkIn(row: Booking, event: Event): Promise<void> {
       >
         {{ actionError }}
       </p>
-      <div class="fchips">
-        <button
-          v-for="item in TABS"
-          :key="item.id"
-          type="button"
-          class="fchip"
-          :class="{ on: tab === item.id }"
-          @click="tab = item.id"
-        >
-          {{ t(item.labelKey) }} {{ countOf(item.id) }}
-        </button>
+      <div class="ebtool dep-toolbar bk-filter-bar">
+        <div class="fchips">
+          <button
+            v-for="item in TABS"
+            :key="item.id"
+            type="button"
+            class="fchip"
+            :class="{ on: tab === item.id }"
+            @click="tab = item.id"
+          >
+            {{ t(item.labelKey) }} {{ countOf(item.id) }}
+          </button>
+        </div>
+        <div class="bk-desk-controls">
+          <UInput
+            v-model="date"
+            type="date"
+            class="bk-desk-date"
+            :aria-label="t('frontDesk.title')"
+          />
+          <USelect
+            v-model="exportFormat"
+            class="bk-select"
+            :items="exportFormats"
+            :aria-label="t('frontDesk.exportFormat')"
+          />
+          <UButton
+            :loading="exporting"
+            @click="exportRegistration"
+          >
+            {{ t('frontDesk.export') }}
+          </UButton>
+        </div>
       </div>
       <div class="bk-table-wrap">
         <table class="list">

@@ -5,7 +5,6 @@ import type {
   ClientDocumentRow,
   Paginated
 } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import DocumentConfirmModal from '../../../components/documents/DocumentConfirmModal.vue'
 import DocumentPreviewModal from '../../../components/documents/DocumentPreviewModal.vue'
@@ -36,14 +35,11 @@ const { useFetch, request } = useApi()
 const { format } = useDates()
 const toast = useToast()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const kind = ref('ALL')
 const status = ref('ALL')
 const searchInput = ref('')
 const search = ref('')
 const page = ref(1)
-const today = computed(() => format(new Date(), 'iso'))
 
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
@@ -69,7 +65,7 @@ onUnmounted(() => {
   clearTimeout(searchTimer)
 })
 
-watch([search, kind, status, from, to], () => {
+watch([search, kind, status], () => {
   page.value = 1
 })
 
@@ -78,14 +74,6 @@ const listUrl = computed(() => {
     page: String(page.value),
     per_page: '50'
   })
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
 
   if (kind.value !== 'ALL') {
     params.set('kind', kind.value)
@@ -107,7 +95,6 @@ const { data: listPayload, refresh } = useFetch<ClientDocumentsPayload>(listUrl)
 const rows = computed(() => listPayload.value?.data ?? [])
 const filters = computed(() => listPayload.value?.meta.filters ?? emptyFilters)
 const meta = computed(() => listPayload.value?.meta)
-const total = computed(() => listPayload.value?.meta.total ?? 0)
 
 function rowDate(row: ClientDocumentRow): string {
   return row.date === null ? '—' : format(row.date, 'short')
@@ -189,19 +176,6 @@ async function onPanelUpdated(): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('documents.fieldLabel')"
-      :noun="t('documents.noun')"
-      :total="total"
-      :today="today"
-    />
-
-    <p class="notice">
-      {{ t('documents.notice') }}
-    </p>
-
     <div class="panel">
       <h3>{{ t('documents.title') }}</h3>
       <div class="ebtool dep-toolbar">

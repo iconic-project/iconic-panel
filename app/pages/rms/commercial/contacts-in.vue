@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Booking, ContactInRow, NationalitiesSummary, Paginated } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import { segmentPillClass, statusLabel, statusPillClass } from '../../../components/bookings/bookingHelpers'
 import { nationalityBarWidth } from '../../../components/contacts/contactHelpers'
@@ -13,57 +12,29 @@ const emptyNationalities: NationalitiesSummary = {
 
 const { t } = useI18n()
 const { useFetch, request } = useApi()
-const { format } = useDates()
 const { format: money } = useMoney()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const page = ref(1)
-const today = computed(() => format(new Date(), 'iso'))
 
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
 
-watch([from, to], () => {
-  page.value = 1
-})
-
-function windowParams(): URLSearchParams {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  return params
-}
-
 const listUrl = computed(() => {
-  const params = windowParams()
-  params.set('page', String(page.value))
-  params.set('per_page', '50')
+  const params = new URLSearchParams({
+    page: String(page.value),
+    per_page: '50'
+  })
 
   return `/api/rms/contacts-in?${params.toString()}`
 })
 
-const nationalitiesUrl = computed(() => {
-  const query = windowParams().toString()
-
-  return query === ''
-    ? '/api/rms/contacts-in/nationalities'
-    : `/api/rms/contacts-in/nationalities?${query}`
-})
+const nationalitiesUrl = '/api/rms/contacts-in/nationalities'
 
 const { data: listPayload, refresh } = useFetch<Paginated<ContactInRow>>(listUrl)
 const { data: nationalitiesPayload, refresh: refreshNationalities } = useFetch<NationalitiesSummary>(nationalitiesUrl)
 
 const rows = computed(() => listPayload.value?.data ?? [])
 const meta = computed(() => listPayload.value?.meta)
-const total = computed(() => listPayload.value?.meta.total ?? 0)
 const summary = computed(() => nationalitiesPayload.value ?? emptyNationalities)
 const nationalities = computed(() => summary.value.nationalities)
 const barMax = computed(() => {
@@ -85,19 +56,6 @@ async function onPanelUpdated(): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('contactsIn.fieldLabel')"
-      :noun="t('contactsIn.noun')"
-      :total="total"
-      :today="today"
-    />
-
-    <p class="notice contacts-notice">
-      {{ t('contactsIn.notice') }}
-    </p>
-
     <div class="panel">
       <h3>{{ t('contactsIn.listTitle') }}</h3>
       <div class="bk-table-wrap">

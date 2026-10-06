@@ -207,9 +207,6 @@
     "approval": "Aprobación / motivo"
   },
   "rates": {
-    "noticeBefore": "Esta es la única fuente que lee el motor de reservas: disponibilidad, tarifas, reglas de descuento y promociones. Las tarifas base, las condiciones del depósito y las reglas de descuento están confirmadas por el CEO (FIN-001/OPS-004…) — ",
-    "noticeEdit": "editadas solo por Admin / Director",
-    "noticeAfter": ", y cada cambio se publica con una referencia de aprobación y queda registrado. Las promociones son una extensión de la v1.2 pendiente de la aprobación del CEO.",
     "viewOnly": "SOLO LECTURA — ADMIN / DIRECTOR EDITA LAS TARIFAS",
     "adminDirector": "ADMIN / DIRECTOR",
     "baseTitle": "Tarifas base",
@@ -1390,7 +1387,7 @@
     "ledgerTitle": "Registro de pagos — cada pago, método y referencia (§7)",
     "ledgerEmpty": "No hay pagos en este intervalo de fechas.",
     "reconTitle": "Conciliación de la plataforma de pagos (§7.3)",
-    "reconMonthNote": "Conciliación del mes de Galápagos en curso ({from} – {to}). Elija un intervalo de fechas para cambiar la ventana.",
+    "reconMonthNote": "Conciliación del mes de Galápagos en curso ({from} – {to}).",
     "reconGateway": "Transacciones de la pasarela",
     "reconGatewaySub": "Stripe (TEC-001 · confirmado)",
     "reconMatched": "Conciliadas con el RMS",

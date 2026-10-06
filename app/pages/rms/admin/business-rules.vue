@@ -54,10 +54,6 @@ const chips: Array<{ id: RuleChip, labelKey: string, countKey: keyof RuleRegistr
 
 <template>
   <div v-if="draft && live">
-    <p class="notice rules-notice">
-      {{ t('businessRules.noticeBefore') }}<b>{{ t('businessRules.noticeSource') }}</b>{{ t('businessRules.noticeAfter') }}<b>{{ t('businessRules.statusConfirmed') }}</b>{{ t('businessRules.noticeAfterConfirmed') }}
-    </p>
-
     <div class="krow">
       <AnkKpi
         :label="t('businessRules.kpiTracked')"

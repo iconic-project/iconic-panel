@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AgenciesKpis, Agency, AgencyListItem, Booking } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import ReasonModal from '../../../components/bookings/ReasonModal.vue'
 import AgencyDrawer from '../../../components/agencies/AgencyDrawer.vue'
@@ -43,10 +42,6 @@ const toast = useToast()
 const route = useRoute()
 const openedFromQuery = ref(false)
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
-const today = computed(() => format(new Date(), 'iso'))
-
 const drawerOpen = ref(false)
 const selected = ref<Agency | null>(null)
 const bookingOpen = ref(false)
@@ -59,21 +54,7 @@ const rejectTarget = ref<AgencyListItem | null>(null)
 const rejectSubmitting = ref(false)
 const rejectError = ref('')
 
-const listUrl = computed(() => {
-  const params = new URLSearchParams()
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  const query = params.toString()
-
-  return query === '' ? '/api/rms/agencies' : `/api/rms/agencies?${query}`
-})
+const listUrl = '/api/rms/agencies'
 
 const { data: listPayload, refresh } = useFetch<AgenciesPayload>(listUrl)
 
@@ -81,7 +62,6 @@ const rows = computed(() => listPayload.value?.data ?? [])
 const kpis = computed(() => listPayload.value?.meta.kpis ?? emptyKpis)
 const pending = computed(() => rows.value.filter(row => row.status === 'PENDING'))
 const partners = computed(() => rows.value.filter(row => row.status !== 'PENDING'))
-const total = computed(() => partners.value.length)
 const canManage = computed(() => can('agencies.manage'))
 
 async function openAgency(row: AgencyListItem): Promise<void> {
@@ -204,15 +184,6 @@ watch(
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('agencies.fieldLabel')"
-      :noun="t('agencies.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="krow">
       <AnkKpi
         :label="t('agencies.kpiApproved')"

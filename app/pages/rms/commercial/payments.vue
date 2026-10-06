@@ -10,7 +10,6 @@ import type {
   ReconciliationReport,
   ReconciliationRow
 } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import ApplyGatewayModal from '../../../components/payments/ApplyGatewayModal.vue'
 import MarkWireModal from '../../../components/payments/MarkWireModal.vue'
@@ -51,8 +50,6 @@ const { format } = useDates()
 const { format: money } = useMoney()
 const toast = useToast()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const page = ref(1)
 const today = computed(() => format(new Date(), 'iso'))
 
@@ -69,56 +66,27 @@ const applyRow = ref<ReconciliationRow | null>(null)
 const applySubmitting = ref(false)
 const applyError = ref('')
 
-watch([from, to], () => {
-  page.value = 1
-})
-
-function withRange(base: URLSearchParams): URLSearchParams {
-  if (from.value !== null) {
-    base.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    base.set('to', to.value)
-  }
-
-  return base
-}
-
 const ledgerUrl = computed(() => {
-  const params = withRange(new URLSearchParams({
+  const params = new URLSearchParams({
     page: String(page.value),
     per_page: '50'
-  }))
+  })
 
   return `/api/rms/payments?${params.toString()}`
 })
 
 const pendingUrl = computed(() => {
-  const params = withRange(new URLSearchParams({
+  const params = new URLSearchParams({
     pending_payment: '1',
     per_page: '100'
-  }))
+  })
 
   return `/api/rms/bookings?${params.toString()}`
 })
 
-const commissionsUrl = computed(() => {
-  const params = withRange(new URLSearchParams())
-  const query = params.toString()
+const commissionsUrl = '/api/rms/commissions'
 
-  return query === '' ? '/api/rms/commissions' : `/api/rms/commissions?${query}`
-})
-
-const reconRange = computed(() => {
-  if (from.value !== null && to.value !== null) {
-    return { from: from.value, to: to.value, monthDefault: false }
-  }
-
-  const month = galapagosMonthRange(today.value)
-
-  return { from: month.from, to: month.to, monthDefault: true }
-})
+const reconRange = computed(() => galapagosMonthRange(today.value))
 
 const reconUrl = computed(() => {
   return `/api/rms/payments/reconciliation?from=${reconRange.value.from}&to=${reconRange.value.to}`
@@ -136,7 +104,6 @@ const pending = computed(() => pendingPayload.value?.data ?? [])
 const commissions = computed(() => commissionsPayload.value?.data ?? [])
 const payments = computed(() => ledgerPayload.value?.data ?? [])
 const ledgerMeta = computed(() => ledgerPayload.value?.meta)
-const total = computed(() => ledgerPayload.value?.meta.total ?? 0)
 const recon = computed(() => reconPayload.value)
 const reviewRows = computed(() => [
   ...(recon.value?.in_gateway_not_rms ?? []),
@@ -296,15 +263,6 @@ async function submitApply(payload: { bookingId: number, kind: string }): Promis
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('payments.fieldLabel')"
-      :noun="t('payments.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="krow">
       <AnkKpi
         v-for="card in cards"
@@ -529,10 +487,7 @@ async function submitApply(payload: { bookingId: number, kind: string }): Promis
 
     <div class="panel">
       <h3>{{ t('payments.reconTitle') }}</h3>
-      <p
-        v-if="reconRange.monthDefault"
-        class="note pay-recon-note"
-      >
+      <p class="note pay-recon-note">
         {{ t('payments.reconMonthNote', { from: reconRange.from, to: reconRange.to }) }}
       </p>
       <div class="krow">

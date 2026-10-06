@@ -207,9 +207,6 @@
     "approval": "Approval / reason"
   },
   "rates": {
-    "noticeBefore": "This is the single source the booking engine reads: availability, rates, discount rules and promotions. Base rates, deposit terms and discount rules are CEO-confirmed (FIN-001/OPS-004…) — ",
-    "noticeEdit": "edited by Admin / Director only",
-    "noticeAfter": ", each change published with an approval reference and logged. Promotions are a v1.2 extension pending CEO sign-off.",
     "viewOnly": "VIEW ONLY — ADMIN / DIRECTOR EDITS RATES",
     "adminDirector": "ADMIN / DIRECTOR",
     "baseTitle": "Base rates",
@@ -1390,7 +1387,7 @@
     "ledgerTitle": "Payment ledger — every payment, method & reference (§7)",
     "ledgerEmpty": "No payments in this date range.",
     "reconTitle": "Payment platform reconciliation (§7.3)",
-    "reconMonthNote": "Reconciling the current Galápagos month ({from} – {to}). Choose a date range to change the window.",
+    "reconMonthNote": "Reconciling the current Galápagos month ({from} – {to}).",
     "reconGateway": "Gateway transactions",
     "reconGatewaySub": "Stripe (TEC-001 · confirmed)",
     "reconMatched": "Matched to RMS",
