@@ -29,40 +29,25 @@ defineExpose({
     role="group"
     :aria-label="t('shell.localeAria')"
   >
-    <UButton
-      color="neutral"
-      variant="outline"
-      class="panel-locale-btn"
+    <button
+      type="button"
+      class="shell-seg shell-seg--quiet"
       data-locale="en"
+      :class="{ on: locale === 'en' }"
       :aria-pressed="locale === 'en'"
       @click="onChoose('en')"
     >
       EN
-    </UButton>
-    <UButton
-      color="neutral"
-      variant="outline"
-      class="panel-locale-btn"
+    </button>
+    <button
+      type="button"
+      class="shell-seg shell-seg--quiet"
       data-locale="es"
+      :class="{ on: locale === 'es' }"
       :aria-pressed="locale === 'es'"
       @click="onChoose('es')"
     >
       ES
-    </UButton>
+    </button>
   </div>
 </template>
-
-<style scoped>
-.panel-locale {
-  display: flex;
-}
-
-.panel-locale-btn {
-  padding: 9px 14px;
-}
-
-.panel-locale-btn[aria-pressed='true'] {
-  color: var(--ivory);
-  border-color: var(--ivory);
-}
-</style>

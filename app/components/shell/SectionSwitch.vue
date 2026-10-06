@@ -39,7 +39,7 @@ function onKeydown(event: KeyboardEvent): void {
       :key="option.id"
       type="button"
       role="radio"
-      class="fchip"
+      class="shell-seg"
       :class="{ on: sectionId === option.id }"
       :aria-checked="sectionId === option.id"
       :data-section="option.id"

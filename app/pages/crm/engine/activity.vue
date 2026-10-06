@@ -32,21 +32,23 @@ const { useFetch } = useApi()
 const { format } = useDates()
 const config = useRuntimeConfig()
 
+const FILTER_ALL = 'all'
+
 const from = ref<string | null>(null)
 const to = ref<string | null>(null)
-const nameFilter = ref('')
-const identifiedFilter = ref('')
+const nameFilter = ref(FILTER_ALL)
+const identifiedFilter = ref(FILTER_ALL)
 const page = ref(1)
 const eventNames = ref<Array<string>>([])
 const today = computed(() => format(new Date(), 'iso'))
 
 const nameItems = computed(() => [
-  { label: t('crmActivity.filterEvent'), value: '' },
+  { label: t('crmActivity.filterEvent'), value: FILTER_ALL },
   ...eventNames.value.map(name => ({ label: name, value: name }))
 ])
 
 const identifiedItems = computed(() => [
-  { label: t('crmActivity.filterIdentified'), value: '' },
+  { label: t('crmActivity.filterIdentified'), value: FILTER_ALL },
   { label: t('crmActivity.identifiedYes'), value: '1' },
   { label: t('crmActivity.identifiedNo'), value: '0' }
 ])
@@ -69,7 +71,7 @@ const listUrl = computed(() => {
     params.set('to', to.value)
   }
 
-  if (nameFilter.value !== '') {
+  if (nameFilter.value !== FILTER_ALL) {
     params.set('name', nameFilter.value)
   }
 
