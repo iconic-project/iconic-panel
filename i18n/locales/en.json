@@ -70,6 +70,12 @@
   },
   "auth": {
     "signIn": "Sign in",
+    "deskEyebrow": "Front desk",
+    "deskHeadline": "The night desk is open.",
+    "deskBody": "Rooms, stays, and the book for the house.",
+    "deskKey": "Staff key",
+    "deskArrivals": "Arrivals",
+    "deskInHouse": "In house",
     "signInFailed": "These credentials do not match our records.",
     "email": "Email",
     "password": "Password",

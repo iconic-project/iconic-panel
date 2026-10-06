@@ -70,6 +70,12 @@
   },
   "auth": {
     "signIn": "Iniciar sesión",
+    "deskEyebrow": "Recepción",
+    "deskHeadline": "El mostrador de noche está abierto.",
+    "deskBody": "Habitaciones, estancias y el libro de la casa.",
+    "deskKey": "Llave del personal",
+    "deskArrivals": "Llegadas",
+    "deskInHouse": "Alojados",
     "signInFailed": "Estas credenciales no coinciden con nuestros registros.",
     "email": "Correo electrónico",
     "password": "Contraseña",
