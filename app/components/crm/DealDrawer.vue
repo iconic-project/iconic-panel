@@ -261,9 +261,13 @@ async function submitLost(reason: string): Promise<void> {
         >
           {{ deal.booking.reference }}
           · {{ deal.booking.status }}
-          · {{ formatDate(deal.booking.departure_date, 'short') }}
-          <template v-if="deal.booking.cabin">
-            · {{ deal.booking.cabin }}
+          · {{ formatDate(deal.booking.check_in, 'short') }} – {{ formatDate(deal.booking.check_out, 'short') }}
+          · {{ t('crmPipeline.nights', { nights: String(deal.booking.nights) }) }}
+          <template v-if="deal.booking.room_type">
+            · {{ deal.booking.room_type }}
+          </template>
+          <template v-if="deal.booking.property_name">
+            · {{ deal.booking.property_name }}
           </template>
           · {{ format(deal.booking.charges_total) }}
           · {{ t('crmPipeline.paid') }} {{ format(deal.booking.paid) }}
@@ -294,6 +298,26 @@ async function submitLost(reason: string): Promise<void> {
           {{ deal.booking.main_channel }} · {{ deal.booking.channel_of_origin }}
           · {{ touchLabel(deal.booking.utm_first) }}
         </p>
+        <div class="sec">
+          <h4>{{ t('crmPipeline.searches') }}</h4>
+          <ul v-if="deal.searches.length > 0">
+            <li
+              v-for="search in deal.searches"
+              :key="`${search.at}-${search.name}`"
+            >
+              {{ search.name }}
+              <template v-if="search.detail">
+                · {{ search.detail }}
+              </template>
+            </li>
+          </ul>
+          <p
+            v-else
+            class="crm-held"
+          >
+            {{ t('crmPipeline.noSearches') }}
+          </p>
+        </div>
 
         <div
           v-if="canAct && unbound"

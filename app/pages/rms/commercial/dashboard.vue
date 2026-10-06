@@ -4,6 +4,7 @@ import type {
   BusinessRulesVersion,
   ChannelOfOriginGroup,
   CommercialMetrics,
+  HotelKpis,
   ItineraryListItem,
   MetricDefinition,
   Yacht
@@ -45,6 +46,7 @@ const channel = ref(SELECT_ALL)
 const agencyId = ref(SELECT_ALL)
 
 const metrics = ref<CommercialMetrics | null>(null)
+const hotel = ref<HotelKpis | null>(null)
 const loadError = ref('')
 
 const { data: yachtsPayload } = useFetch<{ data: Array<Yacht> }>('/api/rms/yachts')
@@ -115,6 +117,26 @@ function definitionLine(definition: MetricDefinition): string {
   })
 }
 
+function hotelPercent(value: string | null): string {
+  if (value === null) {
+    return t('dashboard.dash')
+  }
+
+  return `${value}%`
+}
+
+function periodLabel(key: HotelKpis['periods'][number]['key']): string {
+  if (key === 'this_month') {
+    return t('dashboard.thisMonth')
+  }
+
+  if (key === 'next_30') {
+    return t('dashboard.next30')
+  }
+
+  return t('dashboard.next90')
+}
+
 function percentOrDash(ratio: string | null): string {
   return ratioPercentLabel(ratio) ?? t('dashboard.dash')
 }
@@ -150,6 +172,7 @@ function barColor(ratio: string | null): string {
 async function loadMetrics(): Promise<void> {
   if (from.value === null || to.value === null) {
     metrics.value = null
+    hotel.value = null
     loadError.value = ''
     return
   }
@@ -180,10 +203,24 @@ async function loadMetrics(): Promise<void> {
   }
 
   try {
-    metrics.value = await request(`/api/rms/metrics?${params.toString()}`) as CommercialMetrics
+    const hotelParams = new URLSearchParams()
+
+    if (channel.value !== SELECT_ALL) {
+      hotelParams.set('channel', channel.value)
+    }
+
+    const hotelQuery = hotelParams.size > 0 ? `?${hotelParams.toString()}` : ''
+    const [metricsPayload, hotelPayload] = await Promise.all([
+      request(`/api/rms/metrics?${params.toString()}`) as Promise<CommercialMetrics>,
+      request(`/api/rms/hotel-kpis${hotelQuery}`) as Promise<HotelKpis>
+    ])
+
+    metrics.value = metricsPayload
+    hotel.value = hotelPayload
     loadError.value = ''
   } catch (error: unknown) {
     metrics.value = null
+    hotel.value = null
     loadError.value = firstApiMessage(error) ?? t('dashboard.loadError')
   }
 }
@@ -245,23 +282,14 @@ async function loadMetrics(): Promise<void> {
 
     <template v-else-if="metrics">
       <div class="krow">
-        <AnkKpi
-          :label="t('dashboard.kpiOccupancy')"
-          :sub="definitionLine(metrics.metrics.occupancy.definition)"
-        >
-          {{ percentOrDash(metrics.metrics.occupancy.occupancy) }}
+        <AnkKpi :label="t('dashboard.kpiOccupancy')">
+          {{ hotelPercent(hotel?.periods[0]?.kpis.occupancy ?? null) }}
         </AnkKpi>
-        <AnkKpi
-          :label="t('dashboard.kpiRevpab')"
-          :sub="definitionLine(metrics.metrics.revpab.definition)"
-        >
-          {{ moneyOrDash(metrics.metrics.revpab.revpab) }}
+        <AnkKpi :label="t('dashboard.kpiAdr')">
+          {{ moneyOrDash(hotel?.periods[0]?.kpis.adr ?? null) }}
         </AnkKpi>
-        <AnkKpi
-          :label="t('dashboard.kpiAdr')"
-          :sub="definitionLine(metrics.metrics.adr.definition)"
-        >
-          {{ moneyOrDash(metrics.metrics.adr.adr) }}
+        <AnkKpi :label="t('dashboard.kpiRevpar')">
+          {{ moneyOrDash(hotel?.periods[0]?.kpis.revpar ?? null) }}
         </AnkKpi>
         <AnkKpi
           :label="t('dashboard.kpiLead')"
@@ -281,6 +309,39 @@ async function loadMetrics(): Promise<void> {
         >
           {{ money(metrics.metrics.commissions.payable) }}
         </AnkKpi>
+      </div>
+
+      <div class="panel">
+        <h3>{{ t('dashboard.hotelKpis') }}</h3>
+        <div class="bk-table-wrap">
+          <table class="list">
+            <thead>
+              <tr>
+                <th>{{ t('dashboard.period') }}</th>
+                <th>{{ t('dashboard.onTheBooks') }} {{ t('dashboard.kpiOccupancy') }}</th>
+                <th>{{ t('dashboard.onTheBooks') }} {{ t('dashboard.kpiAdr') }}</th>
+                <th>{{ t('dashboard.onTheBooks') }} {{ t('dashboard.kpiRevpar') }}</th>
+                <th>{{ t('dashboard.lastYear') }} {{ t('dashboard.kpiOccupancy') }}</th>
+                <th>{{ t('dashboard.lastYear') }} {{ t('dashboard.kpiAdr') }}</th>
+                <th>{{ t('dashboard.lastYear') }} {{ t('dashboard.kpiRevpar') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="period in hotel?.periods ?? []"
+                :key="period.key"
+              >
+                <td>{{ periodLabel(period.key) }}</td>
+                <td>{{ hotelPercent(period.kpis.occupancy) }}</td>
+                <td>{{ moneyOrDash(period.kpis.adr) }}</td>
+                <td>{{ moneyOrDash(period.kpis.revpar) }}</td>
+                <td>{{ hotelPercent(period.last_year?.occupancy ?? null) }}</td>
+                <td>{{ moneyOrDash(period.last_year?.adr ?? null) }}</td>
+                <td>{{ moneyOrDash(period.last_year?.revpar ?? null) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div class="panel">

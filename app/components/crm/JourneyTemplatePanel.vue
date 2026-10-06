@@ -373,6 +373,12 @@ onUnmounted(() => {
           <p class="mono">
             {{ t('crmJourneys.variables') }}: {{ row.version.variables.join(', ') }}
           </p>
+          <p
+            v-if="row.version.variables.includes('departure_date')"
+            class="field-hint"
+          >
+            {{ t('crmJourneys.departureDateDeprecated') }}
+          </p>
         </div>
 
         <div class="field">

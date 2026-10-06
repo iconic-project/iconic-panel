@@ -532,6 +532,21 @@ async function onUndo(reason: string): Promise<void> {
           <span>{{ formatAttribution(profile.last_touch) }}</span>
         </div>
         <div class="kv">
+          <span>{{ t('crmContacts.stays') }}</span>
+          <span>
+            {{ t('crmContacts.staySummary', { stays: String(profile.stays_count), nights: String(profile.nights_count) }) }}
+            <template v-if="profile.last_room_type">
+              · {{ t('crmContacts.lastRoom', { room: profile.last_room_type }) }}
+            </template>
+            <template v-if="profile.last_stay_check_out">
+              · {{ t('crmContacts.lastStay', { date: format(profile.last_stay_check_out, 'short') }) }}
+            </template>
+            <template v-if="profile.next_stay_check_in">
+              · {{ t('crmContacts.nextStay', { date: format(profile.next_stay_check_in, 'short') }) }}
+            </template>
+          </span>
+        </div>
+        <div class="kv">
           <span>{{ t('crmContacts.npsLabel') }}</span>
           <span>{{ profile.nps ?? '—' }}</span>
         </div>
@@ -706,7 +721,7 @@ async function onUndo(reason: string): Promise<void> {
                 <td>
                   <span class="pill">{{ statusLabel(row.status) }}</span>
                 </td>
-                <td>{{ format(row.departure_date, 'short') }}</td>
+                <td>{{ format(row.check_in, 'short') }} – {{ format(row.check_out, 'short') }}</td>
                 <td>{{ money(row.charges_total) }}</td>
               </tr>
             </tbody>

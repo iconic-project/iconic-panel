@@ -10,6 +10,7 @@ import type {
 import { firstApiMessage } from '../../utils/apiForm'
 import { confirmUnsaved } from '../../composables/useUnsavedGuard'
 import HistoryTimeline from '../history/HistoryTimeline.vue'
+import BookingManifestArchive from './BookingManifestArchive.vue'
 import ReasonModal from './ReasonModal.vue'
 import MoveBookingModal from './MoveBookingModal.vue'
 import ConfirmRequestModal from '../requests/ConfirmRequestModal.vue'
@@ -1032,6 +1033,10 @@ async function onPaymentsUpdated(booking?: Booking): Promise<void> {
             {{ t('bookings.historyNote') }}
           </p>
           <HistoryTimeline :entries="history" />
+          <BookingManifestArchive
+            v-if="source.departure"
+            :departure-id="source.departure.id"
+          />
           <button
             v-if="historyPage < historyLast"
             type="button"

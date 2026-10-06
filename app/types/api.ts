@@ -180,6 +180,7 @@ export type {
   CharterEnquiry,
   CharterEnquiryStatus,
   CommercialMetrics,
+  HotelKpis,
   MetricDefinition,
   ReportCadence,
   ReportDefinition,

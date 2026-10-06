@@ -27,18 +27,3 @@ export function npsScoreClass(score: number, alertBelow: number, reviewFrom: num
 
   return 'p-pend'
 }
-
-export function defaultDepartureId(
-  rows: Array<{ departure_id: number, date: string }>,
-  today: string
-): number | null {
-  const upcoming = rows.find(row => row.date >= today)
-
-  if (upcoming !== undefined) {
-    return upcoming.departure_id
-  }
-
-  const last = rows.at(-1)
-
-  return last === undefined ? null : last.departure_id
-}

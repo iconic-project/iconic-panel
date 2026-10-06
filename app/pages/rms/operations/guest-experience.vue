@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import type {
   DepartureGuestExperience,
-  GuestExperienceDeparture,
   NpsView,
   PreferenceSource
 } from '../../../types/api'
 import DocumentPreviewModal from '../../../components/documents/DocumentPreviewModal.vue'
 import PreferenceModal from '../../../components/guest-experience/PreferenceModal.vue'
 import {
-  defaultDepartureId,
   npsScoreClass,
   prefStatusClass
 } from '../../../components/guest-experience/guestExperienceHelpers'
@@ -24,8 +22,9 @@ const { format } = useDates()
 const canManage = computed(() => can('guest_experience.manage'))
 const canSensitive = computed(() => can('guests.view_sensitive'))
 
-const departures = ref<Array<GuestExperienceDeparture>>([])
-const selectedId = ref<number | null>(null)
+const today = computed(() => format(new Date(), 'iso'))
+const from = ref(today.value)
+const to = ref(today.value)
 const experience = ref<DepartureGuestExperience | null>(null)
 const nps = ref<NpsView | null>(null)
 const loadError = ref('')
@@ -36,32 +35,19 @@ const preferenceGuest = ref<ExperienceGuest | null>(null)
 const briefOpen = ref(false)
 
 const briefHtml = computed(() => (
-  selectedId.value === null
-    ? null
-    : `/api/rms/departures/${String(selectedId.value)}/hotel-manager-brief`
+  from.value === '' ? null : `/api/rms/guest-experience/arrivals?date=${from.value}`
 ))
 
 const briefPdf = computed(() => (
-  briefHtml.value === null ? null : `${briefHtml.value}?format=pdf`
+  briefHtml.value === null ? null : `${briefHtml.value}&format=pdf`
 ))
 
-const departureItems = computed(() => departures.value.map(row => ({
-  label: departureLabel(row),
-  value: row.departure_id
-})))
-
-function onDepartureUpdate(value: number | string | null | undefined): void {
-  selectedId.value = typeof value === 'number' ? value : null
-}
-
-watch(selectedId, (id) => {
-  if (id !== null) {
-    void loadExperience(id)
-  }
+watch([from, to], () => {
+  void loadExperience()
 })
 
 onMounted(() => {
-  void loadDepartures()
+  void loadExperience()
 
   if (canManage.value) {
     void loadNps()
@@ -98,37 +84,24 @@ function statusDetail(guest: ExperienceGuest): string {
   return ''
 }
 
-function departureLabel(row: GuestExperienceDeparture): string {
-  return t('guestExperience.departureOption', {
-    date: format(row.date, 'short'),
-    yacht: row.yacht,
-    count: String(row.passengers)
-  })
-}
-
 function openPreferences(guest: ExperienceGuest): void {
   preferenceGuest.value = guest
   preferenceOpen.value = true
 }
 
-async function loadDepartures(): Promise<void> {
-  try {
-    const payload = await request('/api/rms/guest-experience/departures') as {
-      data: Array<GuestExperienceDeparture>
-    }
-    departures.value = payload.data
-    loadError.value = ''
-    selectedId.value = defaultDepartureId(payload.data, format(new Date(), 'iso'))
-  } catch (caught: unknown) {
-    departures.value = []
-    experience.value = null
-    loadError.value = firstApiMessage(caught) ?? t('guestExperience.loadFailed')
-  }
+function surveyHours(view: NpsView): string {
+  const facts = view.facts as NpsView['facts'] & { survey_hours_after_check_out?: number }
+
+  return String(facts.survey_hours_after_check_out ?? 0)
 }
 
-async function loadExperience(id: number): Promise<void> {
+async function loadExperience(): Promise<void> {
+  if (from.value === '' || to.value === '' || to.value < from.value) {
+    return
+  }
+
   try {
-    const payload = await request(`/api/rms/departures/${String(id)}/guest-experience`) as {
+    const payload = await request(`/api/rms/guest-experience?from=${from.value}&to=${to.value}`) as {
       data: DepartureGuestExperience
     }
     experience.value = payload.data
@@ -150,9 +123,7 @@ async function loadNps(): Promise<void> {
 }
 
 function refreshExperience(): void {
-  if (selectedId.value !== null) {
-    void loadExperience(selectedId.value)
-  }
+  void loadExperience()
 }
 
 function questionnaireSub(view: DepartureGuestExperience): string {
@@ -170,17 +141,18 @@ function questionnaireSub(view: DepartureGuestExperience): string {
       {{ t('guestExperience.notice') }}
     </p>
 
-    <div
-      v-if="departures.length > 0"
-      class="field gx-departure"
-    >
-      <label for="gx-departure">{{ t('guestExperience.departure') }}</label>
-      <USelect
-        id="gx-departure"
-        :model-value="selectedId ?? undefined"
-        class="w-full"
-        :items="departureItems"
-        @update:model-value="onDepartureUpdate"
+    <div class="field gx-dates">
+      <label for="gx-from">{{ t('guestExperience.arrivalFrom') }}</label>
+      <UInput
+        id="gx-from"
+        v-model="from"
+        type="date"
+      />
+      <label for="gx-to">{{ t('guestExperience.arrivalTo') }}</label>
+      <UInput
+        id="gx-to"
+        v-model="to"
+        type="date"
       />
     </div>
 
@@ -191,10 +163,10 @@ function questionnaireSub(view: DepartureGuestExperience): string {
       {{ loadError }}
     </p>
     <p
-      v-else-if="departures.length === 0"
+      v-else-if="experience !== null && experience.guests.length === 0"
       class="note"
     >
-      {{ t('guestExperience.emptyDepartures') }}
+      {{ t('guestExperience.emptyArrivals') }}
     </p>
 
     <template v-if="experience">
@@ -232,7 +204,7 @@ function questionnaireSub(view: DepartureGuestExperience): string {
             <thead>
               <tr>
                 <th>{{ t('guestExperience.colGuest') }}</th>
-                <th>{{ t('guestExperience.colCabin') }}</th>
+                <th>{{ t('guestExperience.colRoom') }}</th>
                 <th>{{ t('guestExperience.colStatus') }}</th>
                 <th>{{ t('guestExperience.colDietary') }}</th>
                 <th>{{ t('guestExperience.colCelebration') }}</th>
@@ -283,7 +255,7 @@ function questionnaireSub(view: DepartureGuestExperience): string {
         <div class="gx-brief">
           <UButton
             variant="outline"
-            :disabled="selectedId === null"
+            :disabled="from === ''"
             @click="briefOpen = true"
           >
             {{ t('guestExperience.brief') }}
@@ -308,7 +280,7 @@ function questionnaireSub(view: DepartureGuestExperience): string {
         class="note gx-empty"
       >
         {{ t('guestExperience.emptyNps', {
-          hours: String(nps.facts.survey_hours_after_return),
+          hours: surveyHours(nps),
           date: nps.facts.first_expected_survey_on === null ? '—' : format(nps.facts.first_expected_survey_on, 'short'),
           alert: String(nps.facts.alert_below),
           review: String(nps.facts.review_request_from)
@@ -386,14 +358,17 @@ function questionnaireSub(view: DepartureGuestExperience): string {
       :title="t('guestExperience.briefTitle')"
       :html-path="briefHtml"
       :file-path="briefPdf"
-      file-name="hotel-manager-brief.pdf"
+      file-name="arrivals-brief.pdf"
     />
   </div>
 </template>
 
 <style scoped>
-.gx-departure {
-  max-width: 420px;
+.gx-dates {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  max-width: 520px;
 }
 
 .gx-warn {

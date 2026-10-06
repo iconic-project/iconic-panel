@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Booking, Paginated } from '../../../types/api'
+import type { Booking } from '../../../types/api'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import { statusText } from '../../../components/bookings/bookingHelpers'
+import { downloadDocumentFile } from '../../../components/documents/documentFetch'
 import {
   deskActionPath,
-  frontDeskParams,
   nightAuditAlerts,
   type DeskTab
 } from '../../../components/bookings/stayBooking'
@@ -28,36 +28,31 @@ const { request, useFetch } = useApi()
 const { format } = useDates()
 const { format: money } = useMoney()
 
+type FrontDeskLists = {
+  date: string
+  arrivals: Booking[]
+  in_house: Booking[]
+  departures: Booking[]
+}
+
 const date = ref(format(new Date(), 'iso'))
 const tab = ref<DeskTab>('arrivals')
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
 const actionError = ref('')
+const exportFormat = ref<'csv' | 'pdf'>('csv')
+const exporting = ref(false)
 
-const listUrl = computed(() => {
-  const params = new URLSearchParams({
-    ...frontDeskParams(tab.value, date.value),
-    per_page: '50'
-  })
+const listUrl = computed(() => `/api/rms/front-desk?date=${date.value}`)
 
-  return `/api/rms/bookings?${params.toString()}`
-})
-
-const arrivalsUrl = computed(() => `/api/rms/bookings?${new URLSearchParams({ ...frontDeskParams('arrivals', date.value), per_page: '1' }).toString()}`)
-const inHouseUrl = computed(() => `/api/rms/bookings?${new URLSearchParams({ ...frontDeskParams('in_house', date.value), per_page: '1' }).toString()}`)
-const departuresUrl = computed(() => `/api/rms/bookings?${new URLSearchParams({ ...frontDeskParams('departures', date.value), per_page: '1' }).toString()}`)
-
-const { data: list, refresh } = await useFetch<Paginated<Booking>>(listUrl)
-const { data: arrivals } = await useFetch<Paginated<Booking>>(arrivalsUrl)
-const { data: inHouse } = await useFetch<Paginated<Booking>>(inHouseUrl)
-const { data: departures } = await useFetch<Paginated<Booking>>(departuresUrl)
+const { data: lists, refresh } = await useFetch<FrontDeskLists>(listUrl)
 const { data: alerts } = await useFetch<{ data: DeskAlert[] }>('/api/alerts?section=rms&state=open')
 
-const rows = computed(() => list.value?.data ?? [])
+const rows = computed(() => lists.value?.[tab.value] ?? [])
 const counts = computed(() => ({
-  arrivals: arrivals.value?.meta.total ?? 0,
-  in_house: inHouse.value?.meta.total ?? 0,
-  departures: departures.value?.meta.total ?? 0
+  arrivals: lists.value?.arrivals.length ?? 0,
+  in_house: lists.value?.in_house.length ?? 0,
+  departures: lists.value?.departures.length ?? 0
 }))
 const audit = computed(() => nightAuditAlerts(alerts.value?.data ?? []))
 
@@ -77,6 +72,27 @@ function openBooking(row: Booking): void {
 function onUpdated(booking: Booking): void {
   selected.value = booking
   void refresh()
+}
+
+const exportFormats = computed(() => [
+  { label: t('frontDesk.formatCsv'), value: 'csv' },
+  { label: t('frontDesk.formatPdf'), value: 'pdf' }
+])
+
+async function exportRegistration(): Promise<void> {
+  exporting.value = true
+  actionError.value = ''
+
+  try {
+    await downloadDocumentFile(
+      `/api/rms/front-desk/registration?date=${date.value}&format=${exportFormat.value}`,
+      `registration-${date.value}.${exportFormat.value}`
+    )
+  } catch (caught: unknown) {
+    actionError.value = caught instanceof Error ? caught.message : t('frontDesk.exportFailed')
+  } finally {
+    exporting.value = false
+  }
 }
 
 async function checkIn(row: Booking, event: Event): Promise<void> {
@@ -102,6 +118,18 @@ async function checkIn(row: Booking, event: Event): Promise<void> {
           type="date"
           :aria-label="t('frontDesk.title')"
         />
+        <USelect
+          v-model="exportFormat"
+          size="sm"
+          :items="exportFormats"
+          :aria-label="t('frontDesk.exportFormat')"
+        />
+        <UButton
+          :loading="exporting"
+          @click="exportRegistration"
+        >
+          {{ t('frontDesk.export') }}
+        </UButton>
       </div>
       <div
         v-if="audit.length > 0"

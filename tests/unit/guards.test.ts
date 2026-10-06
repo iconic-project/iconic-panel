@@ -239,7 +239,7 @@ describe('seeded admin nav', () => {
     })
   })
 
-  it('shows Documents & Manifests with panel.rms and hides it without', () => {
+  it('shows Documents with panel.rms and hides it without', () => {
     const shown = visibleNav(sections.rms, allow('panel.rms'))
     const hidden = visibleNav(sections.rms, allow('bookings.create'))
 
