@@ -319,7 +319,7 @@ watch(
 <template>
   <div>
     <div class="panel">
-      <div class="bk-toolbar">
+      <div class="bk-toolbar bk-head">
         <h3>{{ t('bookings.panelTitle') }}</h3>
         <UButton
           v-if="canCreate"
@@ -328,69 +328,62 @@ watch(
           {{ t('bookings.newStay') }}
         </UButton>
       </div>
-      <div class="list-filters bk-filters">
-        <label class="field">
-          <span>{{ t('bookings.filterArriving') }}</span>
-          <span class="bk-date">
-            <AnkDateInput
-              v-model="arrivingFrom"
-              :aria-label="t('bookings.filterArriving')"
-            />
-          </span>
-          <span class="bk-date">
-            <AnkDateInput
-              v-model="arrivingTo"
-              :aria-label="t('bookings.filterArriving')"
-            />
-          </span>
-        </label>
-        <label class="field">
-          <span>{{ t('bookings.filterInHouse') }}</span>
-          <span class="bk-date">
-            <AnkDateInput
-              v-model="inHouseOn"
-              :aria-label="t('bookings.filterInHouse')"
-            />
-          </span>
-        </label>
-        <label class="field">
-          <span>{{ t('bookings.filterDeparting') }}</span>
-          <span class="bk-date">
-            <AnkDateInput
-              v-model="departingFrom"
-              :aria-label="t('bookings.filterDeparting')"
-            />
-          </span>
-          <span class="bk-date">
-            <AnkDateInput
-              v-model="departingTo"
-              :aria-label="t('bookings.filterDeparting')"
-            />
-          </span>
-        </label>
-        <label class="field">
-          <span>{{ t('bookings.filterStatus') }}</span>
-          <USelect
-            v-model="statusFilter"
-            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...STATUS_FILTERS.map(status => ({ label: labelOf(status), value: status }))]"
-          />
-        </label>
-        <label class="field">
-          <span>{{ t('bookings.filterOwner') }}</span>
-          <USelect
-            v-model="ownerFilter"
-            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...owners.map(owner => ({ label: owner.name, value: String(owner.id) }))]"
-          />
-        </label>
-        <label class="field">
-          <span>{{ t('bookings.filterChannel') }}</span>
-          <USelect
-            v-model="channelFilter"
-            :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...MAIN_CHANNELS.map(channel => ({ label: channel, value: channel }))]"
-          />
-        </label>
+      <div class="bk-filters-wrap">
+        <div class="bk-filters">
+          <label class="field">
+            <span>{{ t('bookings.filterArriving') }}</span>
+            <span class="bk-date-range">
+              <span class="bk-date">
+                <AnkDateInput
+                  v-model="arrivingFrom"
+                  :aria-label="t('bookings.filterArriving')"
+                />
+              </span>
+              <span
+                class="bk-range-sep"
+                aria-hidden="true"
+              >–</span>
+              <span class="bk-date">
+                <AnkDateInput
+                  v-model="arrivingTo"
+                  :aria-label="t('bookings.filterArriving')"
+                />
+              </span>
+            </span>
+          </label>
+          <label class="field">
+            <span>{{ t('bookings.filterInHouse') }}</span>
+            <span class="bk-date">
+              <AnkDateInput
+                v-model="inHouseOn"
+                :aria-label="t('bookings.filterInHouse')"
+              />
+            </span>
+          </label>
+          <label class="field">
+            <span>{{ t('bookings.filterDeparting') }}</span>
+            <span class="bk-date-range">
+              <span class="bk-date">
+                <AnkDateInput
+                  v-model="departingFrom"
+                  :aria-label="t('bookings.filterDeparting')"
+                />
+              </span>
+              <span
+                class="bk-range-sep"
+                aria-hidden="true"
+              >–</span>
+              <span class="bk-date">
+                <AnkDateInput
+                  v-model="departingTo"
+                  :aria-label="t('bookings.filterDeparting')"
+                />
+              </span>
+            </span>
+          </label>
+        </div>
       </div>
-      <div class="ebtool dep-toolbar">
+      <div class="ebtool dep-toolbar bk-filter-bar">
         <div class="fchips">
           <button
             v-for="item in SEGMENTS"
@@ -402,6 +395,32 @@ watch(
           >
             {{ t(item.labelKey) }}
           </button>
+        </div>
+        <div class="bk-filter-selects">
+          <label class="field">
+            <span>{{ t('bookings.filterStatus') }}</span>
+            <USelect
+              v-model="statusFilter"
+              class="bk-select"
+              :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...STATUS_FILTERS.map(status => ({ label: labelOf(status), value: status }))]"
+            />
+          </label>
+          <label class="field">
+            <span>{{ t('bookings.filterOwner') }}</span>
+            <USelect
+              v-model="ownerFilter"
+              class="bk-select"
+              :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...owners.map(owner => ({ label: owner.name, value: String(owner.id) }))]"
+            />
+          </label>
+          <label class="field">
+            <span>{{ t('bookings.filterChannel') }}</span>
+            <USelect
+              v-model="channelFilter"
+              class="bk-select"
+              :items="[{ label: t('bookings.filterAny'), value: FILTER_ANY }, ...MAIN_CHANNELS.map(channel => ({ label: channel, value: channel }))]"
+            />
+          </label>
         </div>
         <div class="list-filters">
           <UInput

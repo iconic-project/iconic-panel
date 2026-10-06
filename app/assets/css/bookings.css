@@ -120,6 +120,20 @@
   padding: 12px 20px 0;
 }
 
+.bk-head {
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--hair);
+}
+
+.bk-head h3 {
+  border-bottom: none;
+}
+
+.bk-filter-bar {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hair);
+}
+
 .bk-search {
   min-width: 220px;
 }
@@ -129,24 +143,65 @@
   color: var(--coral);
 }
 
-.bk-filters {
-  padding: 0 20px 4px;
+.bk-filters-wrap {
+  container-type: inline-size;
+  padding: 10px 20px 2px;
 }
 
-.bk-filters .field {
+.bk-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px 48px;
+}
+
+@container (min-width: 88rem) {
+  .bk-filters {
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+}
+
+.bk-filters .field,
+.bk-filter-selects .field {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 0;
 }
 
-.bk-filters .field > span:first-child {
+.bk-filters .field > span:first-child,
+.bk-filter-selects .field > span:first-child {
   white-space: nowrap;
 }
 
+.bk-date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bk-range-sep {
+  color: var(--iv38);
+  font-size: 13px;
+  line-height: 1;
+}
+
 .bk-date {
-  width: 12rem;
+  width: 11rem;
   flex: none;
+}
+
+.bk-filter-selects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+}
+
+.bk-select {
+  min-width: 9.5rem;
 }
 
 .bk-table-wrap {

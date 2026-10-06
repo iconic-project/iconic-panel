@@ -865,9 +865,11 @@ main:has(> .inbox-page) {
   grid-template-columns: 320px 1fr;
   gap: 0;
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
   background: var(--forest-900);
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .convcol {
@@ -934,6 +936,7 @@ main:has(> .inbox-page) {
   letter-spacing: 0;
   padding: 2px 6px;
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
   color: var(--iv62);
 }
 
@@ -945,6 +948,7 @@ main:has(> .inbox-page) {
 .unread {
   width: 8px;
   height: 8px;
+  border-radius: var(--ui-radius);
   background: var(--coral);
   display: inline-block;
   flex: none;
@@ -1027,6 +1031,8 @@ main:has(> .inbox-page) {
   font-size: 13px;
   line-height: 1.55;
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
+  overflow: hidden;
 }
 
 .msg p {
@@ -1090,6 +1096,7 @@ main:has(> .inbox-page) {
 
 .chbtn {
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
   background: transparent;
   padding: 7px 14px;
   font-family: var(--font-sans);
