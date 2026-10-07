@@ -171,7 +171,10 @@ function moveRoom(): Promise<void> {
       <span>{{ t('bookings.colRoomType') }}</span>
       <span>{{ booking.room_type.name }}</span>
     </div>
-    <div class="desk-actions">
+    <div
+      v-if="actions.check_in || actions.check_out || actions.no_show"
+      class="desk-actions"
+    >
       <UButton
         v-if="actions.check_in"
         :disabled="busy"
