@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Booking, RequestQueueItem, RequestQueueRules } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
+import type { Booking, Paginated, RequestQueueItem, RequestQueueRules } from '../../../types/api'
 import BookingPanel from '../../../components/bookings/BookingPanel.vue'
 import ReasonModal from '../../../components/bookings/ReasonModal.vue'
 import ConfirmRequestModal from '../../../components/requests/ConfirmRequestModal.vue'
@@ -14,10 +13,10 @@ import {
 import { firstApiMessage } from '../../../utils/apiForm'
 
 const POLL_MS = 5 * 60 * 1000
+const PAGE_SIZE = 15
 
-type QueuePayload = {
-  data: Array<RequestQueueItem>
-  meta: {
+type QueuePayload = Paginated<RequestQueueItem> & {
+  meta: Paginated<RequestQueueItem>['meta'] & {
     rules: RequestQueueRules
   }
 }
@@ -25,15 +24,12 @@ type QueuePayload = {
 const { can } = useAuth()
 const { t } = useI18n()
 const { useFetch, request } = useApi()
-const { format } = useDates()
 const { format: money } = useMoney()
 const toast = useToast()
-const { count: openCount, rules: sharedRules, refresh: refreshBadge } = useOpenRequests()
+const { rules: sharedRules, refresh: refreshBadge } = useOpenRequests()
 const { now, start: startSlaTick } = useSlaNow()
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
-const today = computed(() => format(new Date(), 'iso'))
+const page = ref(1)
 
 const panelOpen = ref(false)
 const selected = ref<Booking | null>(null)
@@ -48,27 +44,20 @@ const releaseSubmitting = ref(false)
 const releaseError = ref('')
 
 const listUrl = computed(() => {
-  const params = new URLSearchParams()
+  const params = new URLSearchParams({
+    page: String(page.value),
+    per_page: String(PAGE_SIZE)
+  })
 
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
-
-  const query = params.toString()
-
-  return query === '' ? '/api/rms/requests' : `/api/rms/requests?${query}`
+  return `/api/rms/requests?${params.toString()}`
 })
 
 const { data: listPayload, refresh } = useFetch<QueuePayload>(listUrl)
 
 const rows = computed(() => listPayload.value?.data ?? [])
+const meta = computed(() => listPayload.value?.meta)
 const rules = computed(() => listPayload.value?.meta.rules ?? sharedRules.value)
 const dayMinutes = computed(() => rules.value?.business_day_minutes ?? 0)
-const total = computed(() => rows.value.length)
 
 function slaOf(row: RequestQueueItem) {
   return formatSla(slaRemainingMinutes(row.sla.due_at, now.value))
@@ -169,35 +158,6 @@ onMounted(() => {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('requests.fieldLabel')"
-      :noun="t('requests.noun')"
-      :total="total"
-      :today="today"
-    />
-
-    <i18n-t
-      v-if="rules"
-      keypath="requests.notice"
-      tag="p"
-      class="notice req-notice"
-    >
-      <template #status>
-        <b>REQUESTED</b>
-      </template>
-      <template #near>
-        {{ rules.near_term_business_hours }}
-      </template>
-      <template #long>
-        {{ rules.long_lead_business_days }}
-      </template>
-      <template #sla>
-        <b>{{ t('requests.noticeSla', { hours: String(rules.response_hours) }) }}</b>
-      </template>
-    </i18n-t>
-
     <div class="panel">
       <h3>{{ t('requests.panelTitle') }}</h3>
       <div class="bk-table-wrap">
@@ -220,7 +180,7 @@ onMounted(() => {
               class="dr-empty"
             >
               <td colspan="8">
-                {{ openCount > 0 ? t('requests.emptyRange') : t('requests.emptyAll') }}
+                {{ t('requests.emptyAll') }}
               </td>
             </tr>
             <tr
@@ -263,23 +223,37 @@ onMounted(() => {
                 >{{ slaOf(row).text }}</span>
               </td>
               <td class="list-actions">
-                <UButton
-                  :disabled="!canConfirmRow(row)"
-                  @click="startConfirm(row, $event)"
-                >
-                  {{ t('requests.confirm') }}
-                </UButton>
-                <UButton
-                  variant="outline"
-                  :disabled="!canReleaseRow(row)"
-                  @click="startRelease(row, $event)"
-                >
-                  {{ t('requests.release') }}
-                </UButton>
+                <div class="req-actions">
+                  <UButton
+                    :disabled="!canConfirmRow(row)"
+                    @click="startConfirm(row, $event)"
+                  >
+                    {{ t('requests.confirm') }}
+                  </UButton>
+                  <UButton
+                    variant="outline"
+                    :disabled="!canReleaseRow(row)"
+                    @click="startRelease(row, $event)"
+                  >
+                    {{ t('requests.release') }}
+                  </UButton>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div
+        v-if="meta && meta.total > 0"
+        class="bk-pager"
+      >
+        <span class="bk-pager-count">{{ t('bookings.pager', { from: String(meta.from ?? 0), to: String(meta.to ?? 0), total: String(meta.total) }) }}</span>
+        <UPagination
+          v-model:page="page"
+          :total="meta.total"
+          :items-per-page="PAGE_SIZE"
+          size="sm"
+        />
       </div>
     </div>
 

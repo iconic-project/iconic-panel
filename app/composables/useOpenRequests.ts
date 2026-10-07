@@ -5,6 +5,7 @@ const POLL_MS = 5 * 60 * 1000
 type QueuePayload = {
   data: Array<RequestQueueItem>
   meta: {
+    total: number
     rules: RequestQueueRules
   }
 }
@@ -26,7 +27,7 @@ export function useOpenRequests() {
     }
 
     const body = await request('/api/rms/requests') as QueuePayload
-    count.value = body.data.length
+    count.value = body.meta.total
     rules.value = body.meta.rules
   }
 

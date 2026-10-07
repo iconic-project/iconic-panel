@@ -460,6 +460,14 @@ button.lnk {
   font-size: 9px;
   letter-spacing: 0;
   padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.req-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 }
 
 .slat.ok {
@@ -497,9 +505,55 @@ html.light .slat.bad {
 
 .gcard {
   border: 1px solid var(--hair);
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
   background: var(--forest-900);
+}
+
+.history-drawer .note {
+  padding: 0 0 12px;
+}
+
+.history-drawer .warnbox {
+  margin-bottom: 16px;
+}
+
+.history-drawer table.list th,
+.history-drawer table.list td {
+  padding: 10px 14px;
+}
+
+.desk-modify {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  row-gap: 12px;
+}
+
+.desk-modify .field {
+  margin-bottom: 0;
+}
+
+.desk-modify .desk-actions {
+  grid-column: 1 / -1;
+}
+
+.desk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.desk-move {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.desk-move > label {
+  margin-bottom: 0;
 }
 
 .gcard-inc {

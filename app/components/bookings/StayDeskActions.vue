@@ -171,7 +171,7 @@ function moveRoom(): Promise<void> {
       <span>{{ t('bookings.colRoomType') }}</span>
       <span>{{ booking.room_type.name }}</span>
     </div>
-    <div class="list-actions">
+    <div class="desk-actions">
       <UButton
         v-if="actions.check_in"
         :disabled="busy"
@@ -207,7 +207,7 @@ function moveRoom(): Promise<void> {
     </label>
     <div
       v-if="actions.modify_stay"
-      class="cols2"
+      class="desk-modify"
     >
       <label class="field">
         <span>{{ t('bookings.filterArriving') }}</span>
@@ -223,7 +223,7 @@ function moveRoom(): Promise<void> {
           :aria-label="t('bookings.filterDeparting')"
         />
       </label>
-      <div class="list-actions">
+      <div class="desk-actions">
         <UButton
           variant="outline"
           :disabled="busy"
@@ -248,7 +248,7 @@ function moveRoom(): Promise<void> {
     </div>
     <div
       v-if="actions.move_room"
-      class="field"
+      class="field desk-move"
     >
       <label for="desk-room">{{ t('bookings.deskMove') }}</label>
       <USelect
