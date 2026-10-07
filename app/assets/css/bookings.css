@@ -456,11 +456,15 @@ button.lnk {
 }
 
 .slat {
+  display: inline-block;
   font-family: var(--font-sans);
-  font-size: 9px;
-  letter-spacing: 0;
-  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 8px;
   border-radius: 8px;
+  white-space: nowrap;
 }
 
 .req-actions {
@@ -476,8 +480,9 @@ button.lnk {
 }
 
 .slat.bad {
-  background: var(--coral);
-  color: #fff;
+  background: var(--danger-soft);
+  color: var(--danger-ink);
+  border: 1px solid var(--danger);
 }
 
 .req-expired,
@@ -497,10 +502,6 @@ button.lnk {
 .wl-notified {
   font-family: var(--font-sans);
   color: var(--iv38);
-}
-
-html.light .slat.bad {
-  color: var(--neutral-950);
 }
 
 .gcard {
