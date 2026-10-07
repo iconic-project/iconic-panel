@@ -219,6 +219,23 @@
   overflow-x: auto;
 }
 
+.bk-pager {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--surface-sunken);
+}
+
+.bk-pager-count {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--iv62);
+}
+
 .bk-row {
   cursor: pointer;
 }

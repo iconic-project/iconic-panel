@@ -12,6 +12,7 @@ import { MAIN_CHANNELS } from '../../../components/bookings/stayBooking'
 
 const SEARCH_DEBOUNCE_MS = 300
 const FILTER_ANY = 'ALL'
+const PAGE_SIZE = 15
 
 const SEGMENTS: Array<{ id: 'ALL' | BookingSegment, labelKey: string }> = [
   { id: 'ALL', labelKey: 'bookings.segmentAll' },
@@ -114,7 +115,7 @@ const canCreate = computed(() => can('bookings.create'))
 const listUrl = computed(() => {
   const params = new URLSearchParams({
     page: String(page.value),
-    per_page: '50'
+    per_page: String(PAGE_SIZE)
   })
 
   const arrivingStart = dateQuery(arrivingFrom.value)
@@ -252,6 +253,7 @@ async function onDeleted(): Promise<void> {
 
 async function onCreated(response: CreateReservationResponse): Promise<void> {
   stayOpen.value = false
+  page.value = 1
   await refreshAll()
   const first = response.bookings[0]
 
@@ -520,24 +522,16 @@ watch(
         </table>
       </div>
       <div
-        v-if="meta && meta.last_page > 1"
-        class="list-pager"
+        v-if="meta && meta.total > 0"
+        class="bk-pager"
       >
-        <button
-          type="button"
-          :disabled="meta.current_page <= 1"
-          @click="page -= 1"
-        >
-          {{ t('bookings.previous') }}
-        </button>
-        <span>{{ t('bookings.pager', { from: String(meta.from ?? 0), to: String(meta.to ?? 0), total: String(meta.total) }) }}</span>
-        <button
-          type="button"
-          :disabled="meta.current_page >= meta.last_page"
-          @click="page += 1"
-        >
-          {{ t('bookings.next') }}
-        </button>
+        <span class="bk-pager-count">{{ t('bookings.pager', { from: String(meta.from ?? 0), to: String(meta.to ?? 0), total: String(meta.total) }) }}</span>
+        <UPagination
+          v-model:page="page"
+          :total="meta.total"
+          :items-per-page="PAGE_SIZE"
+          size="sm"
+        />
       </div>
     </div>
 
