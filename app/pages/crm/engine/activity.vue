@@ -5,7 +5,6 @@ import type {
   EventCatalogueRow,
   Paginated
 } from '../../../types/api'
-import DateRangeFilter from '../../../components/lists/DateRangeFilter.vue'
 import {
   isAnonymousContact,
   sideTokens,
@@ -34,13 +33,10 @@ const config = useRuntimeConfig()
 
 const FILTER_ALL = 'all'
 
-const from = ref<string | null>(null)
-const to = ref<string | null>(null)
 const nameFilter = ref(FILTER_ALL)
 const identifiedFilter = ref(FILTER_ALL)
 const page = ref(1)
 const eventNames = ref<Array<string>>([])
-const today = computed(() => format(new Date(), 'iso'))
 
 const nameItems = computed(() => [
   { label: t('crmActivity.filterEvent'), value: FILTER_ALL },
@@ -53,7 +49,7 @@ const identifiedItems = computed(() => [
   { label: t('crmActivity.identifiedNo'), value: '0' }
 ])
 
-watch([from, to, nameFilter, identifiedFilter], () => {
+watch([nameFilter, identifiedFilter], () => {
   page.value = 1
 })
 
@@ -62,14 +58,6 @@ const listUrl = computed(() => {
     page: String(page.value),
     per_page: '50'
   })
-
-  if (from.value !== null) {
-    params.set('from', from.value)
-  }
-
-  if (to.value !== null) {
-    params.set('to', to.value)
-  }
 
   if (nameFilter.value !== FILTER_ALL) {
     params.set('name', nameFilter.value)
@@ -87,7 +75,6 @@ const { data: listPayload } = useFetch<ActivityPayload>(listUrl)
 const rows = computed(() => listPayload.value?.data ?? [])
 const meta = computed(() => listPayload.value?.meta)
 const kpis = computed(() => listPayload.value?.meta.kpis ?? emptyKpis)
-const total = computed(() => meta.value?.total ?? 0)
 const showEventFilter = computed(() => eventNames.value.length > 0)
 
 onMounted(async () => {
@@ -118,15 +105,6 @@ async function openContact(row: ActivityEvent): Promise<void> {
 
 <template>
   <div>
-    <DateRangeFilter
-      v-model:from="from"
-      v-model:to="to"
-      :field-label="t('crmActivity.fieldLabel')"
-      :noun="t('crmActivity.noun')"
-      :total="total"
-      :today="today"
-    />
-
     <div class="krow">
       <AnkKpi
         :label="t('crmActivity.kpiEventsToday')"
@@ -159,10 +137,6 @@ async function openContact(row: ActivityEvent): Promise<void> {
         {{ t('crmActivity.kpiWebHoldValue', { minutes: String(kpis.web_hold_minutes) }) }}
       </AnkKpi>
     </div>
-
-    <p class="notice crm-notice">
-      {{ t('crmActivity.notice') }}
-    </p>
 
     <div class="panel">
       <h3>{{ t('crmActivity.streamTitle') }}</h3>
