@@ -524,9 +524,16 @@ table.list th.nw {
 }
 
 .journey {
-  border: 1px solid var(--hair);
-  background: var(--forest-900);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--ui-radius);
+  background: var(--bg-surface);
   margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.journey[data-kind='TRANSACTIONAL'] {
+  border-top-color: var(--success);
 }
 
 .journey .jh {
@@ -534,9 +541,15 @@ table.list th.nw {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+  background: var(--primary-soft);
   gap: 14px;
   flex-wrap: wrap;
+}
+
+.journey[data-kind='TRANSACTIONAL'] .jh {
+  background: var(--success-soft);
+  border-bottom-color: color-mix(in srgb, var(--success) 28%, var(--border));
 }
 
 .journey .jh h3 {
@@ -545,7 +558,11 @@ table.list th.nw {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
-  color: var(--sand);
+  color: var(--primary-ink);
+}
+
+.journey[data-kind='TRANSACTIONAL'] .jh h3 {
+  color: var(--success-ink);
 }
 
 .journey .jh .goal {
@@ -585,8 +602,12 @@ table.list th.nw {
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--iv38);
+  color: var(--primary);
   padding: 12px 20px 0;
+}
+
+.journey[data-kind='TRANSACTIONAL'] .jbranch {
+  color: var(--success-ink);
 }
 
 .jsteps {
@@ -599,10 +620,16 @@ table.list th.nw {
 
 .jstep {
   min-width: 150px;
-  border: 1px solid var(--hair);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--ui-radius);
   padding: 11px 13px;
   position: relative;
-  background: var(--forest-950);
+  background: var(--bg-surface);
+}
+
+.journey[data-kind='TRANSACTIONAL'] .jstep {
+  border-top-color: var(--success);
 }
 
 .jstep + .jstep {
@@ -645,9 +672,14 @@ table.list th.nw {
 .jstep .sc {
   font-family: var(--font-sans);
   font-size: 10px;
-  color: var(--sand);
+  font-weight: 500;
+  color: var(--primary);
   margin-top: 6px;
   letter-spacing: 0;
+}
+
+.journey[data-kind='TRANSACTIONAL'] .jstep .sc {
+  color: var(--success-ink);
 }
 
 .jstep .joff {
@@ -697,13 +729,17 @@ table.list th.nw {
 }
 
 .segc {
-  border: 1px solid var(--hair);
-  background: var(--forest-900);
-  padding: 20px;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--ui-radius);
+  background: var(--bg-surface);
+  padding: 0 0 16px;
+  overflow: hidden;
 }
 
 .segc.exception {
-  border-color: var(--warn);
+  border-color: var(--warning);
+  border-top-color: var(--warning);
 }
 
 .seg-open {
@@ -723,6 +759,13 @@ table.list th.nw {
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+  background: var(--primary-soft);
+  padding: 14px 20px 12px;
+  margin-bottom: 12px;
+}
+
+.segc.exception .seg-head {
+  background: var(--warning-soft);
 }
 
 .segc h4 {
@@ -731,20 +774,30 @@ table.list th.nw {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+  color: var(--primary-ink);
+}
+
+.segc.exception h4 {
+  color: var(--warning-ink);
 }
 
 .segc .n {
   font-family: var(--font-sans);
   font-size: 17px;
-  color: var(--coral-400);
+  font-weight: 500;
+  color: var(--primary);
   letter-spacing: 0;
+}
+
+.segc.exception .n {
+  color: var(--warning);
 }
 
 .segc .rule {
   font-size: 12px;
   color: var(--iv62);
-  margin: 10px 0;
+  margin: 0 20px 10px;
   font-style: italic;
 }
 
@@ -756,39 +809,48 @@ table.list th.nw {
 }
 
 .dim {
-  border: 1px solid var(--hair);
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius);
+  background: var(--surface-muted);
   padding: 3px 9px;
   font-family: var(--font-sans);
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--iv62);
+  color: var(--text-body);
 }
 
 .dim.b {
-  border-color: var(--ok);
-  color: var(--ok);
+  background: var(--success-soft);
+  color: var(--success-ink);
 }
 
 .dim.i {
-  border-color: var(--sand);
-  color: var(--sand);
+  background: var(--warning-soft);
+  color: var(--warning-ink);
 }
 
 .dim.l {
-  border-color: var(--iv38);
+  background: var(--surface-muted);
+  color: var(--text-muted);
 }
 
 .dim.p {
-  border-color: var(--coral-400);
-  color: var(--coral-400);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+
+.segc .dimrow {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .segc .feeds {
   font-size: 11px;
   color: var(--iv38);
-  border-top: 1px solid var(--hair);
-  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 10px 20px 0;
 }
 
 .segc .feeds b {
@@ -799,7 +861,7 @@ table.list th.nw {
 .seg-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin: 12px 20px 0;
 }
 
 .seg-condition {

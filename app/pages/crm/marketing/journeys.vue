@@ -166,6 +166,7 @@ function openTemplate(key: string): void {
       :id="journey.key"
       :key="journey.key"
       class="journey"
+      :data-kind="journey.kind"
     >
       <div class="jh">
         <div>
