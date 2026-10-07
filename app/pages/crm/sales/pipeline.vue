@@ -295,12 +295,8 @@ function onKeyboardMove(deal: PipelineDeal, stage: string | number | boolean | n
       {{ loadError }}
     </p>
 
-    <p class="notice crm-notice">
-      {{ t('crmPipeline.notice') }}
-    </p>
-
     <div class="panel">
-      <div class="bk-toolbar">
+      <div class="bk-toolbar pipe-head">
         <h3>{{ t('crmPipeline.title') }}</h3>
         <UButton
           v-if="canMove"
@@ -309,7 +305,7 @@ function onKeyboardMove(deal: PipelineDeal, stage: string | number | boolean | n
           {{ t('crmPipeline.newDeal') }}
         </UButton>
       </div>
-      <div class="ebtool dep-toolbar">
+      <div class="ebtool dep-toolbar pipe-filters">
         <USelect
           v-model="owner"
           size="sm"
@@ -322,6 +318,7 @@ function onKeyboardMove(deal: PipelineDeal, stage: string | number | boolean | n
         />
         <input
           v-model="q"
+          class="pipe-search"
           type="search"
           :placeholder="t('crmPipeline.search')"
           @keydown.enter="load"
@@ -333,6 +330,7 @@ function onKeyboardMove(deal: PipelineDeal, stage: string | number | boolean | n
           v-for="column in columns"
           :key="column.stage"
           class="col"
+          :data-stage="column.stage"
           :class="{ drop: highlight(column.stage) }"
           @dragover.prevent
           @drop="dropOn(column.stage, $event)"

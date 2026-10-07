@@ -229,6 +229,40 @@
   font-size: 11.5px;
 }
 
+.panel .pipe-head {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.panel .pipe-head h3 {
+  border-bottom: 0;
+  padding: 4px 0;
+  color: var(--primary);
+}
+
+.pipe-filters {
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pipe-search {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--fg-default);
+  border-radius: var(--ui-radius);
+  padding: 6px 10px;
+  font-size: 13px;
+  min-width: 200px;
+  outline: none;
+}
+
+.pipe-search:focus {
+  border-color: var(--hilo-blue-500);
+}
+
 .pipe {
   display: flex;
   gap: 14px;
@@ -239,24 +273,60 @@
 
 .col {
   flex: 0 0 240px;
-  background: var(--forest-900);
-  border: 1px solid var(--hair);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--ui-radius);
+  overflow: hidden;
 }
 
 .col.drop {
-  border-color: var(--sand);
+  border-color: var(--primary);
 }
 
-.col h3 {
+.panel .col h3 {
   display: block;
   font-family: var(--font-sans);
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--sand);
+  color: var(--primary-ink);
+  background: var(--primary-soft);
   padding: 12px 14px;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
   margin: 0;
+}
+
+.col[data-stage='DEPOSIT_PENDING'] {
+  border-top-color: var(--warning);
+}
+
+.col[data-stage='DEPOSIT_PENDING'] h3 {
+  color: var(--warning-ink);
+  background: var(--warning-soft);
+  border-bottom-color: color-mix(in srgb, var(--warning) 28%, var(--border));
+}
+
+.col[data-stage='BOOKING_CONFIRMED'],
+.col[data-stage='WON_COMPLETED'] {
+  border-top-color: var(--success);
+}
+
+.col[data-stage='BOOKING_CONFIRMED'] h3,
+.col[data-stage='WON_COMPLETED'] h3 {
+  color: var(--success-ink);
+  background: var(--success-soft);
+  border-bottom-color: color-mix(in srgb, var(--success) 28%, var(--border));
+}
+
+.col[data-stage='LOST'] {
+  border-top-color: var(--danger);
+}
+
+.col[data-stage='LOST'] h3 {
+  color: var(--danger-ink);
+  background: var(--danger-soft);
+  border-bottom-color: color-mix(in srgb, var(--danger) 28%, var(--border));
 }
 
 .col h3 .sla,
@@ -271,8 +341,9 @@
 }
 
 .col h3 .money {
-  color: var(--iv62);
+  color: inherit;
   letter-spacing: 0;
+  font-weight: 500;
 }
 
 .cards {
@@ -283,6 +354,7 @@
 .card {
   background: var(--forest);
   border: 1px solid var(--hair);
+  border-radius: var(--ui-radius);
   padding: 14px;
   margin-bottom: 10px;
   cursor: grab;
@@ -298,7 +370,7 @@
   margin-bottom: 3px;
   background: none;
   border: 0;
-  color: var(--ivory);
+  color: var(--primary);
   text-align: left;
   padding: 0;
   cursor: pointer;
@@ -317,7 +389,8 @@
 .card-val {
   font-family: var(--font-sans);
   font-size: 11px;
-  color: var(--sand);
+  font-weight: 500;
+  color: var(--primary);
   letter-spacing: 0;
 }
 
@@ -354,7 +427,7 @@
   font-family: var(--font-sans);
   font-size: 8.5px;
   letter-spacing: 0;
-  color: var(--sand);
+  color: var(--primary);
   margin-bottom: 6px;
   line-height: 1.6;
   display: block;
